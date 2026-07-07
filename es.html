@@ -38,13 +38,16 @@
     .btn:hover { background: var(--blue-dark); }
     .btn.big { padding: 18px 34px; font-size: 18px; border-radius: 14px; }
     .btn.ghost { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
-    @media (max-width: 720px) { .nav-links a:not(.btn):not(.lt) { display: none; } }
+    .nav-links a.btn { color: #fff; }
+    .nav-links a.btn:hover { color: #fff; }
+    @media (max-width: 720px) { .nav-links a:not(.btn):not(.lt) { display: none; } section { padding: 56px 0; } .hero { padding: 44px 0 56px; } .hero-ctas .btn.big { flex: 1 1 auto; text-align: center; padding: 16px 20px; } }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     .lang-toggle { display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
     .lang-toggle a.lt { padding: 7px 12px; font-weight: 800; font-size: 13px; color: var(--muted); text-decoration: none; }
     .lang-toggle a.lt.on { background: var(--blue); color: #fff; }
     .hero { background: linear-gradient(180deg, var(--blue-soft) 0%, #fff 90%); padding: 72px 0 80px; overflow: hidden; }
     .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
-    @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .phone-col { order: -1; } }
+    @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .phone-col { order: 2; margin-top: 34px; } .phone { width: 260px; } }
     .hero h1 { font-size: clamp(34px, 5.4vw, 56px); font-weight: 800; line-height: 1.08; letter-spacing: -1px; }
     .hero h1 em { color: var(--blue); font-style: normal; }
     .hero .sub { font-size: 19px; color: var(--muted); margin-top: 18px; max-width: 520px; }
@@ -279,7 +282,7 @@
     </div>
 
     <div class="founder">
-      <img src="founder.jpg" alt="Carlos, fundador de TalkEstimate" onerror="this.style.display='none'" />
+      <img src="founder.jpg" width="96" height="96" loading="lazy" alt="Carlos, fundador de TalkEstimate" onerror="this.style.display='none'" />
       <div>
         <div class="fname">Hecho por Carlos</div>
         <div class="fstory">Hice TalkEstimate porque el trabajo se lo debe ganar el mejor contratista — no el que escribe más rápido. A cada usuario del acceso anticipado lo configuro yo personalmente, en español o inglés. Si algo falla, se lo estás diciendo directo al que lo puede arreglar.</div>
