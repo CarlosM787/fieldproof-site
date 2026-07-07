@@ -134,6 +134,13 @@
     .pain-card.you .q { font-style: normal; font-weight: 800; color: var(--blue); }
     .pain-card.you a { color: var(--blue); font-weight: 700; font-size: 14px; margin-top: 10px; display: inline-block; }
 
+    /* Founder */
+    .founder { display: flex; gap: 24px; align-items: center; max-width: 640px; margin: 44px auto 0; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(16,24,40,.06); text-align: left; }
+    .founder img { width: 96px; height: 96px; border-radius: 48px; object-fit: cover; border: 3px solid var(--blue-soft); flex-shrink: 0; }
+    .founder .fname { font-weight: 800; font-size: 17px; }
+    .founder .fstory { color: var(--muted); font-size: 15px; margin-top: 6px; line-height: 1.6; }
+    @media (max-width: 560px) { .founder { flex-direction: column; text-align: center; } }
+
     /* Waitlist form */
     .wl-form { display: grid; gap: 10px; margin-top: 22px; text-align: left; }
     .wl-form input, .wl-form select { padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; width: 100%; box-sizing: border-box; }
@@ -288,6 +295,14 @@
         <div class="q">Your quote goes here.</div>
         <div>We only publish real words from real contractors — that's kind of our whole thing.</div>
         <a href="#pricing">Be one of the first →</a>
+      </div>
+    </div>
+
+    <div class="founder">
+      <img src="founder.jpg" alt="Carlos, founder of TalkEstimate" onerror="this.style.display='none'" />
+      <div>
+        <div class="fname">Built by Carlos</div>
+        <div class="fstory">I built TalkEstimate because the best contractor should win the job — not the fastest typer. Every early tester gets set up by me personally, and when something's broken, you're telling the guy who can fix it.</div>
       </div>
     </div>
   </div>
