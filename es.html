@@ -38,7 +38,10 @@
     .btn:hover { background: var(--blue-dark); }
     .btn.big { padding: 18px 34px; font-size: 18px; border-radius: 14px; }
     .btn.ghost { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
-    @media (max-width: 720px) { .nav-links a:not(.btn) { display: none; } }
+    @media (max-width: 720px) { .nav-links a:not(.btn):not(.lt) { display: none; } }
+    .lang-toggle { display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
+    .lang-toggle a.lt { padding: 7px 12px; font-weight: 800; font-size: 13px; color: var(--muted); text-decoration: none; }
+    .lang-toggle a.lt.on { background: var(--blue); color: #fff; }
     .hero { background: linear-gradient(180deg, var(--blue-soft) 0%, #fff 90%); padding: 72px 0 80px; overflow: hidden; }
     .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
     @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .phone-col { order: -1; } }
@@ -142,7 +145,7 @@
       <a href="#features">Funciones</a>
       <a href="#pricing">Precio</a>
       <a href="#faq">Preguntas</a>
-      <a href="index.html">English</a>
+      <span class="lang-toggle" aria-label="Idioma"><a class="lt" href="index.html">EN</a><a class="lt on" href="es.html">ES</a></span>
       <a class="btn" href="#pricing">Consigue la App</a>
     </div>
   </div>
