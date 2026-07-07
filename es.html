@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TalkEstimate — Habla el trabajo. Envía el estimado. Gana el cliente.</title>
+  <meta name="description" content="TalkEstimate convierte tu recorrido hablado de la obra en un estimado profesional que tu cliente aprueba por texto — con TUS precios, nunca inventados por la IA." />
+  <meta name="theme-color" content="#1D4ED8" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%231D4ED8'/%3E%3Ctext x='50' y='68' font-size='52' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'%3ET%3C/text%3E%3C/svg%3E" />
+  <link rel="alternate" hreflang="en" href="https://talkestimate.com/" />
+  <link rel="alternate" hreflang="es" href="https://talkestimate.com/es.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://talkestimate.com/es.html" />
+  <meta property="og:title" content="TalkEstimate — Envía el estimado antes de irte de la casa del cliente" />
+  <meta property="og:description" content="Habla el trabajo en la obra — en español. Recibe un estimado profesional que tu cliente aprueba por texto. Tus precios, nunca inventados por la IA." />
+  <style>
+    :root {
+      --blue: #1D4ED8; --blue-dark: #1E40AF; --blue-soft: #EFF6FF;
+      --ink: #101828; --muted: #475467; --border: #E4E7EC;
+      --surface: #F8FAFC; --green: #15803D; --amber: #B45309;
+      --radius: 16px;
+    }
+    * { box-sizing: border-box; margin: 0; }
+    html { scroll-behavior: smooth; }
+    body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: var(--ink); line-height: 1.55; }
+    .wrap { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+    h2 { font-size: clamp(26px, 4vw, 38px); font-weight: 800; letter-spacing: -0.5px; }
+    .lead { color: var(--muted); max-width: 640px; margin: 14px auto 0; font-size: 18px; }
+    .center { text-align: center; }
+    nav { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
+    .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+    .logo { font-weight: 800; font-size: 19px; color: var(--ink); text-decoration: none; }
+    .logo span { color: var(--blue); }
+    .nav-links { display: flex; gap: 26px; align-items: center; }
+    .nav-links a { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 600; }
+    .nav-links a:hover { color: var(--ink); }
+    .btn { display: inline-block; background: var(--blue); color: #fff; font-weight: 800; text-decoration: none; padding: 12px 22px; border-radius: 12px; font-size: 15px; }
+    .btn:hover { background: var(--blue-dark); }
+    .btn.big { padding: 18px 34px; font-size: 18px; border-radius: 14px; }
+    .btn.ghost { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
+    @media (max-width: 720px) { .nav-links a:not(.btn) { display: none; } }
+    .hero { background: linear-gradient(180deg, var(--blue-soft) 0%, #fff 90%); padding: 72px 0 80px; overflow: hidden; }
+    .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
+    @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .phone-col { order: -1; } }
+    .hero h1 { font-size: clamp(34px, 5.4vw, 56px); font-weight: 800; line-height: 1.08; letter-spacing: -1px; }
+    .hero h1 em { color: var(--blue); font-style: normal; }
+    .hero .sub { font-size: 19px; color: var(--muted); margin-top: 18px; max-width: 520px; }
+    .hero-ctas { margin-top: 28px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .hero-note { margin-top: 14px; color: var(--muted); font-size: 14px; }
+    .checks { margin-top: 26px; display: flex; flex-wrap: wrap; gap: 10px 22px; font-size: 15px; font-weight: 600; color: var(--ink); }
+    .checks div::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    .phone-col { display: flex; justify-content: center; }
+    .phone { width: 300px; border-radius: 40px; background: var(--ink); padding: 12px; box-shadow: 0 30px 60px rgba(16,24,40,.25); }
+    .screen { background: #fff; border-radius: 30px; overflow: hidden; font-size: 12px; }
+    .app-head { background: #fff; padding: 16px 16px 10px; border-bottom: 1px solid var(--border); }
+    .app-head .t { font-weight: 800; font-size: 15px; }
+    .app-head .steps { color: var(--muted); font-size: 10px; margin-top: 3px; }
+    .li { display: flex; justify-content: space-between; padding: 11px 16px; border-bottom: 1px solid var(--border); }
+    .li .d { color: var(--ink); font-weight: 600; }
+    .li .m { color: var(--muted); font-size: 10px; margin-top: 2px; }
+    .li .amt { font-weight: 800; }
+    .badge { display: inline-block; font-size: 8px; font-weight: 800; color: #fff; background: var(--blue); border-radius: 4px; padding: 1px 5px; margin-left: 5px; vertical-align: 1px; }
+    .tot { padding: 12px 16px; background: var(--surface); }
+    .tot .row { display: flex; justify-content: space-between; padding: 2px 0; color: var(--muted); }
+    .tot .grand { font-weight: 800; color: var(--ink); font-size: 14px; }
+    .marg { color: var(--green); font-weight: 800; font-size: 11px; margin-top: 4px; }
+    .app-cta { margin: 12px 16px 16px; background: var(--blue); color: #fff; text-align: center; font-weight: 800; border-radius: 12px; padding: 12px; font-size: 13px; }
+    section { padding: 84px 0; }
+    section.alt { background: var(--surface); }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 18px; margin-top: 44px; }
+    .step { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; box-shadow: 0 2px 8px rgba(16,24,40,.04); }
+    .step .num { width: 42px; height: 42px; border-radius: 21px; background: var(--blue); color: #fff; font-weight: 800; font-size: 19px; display: flex; align-items: center; justify-content: center; margin-bottom: 16px; }
+    .step h3 { font-size: 18px; margin-bottom: 6px; }
+    .step p { color: var(--muted); font-size: 15px; }
+    .demo-grid { display: grid; grid-template-columns: 1fr auto 1fr; gap: 18px; align-items: center; margin-top: 44px; }
+    @media (max-width: 760px) { .demo-grid { grid-template-columns: 1fr; } .demo-arrow { transform: rotate(90deg); justify-self: center; } }
+    .demo-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: 0 2px 10px rgba(16,24,40,.05); }
+    .demo-tag { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--muted); }
+    .demo-quote { font-size: 17px; margin-top: 12px; line-height: 1.7; color: var(--ink); font-style: italic; }
+    .demo-arrow { font-size: 34px; color: var(--blue); font-weight: 800; }
+    .demo-li { display: flex; justify-content: space-between; gap: 10px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
+    .demo-li b { font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .demo-li .flag { color: var(--amber); font-weight: 700; }
+    .demo-total { display: flex; justify-content: space-between; padding-top: 10px; font-weight: 800; font-size: 16px; }
+    .rule-band { background: var(--ink); color: #fff; }
+    .rule-band h2 { color: #fff; }
+    .rule-big { font-size: clamp(26px, 4.5vw, 44px); font-weight: 800; margin-top: 10px; }
+    .rule-big em { color: #60A5FA; font-style: normal; }
+    .rule-band p { color: #CBD5E1; max-width: 680px; margin: 18px auto 0; font-size: 17px; }
+    .rule-cards { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+    .rule-card { background: #1E293B; border-radius: 14px; padding: 16px 26px; font-size: 15px; }
+    .rule-card b { display: block; color: #fff; }
+    .rule-card span { color: #94A3B8; font-size: 13px; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; margin-top: 44px; }
+    .feature { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; gap: 14px; }
+    .feature .ic { font-size: 22px; }
+    .feature b { display: block; margin-bottom: 3px; }
+    .feature span { color: var(--muted); font-size: 15px; }
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 44px; }
+    .pain-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: left; box-shadow: 0 2px 8px rgba(16,24,40,.04); }
+    .pain-card .q { font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.6; }
+    .pain-card .src { margin-top: 14px; font-size: 13px; color: var(--muted); font-weight: 600; }
+    .pain-card.you { border: 2px dashed var(--blue); background: var(--blue-soft); display: flex; flex-direction: column; justify-content: center; text-align: center; }
+    .pain-card.you .q { font-style: normal; font-weight: 800; color: var(--blue); }
+    .pain-card.you a { color: var(--blue); font-weight: 700; font-size: 14px; margin-top: 10px; display: inline-block; }
+    .founder { display: flex; gap: 24px; align-items: center; max-width: 640px; margin: 44px auto 0; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(16,24,40,.06); text-align: left; }
+    .founder img { width: 96px; height: 96px; border-radius: 48px; object-fit: cover; border: 3px solid var(--blue-soft); flex-shrink: 0; }
+    .founder .fname { font-weight: 800; font-size: 17px; }
+    .founder .fstory { color: var(--muted); font-size: 15px; margin-top: 6px; line-height: 1.6; }
+    @media (max-width: 560px) { .founder { flex-direction: column; text-align: center; } }
+    .price-card { max-width: 460px; margin: 44px auto 0; background: #fff; border: 2px solid var(--blue); border-radius: 20px; padding: 36px; text-align: center; box-shadow: 0 12px 40px rgba(29,78,216,.12); }
+    .price-tag { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: 1px; }
+    .price-num { font-size: 56px; font-weight: 800; margin-top: 6px; }
+    .price-num small { font-size: 18px; color: var(--muted); font-weight: 600; }
+    .price-was { color: var(--muted); margin-top: 4px; }
+    .price-list { text-align: left; margin: 22px auto 0; max-width: 320px; color: var(--ink); font-size: 15px; line-height: 2; padding: 0; }
+    .price-list li { list-style: none; } .price-list li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    .wl-form { display: grid; gap: 10px; margin-top: 22px; text-align: left; }
+    .wl-form input, .wl-form select { padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; width: 100%; box-sizing: border-box; }
+    .wl-form button { padding: 16px; border: 0; border-radius: 12px; background: var(--blue); color: #fff; font-size: 17px; font-weight: 800; cursor: pointer; }
+    .wl-form button:hover { background: var(--blue-dark); }
+    .wl-form button:disabled { opacity: .6; }
+    .wl-msg { font-weight: 700; margin-top: 10px; text-align: center; }
+    .wl-msg.ok { color: var(--green); } .wl-msg.err { color: #B91C1C; }
+    .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+    .faq { max-width: 720px; margin: 40px auto 0; }
+    details { border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; margin-bottom: 10px; background: #fff; }
+    summary { font-weight: 700; cursor: pointer; font-size: 16px; }
+    details p { color: var(--muted); margin-top: 10px; font-size: 15px; }
+    footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
+    .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+    .foot a { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="es.html">Talk<span>Estimate</span></a>
+    <div class="nav-links">
+      <a href="#how">Cómo funciona</a>
+      <a href="#features">Funciones</a>
+      <a href="#pricing">Precio</a>
+      <a href="#faq">Preguntas</a>
+      <a href="index.html">English</a>
+      <a class="btn" href="#pricing">Consigue la App</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <h1>Habla el trabajo.<br>Envía el estimado <em>antes de irte de la casa del cliente.</em></h1>
+      <p class="sub">TalkEstimate convierte tu recorrido hablado — <b>en español o inglés</b> — en un estimado profesional que tu cliente aprueba por texto. Con <b>tus</b> precios, nunca inventados por la IA.</p>
+      <div class="hero-ctas">
+        <a class="btn big" href="#pricing">Consigue la App</a>
+        <a class="btn big ghost" href="#demo">Míralo en acción</a>
+      </div>
+      <div class="hero-note">Android hoy · iPhone pronto · Gratis durante el acceso anticipado</div>
+      <div class="checks">
+        <div>Tus precios, siempre</div>
+        <div>Habla en español o inglés</div>
+        <div>Tu cliente aprueba por texto</div>
+      </div>
+    </div>
+    <div class="phone-col">
+      <div class="phone" aria-hidden="true">
+        <div class="screen">
+          <div class="app-head">
+            <div class="t">Price Estimate</div>
+            <div class="steps">Step 4 of 7 · Pricing</div>
+          </div>
+          <div class="li"><div><div class="d">Pintura interior (2 manos)<span class="badge">TU PRECIO</span></div><div class="m">416 sqft · 8.3 hrs de labor</div></div><div class="amt">$673.92</div></div>
+          <div class="li"><div><div class="d">Parche de drywall (chico)<span class="badge">TU PRECIO</span></div><div class="m">3 piezas · 1.5 hrs</div></div><div class="amt">$100.80</div></div>
+          <div class="li"><div><div class="d">Protección y masking<span class="badge">TU PRECIO</span></div><div class="m">1 · 1 hr</div></div><div class="amt">$78.00</div></div>
+          <div class="li"><div><div class="d">Limpieza + tiradero<span class="badge">TU PRECIO</span></div><div class="m">chequeo de margen ✓</div></div><div class="amt">$96.00</div></div>
+          <div class="tot">
+            <div class="row"><span>Subtotal</span><span>$790.60</span></div>
+            <div class="row"><span>Markup</span><span>$158.12</span></div>
+            <div class="row grand"><span>Total</span><span>$948.72</span></div>
+            <div class="marg">Margen estimado: 16.7%</div>
+          </div>
+          <div class="app-cta">Revisar costos olvidados</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="how">
+  <div class="wrap center">
+    <h2>Cuatro pasos. Cero noches escribiendo estimados.</h2>
+    <p class="lead">El estimado se arma mientras todavía estás parado en la obra.</p>
+    <div class="steps-grid">
+      <div class="step"><div class="num">1</div><h3>Graba</h3><p>Camina la obra y di el trabajo — cuartos, medidas, tareas, materiales. En español, inglés, o mezclado. Funciona sin señal.</p></div>
+      <div class="step"><div class="num">2</div><h3>Revisa</h3><p>Cada tarea que escuchó, en una lista clara. Si falta una medida, te la marca — nunca la adivina.</p></div>
+      <div class="step"><div class="num">3</div><h3>Precios</h3><p>Tus tarifas, tus materiales, tu markup — de tu propia lista de precios. Cada línea muestra de dónde salió el número.</p></div>
+      <div class="step"><div class="num">4</div><h3>Envía</h3><p>Una propuesta profesional por texto o correo. Tu cliente aprueba desde un link — sin app, sin cuenta, con fecha y hora.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="alt" id="demo">
+  <div class="wrap center">
+    <h2>Dilo. Míralo convertirse en estimado.</h2>
+    <p class="lead">Un recorrido real de 20 segundos, tal como se habló:</p>
+    <div class="demo-grid" style="text-align:left">
+      <div class="demo-card">
+        <div class="demo-tag">🎙 TÚ, EN LA OBRA</div>
+        <p class="demo-quote">"La recámara principal, doce por catorce, techos de ocho pies. Dos manos de pintura en las paredes. Hay tres agujeritos de clavo que parchar. Y quieren cambiar la puerta del clóset — la tengo que ir a comprar."</p>
+      </div>
+      <div class="demo-arrow">→</div>
+      <div class="demo-card">
+        <div class="demo-tag">📋 TU ESTIMADO, TUS PRECIOS</div>
+        <div class="demo-li"><span>Pintura interior (2 manos) · 416 sqft</span><b>$673.92</b></div>
+        <div class="demo-li"><span>Parche de drywall (chico) · 3</span><b>$100.80</b></div>
+        <div class="demo-li"><span>Instalación de puerta · 1</span><b>$144.00</b></div>
+        <div class="demo-li"><span>Ida a la tienda · <span class="flag">faltan tus horas</span></span><b>—</b></div>
+        <div class="demo-total"><span>Total hasta ahora</span><span>$918.72</span></div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:22px">Fíjate en la última línea — escuchó la ida a la tienda pero <b>no adivinó</b> cuánto tiempo te toma. Eso lo dices tú. Nunca se inventa nada.</p>
+  </div>
+</section>
+
+<section class="rule-band">
+  <div class="wrap center">
+    <h2>Una regla lo hace confiable</h2>
+    <div class="rule-big">La IA <em>nunca</em> decide tus precios.</div>
+    <p>Las apps que ponen precios con "promedios nacionales" se equivocan con tu ciudad, tu experiencia y tu troca. En TalkEstimate la IA solamente escucha y organiza. Cada dólar sale de tu lista de precios, con matemáticas simples que puedes revisar a mano.</p>
+    <div class="rule-cards">
+      <div class="rule-card"><b>La IA hace</b><span>escuchar + organizar lo que dijiste</span></div>
+      <div class="rule-card"><b>Tu lista de precios hace</b><span>cada dólar del estimado</span></div>
+    </div>
+  </div>
+</section>
+
+<section id="features" class="alt">
+  <div class="wrap center">
+    <h2>Hecho para proteger tu margen</h2>
+    <p class="lead">El estimado que mandas vale lo que te acordaste de cobrar.</p>
+    <div class="features" style="text-align:left">
+      <div class="feature"><div class="ic">🧾</div><div><b>Chequeo de costos olvidados</b><span>Preparación, masking, gasolina, limpieza, tiradero, materiales menudos — te los sugiere antes de enviar, con tus precios.</span></div></div>
+      <div class="feature"><div class="ic">📊</div><div><b>Margen en vivo</b><span>Verde, amarillo o rojo en cada trabajo — antes de que el cliente vea un número.</span></div></div>
+      <div class="feature"><div class="ic">📄</div><div><b>Propuestas profesionales</b><span>Precios por fase, con el nombre de tu negocio, y PDF limpio.</span></div></div>
+      <div class="feature"><div class="ic">✍️</div><div><b>Aprobación con fecha y hora</b><span>La aprobación del cliente queda registrada. Se acabó el "yo nunca acepté eso."</span></div></div>
+      <div class="feature"><div class="ic">🧤</div><div><b>Hecho para la obra</b><span>Botones grandes para manos con guantes, alto contraste para el sol, graba sin señal.</span></div></div>
+      <div class="feature"><div class="ic">📋</div><div><b>Tu lista de precios, precargada</b><span>Empieza con plantillas de handyman, pintura, drywall o general — y haz tuyo cada precio.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="why-switch">
+  <div class="wrap center">
+    <h2>Por qué los contratistas buscan algo mejor</h2>
+    <p class="lead">Estas son las quejas más comunes en reseñas públicas de las plataformas grandes — exactamente los problemas que TalkEstimate vino a terminar.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="q">"Las funciones que de verdad necesito — como que el cliente firme — están encerradas en el plan de $200 al mes."</div>
+        <div class="src">Queja común en reseñas de Jobber · en TalkEstimate la aprobación del cliente va incluida, siempre</div>
+      </div>
+      <div class="pain-card">
+        <div class="q">"El plan gratis te corta a los cinco documentos al mes. Yo mando eso en una semana."</div>
+        <div class="src">Queja común en reseñas de Joist · TalkEstimate nunca limita tus estimados</div>
+      </div>
+      <div class="pain-card">
+        <div class="q">"Es todo un sistema de oficina que hay que aprender, cuando yo nomás quiero mandar el número antes que el otro."</div>
+        <div class="src">La queja más común de todas · TalkEstimate es un solo flujo, siete pasos</div>
+      </div>
+      <div class="pain-card you">
+        <div class="q">Aquí va tu frase.</div>
+        <div>Solo publicamos palabras reales de contratistas reales — así trabajamos.</div>
+        <a href="#pricing">Sé de los primeros →</a>
+      </div>
+    </div>
+
+    <div class="founder">
+      <img src="founder.jpg" alt="Carlos, fundador de TalkEstimate" onerror="this.style.display='none'" />
+      <div>
+        <div class="fname">Hecho por Carlos</div>
+        <div class="fstory">Hice TalkEstimate porque el trabajo se lo debe ganar el mejor contratista — no el que escribe más rápido. A cada usuario del acceso anticipado lo configuro yo personalmente, en español o inglés. Si algo falla, se lo estás diciendo directo al que lo puede arreglar.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="pricing" class="alt">
+  <div class="wrap center">
+    <h2>Precio simple</h2>
+    <p class="lead">Un solo plan. Todo incluido. Cancela cuando quieras.</p>
+    <div class="price-card">
+      <div class="price-tag">ACCESO ANTICIPADO</div>
+      <div class="price-num">Gratis<small> por ahora</small></div>
+      <div class="price-was">$29/mes al lanzar — los primeros usuarios aseguran el precio de lanzamiento</div>
+      <ul class="price-list">
+        <li>Estimados ilimitados — sin límites mensuales</li>
+        <li>Recorridos por voz en español o inglés</li>
+        <li>Tu lista de precios personal</li>
+        <li>Links de aprobación + PDFs</li>
+        <li>Órdenes de cambio, aprobadas antes del trabajo</li>
+        <li>Chequeo de costos olvidados</li>
+      </ul>
+      <p style="margin-top:18px;color:var(--muted);font-size:14px">Sin precio por usuario. Sin funciones "premium" encerradas.<br>Todo incluido, por un solo precio. Siempre.</p>
+      <form class="wl-form" id="wl">
+        <input type="email" id="wl-email" placeholder="tu@correo.com" autocomplete="email" required />
+        <select id="wl-trade">
+          <option value="">Tu oficio…</option>
+          <option>Handyman</option>
+          <option>Pintura</option>
+          <option>Drywall</option>
+          <option>General / Remodelación</option>
+          <option>Otro</option>
+        </select>
+        <input class="hp" type="text" id="wl-company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <button type="submit" id="wl-btn">Quiero Acceso Anticipado</button>
+        <div class="wl-msg" id="wl-msg" role="status"></div>
+      </form>
+      <div class="hero-note">A cada usuario lo configuramos personalmente — en tu idioma. Sin spam, nunca.</div>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap center">
+    <h2>Lo que los contratistas de verdad preguntan</h2>
+    <div class="faq" style="text-align:left">
+      <details><summary>¿Puedo hablar en español?</summary><p>Sí — di todo el recorrido en español, en inglés, o mezclado ("hay que parchar el drywall del clóset") y lo entiende perfectamente. Los menús de la app están en inglés por ahora; la versión completamente en español ya está en camino, y es una prioridad.</p></details>
+      <details><summary>¿La IA pone mis precios?</summary><p>No — y nunca lo hará. La IA solamente convierte lo que dijiste en una lista de trabajos. Cada precio sale de tu propia lista: tu tarifa por hora, tus costos de material, tu markup. Cada línea muestra exactamente de dónde salió el número.</p></details>
+      <details><summary>¿Y si me escucha mal?</summary><p>Ves todo lo que escuchó antes de que se ponga un solo precio, en una pantalla de revisión. Corriges una cantidad, borras una línea, agregas lo que falte — en segundos. Y si no dijiste una medida, se queda en blanco hasta que tú la pongas. Nunca adivina.</p></details>
+      <details><summary>¿Funciona sin señal?</summary><p>La grabación funciona completamente sin internet — sótanos, ranchos, zonas muertas. Tu recorrido se sube y procesa en cuanto vuelves a tener señal, y tus borradores siempre quedan guardados en tu teléfono.</p></details>
+      <details><summary>¿Cómo aprueba mi cliente?</summary><p>Le mandas un link por texto. Se abre en su navegador — sin instalar nada, sin crear cuenta. Ve una propuesta limpia, fase por fase, y toca Aprobar. Te queda la aprobación registrada con fecha y hora.</p></details>
+      <details><summary>¿Y los cambios a medio trabajo?</summary><p>¿El cliente agrega trabajo a la mitad? Toca "+ Change" en el trabajo, di qué cambió, y mándale una orden de cambio con precio para que la apruebe — antes de hacer el trabajo extra. Se acabó el trabajo gratis.</p></details>
+      <details><summary>¿iPhone o Android?</summary><p>Android hoy. iPhone es lo que sigue. Únete al acceso anticipado y te avisamos en cuanto llegue.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="alt">
+  <div class="wrap center">
+    <h2>Gana los trabajos que estás perdiendo por contestar tarde.</h2>
+    <p class="lead">Gratis durante las pruebas. Te configuramos personalmente, en tu idioma.</p>
+    <p style="margin-top:26px"><a class="btn big" href="#pricing">Quiero Acceso Anticipado</a></p>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap foot">
+    <div><b style="color:var(--ink)">TalkEstimate</b> — Habla el trabajo. Envía el estimado. Gana el cliente.</div>
+    <div>
+      <a href="privacy.html">Privacidad</a> ·
+      <a href="terms.html">Términos</a> ·
+      <a href="index.html">English</a> ·
+      <a href="mailto:carlosmsinvesting@gmail.com">Contacto</a> ·
+      © 2026 TalkEstimate
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('wl').addEventListener('submit', async function (e) {
+    e.preventDefault();
+    var btn = document.getElementById('wl-btn');
+    var msg = document.getElementById('wl-msg');
+    btn.disabled = true;
+    msg.className = 'wl-msg';
+    msg.textContent = '';
+    try {
+      var res = await fetch('https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          email: document.getElementById('wl-email').value,
+          trade: (document.getElementById('wl-trade').value || 'sin oficio') + ' · español',
+          company: document.getElementById('wl-company').value
+        })
+      });
+      var data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'failed');
+      msg.className = 'wl-msg ok';
+      msg.textContent = '✓ ¡Listo! Te escribimos personalmente para configurarte.';
+      document.getElementById('wl').reset();
+    } catch (err) {
+      msg.className = 'wl-msg err';
+      msg.textContent = 'Algo salió mal — inténtalo otra vez, o escríbenos a carlosmsinvesting@gmail.com';
+    } finally {
+      btn.disabled = false;
+    }
+  });
+</script>
+</body>
+</html>
