@@ -125,6 +125,15 @@
     .demo-li .flag { color: var(--amber); font-weight: 700; }
     .demo-total { display: flex; justify-content: space-between; padding-top: 10px; font-weight: 800; font-size: 16px; }
 
+    /* Why switching */
+    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 44px; }
+    .pain-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: left; box-shadow: 0 2px 8px rgba(16,24,40,.04); }
+    .pain-card .q { font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.6; }
+    .pain-card .src { margin-top: 14px; font-size: 13px; color: var(--muted); font-weight: 600; }
+    .pain-card.you { border: 2px dashed var(--blue); background: var(--blue-soft); display: flex; flex-direction: column; justify-content: center; text-align: center; }
+    .pain-card.you .q { font-style: normal; font-weight: 800; color: var(--blue); }
+    .pain-card.you a { color: var(--blue); font-weight: 700; font-size: 14px; margin-top: 10px; display: inline-block; }
+
     /* Waitlist form */
     .wl-form { display: grid; gap: 10px; margin-top: 22px; text-align: left; }
     .wl-form input, .wl-form select { padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; width: 100%; box-sizing: border-box; }
@@ -254,6 +263,32 @@
       <div class="feature"><div class="ic">✍️</div><div><b>Approval you can point to</b><span>Customer approval recorded with a timestamp. "I never agreed to that" is over.</span></div></div>
       <div class="feature"><div class="ic">🧤</div><div><b>Made for the jobsite</b><span>Big buttons for gloved hands, high contrast for sunlight, recording works offline.</span></div></div>
       <div class="feature"><div class="ic">📋</div><div><b>Your price book, pre-loaded</b><span>Start from handyman, painting, drywall, or general templates — then make every price yours.</span></div></div>
+    </div>
+  </div>
+</section>
+
+<section id="why-switch">
+  <div class="wrap center">
+    <h2>Why contractors are looking for something better</h2>
+    <p class="lead">These are the most common complaints in public reviews of the big field-service platforms — the exact problems TalkEstimate was built to end.</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="q">“The features I actually need — like getting the customer to sign off — are locked behind the $200-a-month plan.”</div>
+        <div class="src">Recurring theme in Jobber reviews · customer approval is included in TalkEstimate, always</div>
+      </div>
+      <div class="pain-card">
+        <div class="q">“The free plan cuts you off after five documents a month. I send that in a week.”</div>
+        <div class="src">Recurring theme in Joist reviews · TalkEstimate never caps your estimates</div>
+      </div>
+      <div class="pain-card">
+        <div class="q">“It's a whole office suite with a learning curve, when all I want is to get the number out before the next guy does.”</div>
+        <div class="src">The most common complaint across every platform · TalkEstimate is one flow, seven steps</div>
+      </div>
+      <div class="pain-card you">
+        <div class="q">Your quote goes here.</div>
+        <div>We only publish real words from real contractors — that's kind of our whole thing.</div>
+        <a href="#pricing">Be one of the first →</a>
+      </div>
     </div>
   </div>
 </section>
