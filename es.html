@@ -137,6 +137,7 @@
     details { border: 1px solid var(--border); border-radius: 14px; padding: 18px 22px; margin-bottom: 10px; background: #fff; }
     summary { font-weight: 700; cursor: pointer; font-size: 16px; }
     details p { color: var(--muted); margin-top: 10px; font-size: 15px; }
+    @media (max-width: 720px) { body { font-size: 17px; } .step p, .feature span, details p { font-size: 16px; } .lead { font-size: 17px; } }
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
     .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
     .foot a { color: var(--muted); }
@@ -185,11 +186,11 @@
           <div class="li"><div><div class="d">Pintura interior (2 manos)<span class="badge">TU PRECIO</span></div><div class="m">416 sqft · 8.3 hrs de labor</div></div><div class="amt">$673.92</div></div>
           <div class="li"><div><div class="d">Parche de drywall (chico)<span class="badge">TU PRECIO</span></div><div class="m">3 piezas · 1.5 hrs</div></div><div class="amt">$100.80</div></div>
           <div class="li"><div><div class="d">Protección y masking<span class="badge">TU PRECIO</span></div><div class="m">1 · 1 hr</div></div><div class="amt">$78.00</div></div>
-          <div class="li"><div><div class="d">Limpieza + tiradero<span class="badge">TU PRECIO</span></div><div class="m">chequeo de margen ✓</div></div><div class="amt">$96.00</div></div>
+          <div class="li"><div><div class="d">Limpieza + tiradero<span class="badge">TU PRECIO</span></div><div class="m">chequeo de margen ✓</div></div><div class="amt">$66.00</div></div>
           <div class="tot">
-            <div class="row"><span>Subtotal</span><span>$790.60</span></div>
-            <div class="row"><span>Markup</span><span>$158.12</span></div>
-            <div class="row grand"><span>Total</span><span>$948.72</span></div>
+            <div class="row"><span>Subtotal</span><span>$765.60</span></div>
+            <div class="row"><span>Ganancia</span><span>$153.12</span></div>
+            <div class="row grand"><span>Total</span><span>$918.72</span></div>
             <div class="marg">Margen estimado: 16.7%</div>
           </div>
           <div class="app-cta">Revisar costos olvidados</div>
@@ -226,12 +227,28 @@
         <div class="demo-tag">📋 TU ESTIMADO, TUS PRECIOS</div>
         <div class="demo-li"><span>Pintura interior (2 manos) · 416 sqft</span><b>$673.92</b></div>
         <div class="demo-li"><span>Parche de drywall (chico) · 3</span><b>$100.80</b></div>
-        <div class="demo-li"><span>Instalación de puerta · 1</span><b>$144.00</b></div>
+        <div class="demo-li"><span>Instalación de puerta · 1</span><b>$120.00</b></div>
         <div class="demo-li"><span>Ida a la tienda · <span class="flag">faltan tus horas</span></span><b>—</b></div>
-        <div class="demo-total"><span>Total hasta ahora</span><span>$918.72</span></div>
+        <div class="demo-total"><span>Total hasta ahora</span><span>$894.72</span></div>
       </div>
     </div>
     <p class="lead" style="margin-top:22px">Fíjate en la última línea — escuchó la ida a la tienda pero <b>no adivinó</b> cuánto tiempo te toma. Eso lo dices tú. Nunca se inventa nada.</p>
+    <div class="demo-grid" style="text-align:left;margin-top:30px">
+      <div class="demo-card">
+        <div class="demo-tag">🎙 UN TRABAJO DE HANDYMAN</div>
+        <p class="demo-quote">“El baño: cambiar la llave del lavabo, el toilet no deja de correr, dos contactos que no sirven, y dos agujeritos en la pared que parchar.”</p>
+      </div>
+      <div class="demo-arrow">→</div>
+      <div class="demo-card">
+        <div class="demo-tag">📋 CON PRECIO EN SEGUNDOS</div>
+        <div class="demo-li"><span>Cambio de llave · 1</span><b>$90.00</b></div>
+        <div class="demo-li"><span>Reparar toilet · 1</span><b>$66.00</b></div>
+        <div class="demo-li"><span>Cambio de contacto · 2</span><b>$67.20</b></div>
+        <div class="demo-li"><span>Parche de drywall (chico) · 2</span><b>$67.20</b></div>
+        <div class="demo-total"><span>Total</span><span>$290.40</span></div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:18px;font-size:15px">Precios de ejemplo con tarifa de $50/hora y 20% de ganancia — en la app, cada número sale de TU lista de precios.</p>
   </div>
 </section>
 

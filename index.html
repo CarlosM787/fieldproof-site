@@ -163,6 +163,7 @@
     .wl-msg.ok { color: var(--green); } .wl-msg.err { color: #B91C1C; }
     .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
 
+    @media (max-width: 720px) { body { font-size: 17px; } .step p, .feature span, details p { font-size: 16px; } .lead { font-size: 17px; } }
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
     .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
     .foot a { color: var(--muted); }
@@ -212,11 +213,11 @@
           <div class="li"><div><div class="d">Interior Wall Painting (2 coats)<span class="badge">COST BOOK</span></div><div class="m">416 sqft · 8.3 labor hrs</div></div><div class="amt">$673.92</div></div>
           <div class="li"><div><div class="d">Drywall Patch (small)<span class="badge">COST BOOK</span></div><div class="m">3 count · 1.5 labor hrs</div></div><div class="amt">$100.80</div></div>
           <div class="li"><div><div class="d">Masking &amp; Protection<span class="badge">COST BOOK</span></div><div class="m">1 flat · 1 labor hr</div></div><div class="amt">$78.00</div></div>
-          <div class="li"><div><div class="d">Cleanup + Disposal<span class="badge">COST BOOK</span></div><div class="m">margin check ✓</div></div><div class="amt">$96.00</div></div>
+          <div class="li"><div><div class="d">Cleanup + Disposal<span class="badge">COST BOOK</span></div><div class="m">margin check ✓</div></div><div class="amt">$66.00</div></div>
           <div class="tot">
-            <div class="row"><span>Subtotal</span><span>$790.60</span></div>
-            <div class="row"><span>Markup</span><span>$158.12</span></div>
-            <div class="row grand"><span>Total</span><span>$948.72</span></div>
+            <div class="row"><span>Subtotal</span><span>$765.60</span></div>
+            <div class="row"><span>Markup</span><span>$153.12</span></div>
+            <div class="row grand"><span>Total</span><span>$918.72</span></div>
             <div class="marg">Estimated margin: 16.7% — Caution</div>
           </div>
           <div class="app-cta">Check Missing Costs</div>
@@ -253,12 +254,28 @@
         <div class="demo-tag">📋 YOUR ESTIMATE, YOUR PRICES</div>
         <div class="demo-li"><span>Interior Wall Painting (2 coats) · 416 sqft</span><b>$673.92</b></div>
         <div class="demo-li"><span>Drywall Patch (small) · 3</span><b>$100.80</b></div>
-        <div class="demo-li"><span>Door Installation · 1</span><b>$144.00</b></div>
+        <div class="demo-li"><span>Door Installation · 1</span><b>$120.00</b></div>
         <div class="demo-li"><span>Material Pickup · <span class="flag">needs your hours</span></span><b>—</b></div>
-        <div class="demo-total"><span>Total so far</span><span>$918.72</span></div>
+        <div class="demo-total"><span>Total so far</span><span>$894.72</span></div>
       </div>
     </div>
     <p class="lead" style="margin-top:22px">Notice the last line — it heard the pickup trip but <b>didn’t guess</b> how long it takes. That’s yours to say. Nothing is ever invented.</p>
+    <div class="demo-grid" style="text-align:left;margin-top:30px">
+      <div class="demo-card">
+        <div class="demo-tag">🎙 A HANDYMAN JOB</div>
+        <p class="demo-quote">“Bathroom: swap the faucet, the toilet keeps running, two dead outlets, and two small holes in the wall to patch.”</p>
+      </div>
+      <div class="demo-arrow">→</div>
+      <div class="demo-card">
+        <div class="demo-tag">📋 PRICED IN SECONDS</div>
+        <div class="demo-li"><span>Faucet Replacement · 1</span><b>$90.00</b></div>
+        <div class="demo-li"><span>Toilet Repair · 1</span><b>$66.00</b></div>
+        <div class="demo-li"><span>Outlet Replacement · 2</span><b>$67.20</b></div>
+        <div class="demo-li"><span>Drywall Patch (small) · 2</span><b>$67.20</b></div>
+        <div class="demo-total"><span>Total</span><span>$290.40</span></div>
+      </div>
+    </div>
+    <p class="lead" style="margin-top:18px;font-size:15px">Example prices at a $50/hour rate with 20% markup — in the app, every number comes from YOUR price list.</p>
   </div>
 </section>
 
