@@ -7,11 +7,16 @@
   <meta name="description" content="TalkEstimate turns your jobsite voice walkthrough into a priced, professional estimate your customer approves by text — priced from YOUR price list, never AI guesses." />
   <meta name="theme-color" content="#1D4ED8" />
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231D4ED8'/%3E%3Crect x='38' y='34' width='24' height='34' rx='12' fill='white'/%3E%3Cpath d='M30 56 a20 20 0 0 0 40 0' fill='none' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='50' y1='76' x2='50' y2='84' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='40' y1='84' x2='60' y2='84' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M32 32 a18 12 0 0 1 36 0 z' fill='%23FACC15'/%3E%3Crect x='28' y='30' width='44' height='6' rx='3' fill='%23FACC15'/%3E%3Crect x='46' y='18' width='8' height='10' rx='3' fill='%23FACC15'/%3E%3C/svg%3E" />
+  <link rel="canonical" href="https://talkestimate.com/" />
   <link rel="alternate" hreflang="en" href="https://talkestimate.com/" />
   <link rel="alternate" hreflang="es" href="https://talkestimate.com/es.html" />
+  <link rel="alternate" hreflang="x-default" href="https://talkestimate.com/" />
   <link rel="apple-touch-icon" href="apple-touch-icon.png" />
   <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png" />
   <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TalkEstimate" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="es_MX" />
   <meta property="og:image" content="https://talkestimate.com/og-image.png" />
   <meta property="og:url" content="https://talkestimate.com/" />
   <meta property="og:title" content="TalkEstimate — Send the estimate before you leave the driveway" />
@@ -162,12 +167,54 @@
     .wl-msg { font-weight: 700; margin-top: 10px; text-align: center; }
     .wl-msg.ok { color: var(--green); } .wl-msg.err { color: #B91C1C; }
     .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .wl-consent { color: var(--muted); font-size: 13px; margin-top: 10px; text-align: center; line-height: 1.5; }
+    .wl-consent a { color: var(--blue); font-weight: 700; }
 
     @media (max-width: 720px) { body { font-size: 17px; } .step p, .feature span, details p { font-size: 16px; } .lead { font-size: 17px; } }
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
     .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
     .foot a { color: var(--muted); }
   </style>
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://talkestimate.com/#org",
+        "name": "TalkEstimate",
+        "url": "https://talkestimate.com/",
+        "logo": "https://talkestimate.com/og-image.png",
+        "founder": { "@type": "Person", "name": "Carlos Morales" },
+        "contactPoint": {
+          "@type": "ContactPoint",
+          "email": "support@talkestimate.com",
+          "contactType": "customer support"
+        }
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://talkestimate.com/#website",
+        "url": "https://talkestimate.com/",
+        "name": "TalkEstimate",
+        "inLanguage": ["en", "es"],
+        "publisher": { "@id": "https://talkestimate.com/#org" }
+      },
+      {
+        "@type": "SoftwareApplication",
+        "name": "TalkEstimate",
+        "operatingSystem": "Android",
+        "applicationCategory": "BusinessApplication",
+        "description": "TalkEstimate turns a contractor's spoken jobsite walkthrough into a priced, professional estimate the customer approves by text — priced from the contractor's own price list, never AI guesses.",
+        "url": "https://talkestimate.com/",
+        "inLanguage": ["en", "es"],
+        "publisher": { "@id": "https://talkestimate.com/#org" }
+      }
+    ]
+  }
+  </script>
+  <script src="/analytics.js" defer></script>
 </head>
 <body>
 
@@ -180,7 +227,7 @@
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
       <span class="lang-toggle" aria-label="Language"><a class="lt on" href="index.html">EN</a><a class="lt" href="es.html">ES</a></span>
-      <a class="btn" href="#pricing">Get the App</a>
+      <a class="btn" href="#pricing" data-cta="nav_get_app">Get the App</a>
     </div>
   </div>
 </nav>
@@ -192,8 +239,8 @@
       <h1>Talk the job.<br>Send the estimate <em>before you leave the driveway.</em></h1>
       <p class="sub">TalkEstimate turns your jobsite walkthrough into a priced, professional estimate your customer approves by text. Priced from <b>your</b> price list — never AI guesses.</p>
       <div class="hero-ctas">
-        <a class="btn big" href="#pricing">Get the App</a>
-        <a class="btn big ghost" href="#demo">See it in action</a>
+        <a class="btn big" href="#pricing" data-cta="hero_get_app">Get the App</a>
+        <a class="btn big ghost" href="#demo" data-cta="hero_see_demo">See it in action</a>
       </div>
       <div class="hero-note">Android today · iPhone coming · Free during early access · <a href="es.html" style="color:var(--blue);font-weight:800">¿Hablas español? →</a></div>
       <div class="checks">
@@ -358,8 +405,10 @@
       </ul>
       <p style="margin-top:18px;color:var(--muted);font-size:14px">No per-user pricing. No "approval is a premium feature" tiers.<br>Everything is included, for one flat price. Always.</p>
       <form class="wl-form" id="wl">
-        <input type="email" id="wl-email" placeholder="you@example.com" autocomplete="email" required />
-        <select id="wl-trade">
+        <label for="wl-email" class="sr-only">Your email address</label>
+        <input type="email" id="wl-email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required />
+        <label for="wl-trade" class="sr-only">Your trade</label>
+        <select id="wl-trade" name="trade" aria-label="Your trade">
           <option value="">Your trade…</option>
           <option>Handyman</option>
           <option>Painting</option>
@@ -367,9 +416,10 @@
           <option>General / Remodel</option>
           <option>Other</option>
         </select>
-        <input class="hp" type="text" id="wl-company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input class="hp" type="text" id="wl-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <button type="submit" id="wl-btn">Get Early Access</button>
-        <div class="wl-msg" id="wl-msg" role="status"></div>
+        <div class="wl-msg" id="wl-msg" role="status" aria-live="polite"></div>
+        <p class="wl-consent">By joining, you agree to our <a href="privacy.html">Privacy&nbsp;Policy</a>. No spam — we email you personally to get you set up.</p>
       </form>
       <div class="hero-note">We set every early tester up personally. No spam, ever.</div>
     </div>
@@ -396,7 +446,7 @@
   <div class="wrap center">
     <h2>Win the jobs you’re losing to faster replies.</h2>
     <p class="lead">Free while in early testing. Set up personally. Cancel never — there’s nothing to cancel yet.</p>
-    <p style="margin-top:26px"><a class="btn big" href="#pricing">Get Early Access</a></p>
+    <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Get Early Access</a></p>
   </div>
 </section>
 
@@ -414,37 +464,56 @@
 </footer>
 
 <script>
-  document.getElementById('wl').addEventListener('submit', async function (e) {
-    e.preventDefault();
+  (function () {
+    var form = document.getElementById('wl');
     var btn = document.getElementById('wl-btn');
     var msg = document.getElementById('wl-msg');
-    btn.disabled = true;
-    msg.className = 'wl-msg';
-    msg.textContent = '';
-    try {
-      var res = await fetch('https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          email: document.getElementById('wl-email').value,
-          trade: document.getElementById('wl-trade').value,
-          company: document.getElementById('wl-company').value
-        })
-      });
-      var data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'failed');
-      msg.className = 'wl-msg ok';
-      msg.textContent = "✓ You're in. We'll email you personally to get you set up.";
-      document.getElementById('wl').reset();
-    } catch (err) {
-      msg.className = 'wl-msg err';
-      msg.textContent = (err && err.message && err.message !== 'failed')
-        ? err.message
-        : 'Something went wrong — try again, or email support@talkestimate.com';
-    } finally {
-      btn.disabled = false;
-    }
-  });
+    var started = false;
+
+    function track(evt, params) { if (window.teTrack) window.teTrack(evt, params); }
+    function attribution() { try { return window.teAttribution ? window.teAttribution() : {}; } catch (e) { return {}; } }
+
+    // form_start — once, on the first real interaction.
+    form.addEventListener('focusin', function () {
+      if (started) return; started = true;
+      track('form_start', { form_name: 'waitlist' });
+    });
+
+    form.addEventListener('submit', async function (e) {
+      e.preventDefault();
+      btn.disabled = true;                 // block double-submit
+      msg.className = 'wl-msg';
+      msg.textContent = '';
+      // Non-PII campaign metadata rides along; the backend stores what it knows
+      // and harmlessly ignores the rest until the attribution columns ship.
+      var payload = Object.assign({
+        email: document.getElementById('wl-email').value,
+        trade: document.getElementById('wl-trade').value,
+        company: document.getElementById('wl-company').value
+      }, attribution());
+      try {
+        var res = await fetch('https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        var data = await res.json();
+        if (!res.ok) throw new Error(data.error || 'failed');
+        msg.className = 'wl-msg ok';
+        msg.textContent = "✓ You're in. We'll email you personally to get you set up.";
+        form.reset();
+        track('form_submit_success', { form_name: 'waitlist' });   // fires ONLY after the server confirms
+      } catch (err) {
+        msg.className = 'wl-msg err';
+        msg.textContent = (err && err.message && err.message !== 'failed')
+          ? err.message
+          : 'Something went wrong — try again, or email support@talkestimate.com';
+        track('form_submit_error', { form_name: 'waitlist' });
+      } finally {
+        btn.disabled = false;
+      }
+    });
+  })();
 </script>
 </body>
 </html>

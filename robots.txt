@@ -1,0 +1,6 @@
+# TalkEstimate — https://talkestimate.com
+# Marketing site. Everything here is public and meant to be indexed.
+User-agent: *
+Allow: /
+
+Sitemap: https://talkestimate.com/sitemap.xml
