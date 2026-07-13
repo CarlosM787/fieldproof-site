@@ -26,7 +26,7 @@
   // ── CONFIG ────────────────────────────────────────────────────────────────
   // Paste your GA4 Measurement ID here to switch analytics on, e.g. 'G-XXXXXXX'.
   // Leave empty ('') and the site stays completely un-tracked.
-  var GA_MEASUREMENT_ID = '';
+  var GA_MEASUREMENT_ID = 'G-23MSFMVK4B';
 
   // Analytics only ever runs on the real site. Everywhere else it's inert.
   var PROD_HOST = 'talkestimate.com';
