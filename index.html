@@ -43,8 +43,9 @@
     /* Nav */
     nav { position: sticky; top: 0; background: rgba(255,255,255,.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); z-index: 10; }
     .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
-    .logo { font-weight: 800; font-size: 19px; color: var(--ink); text-decoration: none; }
+    .logo { font-weight: 800; font-size: 19px; color: var(--ink); text-decoration: none; display: flex; align-items: center; gap: 9px; }
     .logo span { color: var(--blue); }
+    .logo-mark { width: 30px; height: 30px; border-radius: 8px; display: block; }
     .nav-links { display: flex; gap: 26px; align-items: center; }
     .nav-links a { color: var(--muted); text-decoration: none; font-size: 15px; font-weight: 600; }
     .nav-links a:hover { color: var(--ink); }
@@ -238,7 +239,7 @@
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="logo" href="#">Talk<span>Estimate</span></a>
+    <a class="logo" href="index.html" aria-label="TalkEstimate — home"><img class="logo-mark" src="apple-touch-icon.png" alt="" width="30" height="30">Talk<span>Estimate</span></a>
     <div class="nav-links">
       <a href="#how">How it works</a>
       <a href="#features">Features</a>
