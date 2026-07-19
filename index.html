@@ -100,6 +100,23 @@
     .step h3 { font-size: 18px; margin-bottom: 6px; }
     .step p { color: var(--muted); font-size: 15px; }
 
+    /* Field-notes: real contractor discovery stories (no names, no endorsements) */
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; margin-top: 40px; }
+    @media (max-width: 820px) { .story-grid { grid-template-columns: 1fr; } }
+    .story-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 26px; box-shadow: 0 2px 8px rgba(16,24,40,.04); }
+    .story-tag { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--blue); margin-bottom: 12px; }
+    .story-card p { color: var(--muted); font-size: 15px; }
+    .story-card p + p { margin-top: 12px; }
+    .story-lesson b { color: var(--ink); }
+    .story-note { margin-top: 22px; color: var(--muted); font-size: 13px; }
+
+    /* Demo video — stays fully hidden until a video URL is configured */
+    #video .video-frame { position: relative; aspect-ratio: 16 / 9; max-width: 820px; margin: 34px auto 0; background: var(--ink); border-radius: var(--radius); overflow: hidden; }
+    #video .video-frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+    .video-play { position: absolute; inset: 0; width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; gap: 12px; background: transparent; border: 0; color: #fff; font-size: 20px; font-weight: 800; cursor: pointer; font-family: inherit; }
+    .video-play:hover { background: rgba(255,255,255,.06); }
+    .video-play .video-play-circle { width: 76px; height: 76px; border-radius: 38px; background: var(--blue); display: flex; align-items: center; justify-content: center; font-size: 26px; }
+
     .rule-band { background: var(--ink); color: #fff; }
     .rule-band h2 { color: #fff; }
     .rule-big { font-size: clamp(26px, 4.5vw, 44px); font-weight: 800; margin-top: 10px; }
@@ -243,7 +260,7 @@
         <a class="btn big" href="#pricing" data-cta="hero_get_app">Get the App</a>
         <a class="btn big ghost" href="#demo" data-cta="hero_see_demo">See it in action</a>
       </div>
-      <div class="hero-note">Android today · iPhone coming · Free during early access · <a href="es.html" style="color:var(--blue);font-weight:800">¿Hablas español? →</a></div>
+      <div class="hero-note">Android today · iPhone coming · 30-day free trial, no card up front · <a href="es.html" style="color:var(--blue);font-weight:800">¿Hablas español? →</a></div>
       <div class="checks">
         <div>Your prices, always</div>
         <div>Drafts saved on your phone</div>
@@ -327,6 +344,19 @@
   </div>
 </section>
 
+<!-- Demo video: hidden until VIDEO_URL is set at the bottom of this file. -->
+<section id="video" hidden>
+  <div class="wrap center">
+    <h2>See how TalkEstimate works</h2>
+    <p class="lead">A short walkthrough of the real app, recorded by the founder.</p>
+    <div class="video-frame" id="video-frame">
+      <button type="button" class="video-play" id="video-play" aria-label="Play the TalkEstimate walkthrough video">
+        <span class="video-play-circle" aria-hidden="true">▶</span><span>Play video</span>
+      </button>
+    </div>
+  </div>
+</section>
+
 <section class="rule-band">
   <div class="wrap center">
     <h2>One rule makes it trustworthy</h2>
@@ -388,14 +418,34 @@
   </div>
 </section>
 
+<section id="field-notes" class="alt">
+  <div class="wrap center">
+    <h2>Built from real contractor workflows</h2>
+    <p class="lead">Before we write code, we sit with working contractors. No names, no endorsements — just what they taught us, built into the app.</p>
+    <div class="story-grid" style="text-align:left">
+      <div class="story-card">
+        <div class="story-tag">CUSTOMER DISCOVERY · A TUCSON PROPERTY-MAINTENANCE CONTRACTOR</div>
+        <p>He runs one of the big field-service platforms all day — and still keeps his own price book in Excel, because what he actually needs is to remember what he charged last time. Most of his work is a fixed price, not a formula. Estimates, invoices, emailed paid-in-full receipts, and knowing how much to set aside for taxes: that's the whole business, and he'd already stitched it together himself.</p>
+        <p class="story-lesson"><b>What he taught us:</b> a contractor with a working system won't switch for "free." He'll switch for something clearly simpler than what he built. So TalkEstimate stays a notebook — service, price, send — not another office suite.</p>
+      </div>
+      <div class="story-card">
+        <div class="story-tag">CUSTOMER DISCOVERY · A SOLO CONTRACTOR WE MET IN THE FIELD</div>
+        <p>His estimates don't get written on the job. They wait until he's home, tired, in front of a screen — around an hour of paperwork after a full day of real work — and sometimes they just don't go out. He has exactly the problem TalkEstimate exists to solve. We showed him the app… and he wasn't convinced. Pricing a job still felt like too many steps.</p>
+        <p class="story-lesson"><b>What he taught us:</b> having the problem is not the same as believing your app solves it. That demo sent us straight back to the pricing screen: it now starts with just the service and your price — sizes, hours, and costs only if you want them.</p>
+      </div>
+    </div>
+    <p class="story-note">These are discovery conversations, not testimonials. We never publish names or invented quotes.</p>
+  </div>
+</section>
+
 <section id="pricing">
   <div class="wrap center">
     <h2>Simple pricing</h2>
     <p class="lead">One plan. Everything included. Cancel anytime.</p>
     <div class="price-card">
       <div class="price-tag">EARLY ACCESS</div>
-      <div class="price-num">Free<small> right now</small></div>
-      <div class="price-was">Launch model: <b>30-day free trial, then $29/month.</b><br>Founding testers: free now, $29 locked forever, and a free month for every contractor you refer who joins.</div>
+      <div class="price-num">$29<small>/month</small></div>
+      <div class="price-was"><b>Start with a 30-day free trial — no card up front.</b> Keep going at $29/month only if it earns its keep. Cancel anytime, and your records stay visible either way.<br>The first ten founding testers get it free for good.</div>
       <ul class="price-list">
         <li>Unlimited estimates — no monthly caps</li>
         <li>Voice walkthroughs + AI organizing</li>
@@ -446,7 +496,7 @@
 <section>
   <div class="wrap center">
     <h2>Win the jobs you’re losing to faster replies.</h2>
-    <p class="lead">Free while in early testing. Set up personally. Cancel never — there’s nothing to cancel yet.</p>
+    <p class="lead">30-day free trial — no card up front. Set up personally. Cancel anytime; your records stay yours.</p>
     <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Get Early Access</a></p>
   </div>
 </section>
@@ -513,6 +563,39 @@
       } finally {
         btn.disabled = false;
       }
+    });
+  })();
+</script>
+<script>
+  // Demo video. To publish one: set VIDEO_URL to an EMBED url from Loom
+  // (loom.com/embed/…), YouTube (youtube-nocookie.com/embed/…), or Vimeo
+  // (player.vimeo.com/video/…). Optionally set VIDEO_THUMB to a poster image.
+  // With no URL the section stays fully hidden — no placeholder, no fake video.
+  // Nothing loads from the video host until the visitor taps Play.
+  (function () {
+    var VIDEO_URL = '';
+    var VIDEO_THUMB = '';
+    var section = document.getElementById('video');
+    var frame = document.getElementById('video-frame');
+    var play = document.getElementById('video-play');
+    if (!section || !frame || !play) return;
+    var ok = /^https:\/\/(www\.)?(loom\.com\/embed\/|youtube-nocookie\.com\/embed\/|youtube\.com\/embed\/|player\.vimeo\.com\/video\/)/.test(VIDEO_URL);
+    if (!ok) return; // stays hidden
+    if (VIDEO_THUMB) {
+      frame.style.backgroundImage = "url('" + VIDEO_THUMB + "')";
+      frame.style.backgroundSize = 'cover';
+      frame.style.backgroundPosition = 'center';
+    }
+    section.hidden = false;
+    play.addEventListener('click', function () {
+      var iframe = document.createElement('iframe');
+      iframe.src = VIDEO_URL;
+      iframe.title = 'TalkEstimate walkthrough video';
+      iframe.setAttribute('allowfullscreen', '');
+      iframe.setAttribute('allow', 'fullscreen; picture-in-picture');
+      frame.innerHTML = '';
+      frame.appendChild(iframe);
+      if (window.teTrack) window.teTrack('video_play', { section: 'demo_video' });
     });
   })();
 </script>
