@@ -3,7 +3,8 @@
 The video places count b at t = audioOffset + b * 60 / bpm. For every slot where an instrument in that
 measure's mix has a hit, this finds the attack in the audio (the sharpest energy rise within
 -20..+30 ms of the expected time) and reports the error.
-  python sync_check.py <capture dir>
+  python sync_check.py <capture dir>                                   v1: <dir>/audio.wav, episode.mjs
+  python sync_check.py <final.wav> --episode episode_v2.mjs           v2: the mixed file (offset 0)
 """
 import json
 import subprocess
@@ -14,13 +15,15 @@ from pathlib import Path
 import numpy as np
 
 HERE = Path(__file__).resolve().parent
-CAP = Path(sys.argv[1])
+ARG = Path(sys.argv[1])
+EPFILE = sys.argv[sys.argv.index("--episode") + 1] if "--episode" in sys.argv else "episode.mjs"
+WAV = ARG if ARG.suffix == ".wav" else ARG / "audio.wav"
 MODEL = json.loads(subprocess.run(["node", "-e", "import('../../salsacoach-count-lab/src/model.js').then(m=>console.log(JSON.stringify(m.BAND)))"],
                                   cwd=HERE, capture_output=True, text=True, check=True).stdout)
-EP = json.loads(subprocess.run(["node", "-e", "import('./episode.mjs').then(m=>console.log(JSON.stringify(m.EPISODE)))"],
+EP = json.loads(subprocess.run(["node", "-e", f"import('./{EPFILE}').then(m=>console.log(JSON.stringify(m.EPISODE)))"],
                                cwd=HERE, capture_output=True, text=True, check=True).stdout)
 
-with wave.open(str(CAP / "audio.wav")) as w:
+with wave.open(str(WAV)) as w:
     sr, ch, n = w.getframerate(), w.getnchannels(), w.getnframes()
     x = np.frombuffer(w.readframes(n), dtype=np.int16 if w.getsampwidth() == 2 else np.int32).astype(np.float64)
 x = x.reshape(-1, ch).mean(axis=1)
@@ -39,7 +42,7 @@ for m, meas in enumerate(EP["measures"]):
             continue
         t = EP["audioOffset"] + (m * 16 + s) * slot_s
         a, b = int((t - 0.020) / 0.0005), int((t + 0.030) / 0.0005)
-        if b >= len(rise):
+        if a < 0 or b >= len(rise):
             continue
         k = a + int(np.argmax(rise[a:b]))
         errs.append((k * 0.0005 - t) * 1000)

@@ -1,0 +1,20 @@
+Fonts for the Clave Lab video (Pilot A). All four are unmodified static TTFs downloaded from Google
+Fonts (fonts.gstatic.com) on 2026-09-26 and licensed under the SIL Open Font License 1.1 (full text in
+OFL-1.1.txt next to this file). The copyright lines below are copied from each file's name table.
+
+AtkinsonHyperlegible-400.ttf  (Atkinson Hyperlegible Regular, Version 1.006, sha256 daa4fc7275d21266...)
+  Copyright 2020 Braille Institute of America, Inc.
+  Licence: SIL Open Font License 1.1 (https://scripts.sil.org/OFL)
+AtkinsonHyperlegible-700.ttf  (Atkinson Hyperlegible Bold, Version 1.006, sha256 b5d9490cf95d925a...)
+  Copyright 2020 Braille Institute of America, Inc.
+  Licence: SIL Open Font License 1.1 (https://scripts.sil.org/OFL)
+BigShouldersDisplay-800.ttf  (Big Shoulders Display ExtraBold, Version 2.002, sha256 bf0476be7f490f26...)
+  Copyright 2019 The Big Shoulders Project Authors (https://github.com/xotypeco/big_shoulders)
+  Licence: SIL Open Font License 1.1 (https://scripts.sil.org/OFL)
+JetBrainsMono-500.ttf  (JetBrains Mono Medium, Version 2.211, sha256 3386a05f6ece969e...)
+  Copyright 2020 The JetBrains Mono Project Authors (https://github.com/JetBrains/JetBrainsMono)
+  Licence: SIL Open Font License 1.1 (https://scripts.sil.org/OFL)
+
+The OFL allows use, embedding and redistribution with this notice (not selling the fonts by
+themselves). Its preamble says the licence "does not apply to any document created using the
+fonts", so the videos and thumbnails carry no font obligation (INFERENCE, not legal advice).
