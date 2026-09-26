@@ -151,8 +151,13 @@ export async function loadDancer(role, loader, texLoader, tier, color, anisotrop
     t.anisotropy = anisotropy;
     return t;
   });
+  // The claude.ai artifact build embeds the avatars (its host does not serve .glb files).
+  const embedded = window.__GLB && window.__GLB[role];
+  const glb = embedded
+    ? loader.parseAsync(Uint8Array.from(atob(embedded), (c) => c.charCodeAt(0)).buffer, '')
+    : loader.loadAsync(look.glb);
   const jobs = {
-    gltf: loader.loadAsync(look.glb),
+    gltf: glb,
     bodyC: load(url('body', 'color', size), true),
     headC: load(url('head', 'color', size), true),
     hairC: load(url('opacity', 'color', size), true),

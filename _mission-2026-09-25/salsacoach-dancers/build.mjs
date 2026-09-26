@@ -23,15 +23,16 @@ for (let k = 1; k <= 8; k++) {
   rows.push(`<tr data-k="${k}"${P.holds.includes(k) ? ' class="hold"' : ''}><th scope="row">${k}</th><td>${describe(P, k, 'leader', 'en')}</td><td>${describe(P, k, 'follower', 'en')}</td></tr>`);
 }
 const table = `<caption>On1</caption><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>${rows.join('')}</tbody>`;
-const body = read('src/body.html').replace('{{TABLE}}', table)
-  .replace('{{NOW_L}}', describe(P, 1, 'leader', 'en')).replace('{{NOW_F}}', describe(P, 1, 'follower', 'en'));
+// function replacements everywhere: '$' sequences in the minified bundle must not act as patterns
+const body = read('src/body.html').replace('{{TABLE}}', () => table)
+  .replace('{{NOW_L}}', () => describe(P, 1, 'leader', 'en')).replace('{{NOW_F}}', () => describe(P, 1, 'follower', 'en'));
 const css = read('src/style.css');
 const fonts = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
   + '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@800&family=JetBrains+Mono:wght@500;600;700&display=swap">';
 const title = '<title>SalsaCoach Dancers</title>';
 const meta = '<meta name="description" content="Two life-size salsa dancers stepping on the count, driven by the SalsaCoach Count Lab step table and audio clock.">';
 const artifact = `${title}\n${meta}\n${fonts}\n<style>\n${css}</style>\n${body}\n<script>\n${js}</script>\n`;
-const full = `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n${artifact.replace('\n' + body, '\n</head>\n<body>\n' + body)}</body>\n</html>\n`;
+const full = `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n${artifact.replace('\n' + body, () => '\n</head>\n<body>\n' + body)}</body>\n</html>\n`;
 writeFileSync(here + 'dist/artifact.html', artifact);
 writeFileSync(here + 'dist/index.html', full);
 
@@ -52,11 +53,13 @@ try {
     li('Not yet measured:', 'frame rate and audio latency on a real phone with Bluetooth headphones.'),
   ].join('');
 } catch { /* first build before QA */ }
-const reviewBody = body.replace('  </main>', read('src/review.html').replace('{{FACTS}}', facts) + '  </main>');
+const reviewBody = body.replace('  </main>', () => read('src/review.html').replace('{{FACTS}}', () => facts) + '  </main>');
 const reviewJs = read('src/review.js');
 const reviewArtifact = `${title}\n${meta}\n${fonts}\n<style>\n${css}${read('src/review.css')}</style>\n${reviewBody}\n<script>\n${js}</script>\n<script>\n${reviewJs}</script>\n`;
-writeFileSync(here + 'dist/review-artifact.html', reviewArtifact);
-writeFileSync(here + 'dist/review.html', `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n${reviewArtifact.replace('\n' + reviewBody, '\n</head>\n<body>\n' + reviewBody)}</body>\n</html>\n`);
+// artifact host: no .glb files served, so the review artifact carries both avatars inline
+const glbInline = `<script>window.__GLB = { leader: '${readFileSync(here + 'assets/leader.glb').toString('base64')}', follower: '${readFileSync(here + 'assets/follower.glb').toString('base64')}' };</script>\n`;
+writeFileSync(here + 'dist/review-artifact.html', reviewArtifact.replace('<script>\n' + js, () => glbInline + '<script>\n' + js));
+writeFileSync(here + 'dist/review.html', `<!doctype html>\n<html lang="en">\n<head>\n<meta charset="utf-8">\n<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">\n${reviewArtifact.replace('\n' + reviewBody, () => '\n</head>\n<body>\n' + reviewBody)}</body>\n</html>\n`);
 if (process.env.MEDIA) {
   mkdirSync(here + 'dist/media', { recursive: true });
   for (const f of readdirSync(process.env.MEDIA)) if (/\.(mp4|jpg|png|webp)$/.test(f)) copyFileSync(process.env.MEDIA + '/' + f, here + 'dist/media/' + f);
