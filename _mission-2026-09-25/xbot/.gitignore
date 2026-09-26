@@ -1,0 +1,8 @@
+_cache/
+__pycache__/
+runs/
+# rendered sample output stays private (Carlos asked for a private sample)
+sample/20*/
+sample/*.png
+sample/*.jpg
+sample/SAMPLE_7_DAYS.json

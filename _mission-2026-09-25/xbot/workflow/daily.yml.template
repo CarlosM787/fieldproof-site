@@ -1,0 +1,30 @@
+# Template only. It does nothing here: GitHub only runs workflows from .github/workflows/ on the
+# default branch of the repo that holds the bot. Copy it there once Carlos approves a bot repo.
+name: daily-post
+on:
+  schedule:
+    - cron: "17 15 * * *"   # 08:17 MST (UTC-7, no DST in Arizona); off the hour, as GitHub recommends
+  workflow_dispatch: {}
+permissions:
+  contents: write          # to commit the daily log (keeps a public repo "active" past 60 days)
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install matplotlib==3.11.2
+      - name: Dry run (default) or live when the repo variable LIVE is "true"
+        env:
+          X_USER_TOKEN: ${{ secrets.X_USER_TOKEN }}
+        run: |
+          python -m bot.run_daily --out runs ${{ vars.LIVE == 'true' && '--live' || '' }}
+      - name: Keep the log
+        if: always()
+        run: |
+          git config user.name "daily-bot"; git config user.email "actions@users.noreply.github.com"
+          git add runs/*/log.jsonl runs/*/post.json || true
+          git commit -m "log $(date -u +%F)" || true
+          git push || true
