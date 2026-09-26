@@ -10,6 +10,7 @@ import os
 import tempfile
 import unittest
 import urllib.error
+import urllib.parse
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 from unittest import mock
@@ -316,6 +317,7 @@ class Sources(unittest.TestCase):
             src = run_daily.load_series(argparse.Namespace(mirror_file=None), date(2026, 9, 25))
         self.assertIn("legacy", src.label)
         self.assertEqual(src.series[-1], s[-1])
+        self.assertEqual(src.notes, ("usgs_waterdata_powell: no values",))  # logged, so a dry run shows why
 
     def test_threshold_wording_expires(self):
         self.assertTrue(any(i.startswith("review:") for i in checks.validate(real_series(), date(2027, 1, 2))))
@@ -358,6 +360,39 @@ class Eia930(unittest.TestCase):
             out = render.render_grid(hours, Path(tmp) / "g.png", header="TEST", title="t", subtitle="s",
                                      stamp="SYNTHETIC TEST DATA · NOT REAL", source_line="made-up numbers")
             self.assertGreater(out.stat().st_size, 10_000)
+
+
+class Authorize(unittest.TestCase):
+    def test_asks_only_for_the_scopes_the_bot_needs_and_keeps_the_token_private(self):
+        from bot import authorize
+        url, state, verifier = authorize.authorize_url("cid", "http://localhost:8080/callback")
+        q = {k: v[0] for k, v in urllib.parse.parse_qs(url.split("?", 1)[1]).items()}
+        self.assertEqual(q["scope"].split(), ["tweet.read", "tweet.write", "users.read", "media.write", "offline.access"])
+        self.assertEqual((q["code_challenge_method"], q["state"]), ("S256", state))
+        seen = {}
+
+        class Resp(io.BytesIO):
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *a):
+                return False
+
+        def opener(req, timeout):
+            seen["body"], seen["auth"] = req.data.decode(), req.get_header("Authorization")
+            return Resp(json.dumps({"refresh_token": "r1", "scope": authorize.SCOPES}).encode())
+
+        with self.assertRaises(SystemExit):  # a forged or stale redirect
+            authorize.exchange("http://localhost:8080/callback?state=other&code=c", state, verifier, "cid", "sec",
+                               "http://localhost:8080/callback", opener=opener)
+        tok = authorize.exchange(f"http://localhost:8080/callback?state={state}&code=c", state, verifier, "cid", "sec",
+                                 "http://localhost:8080/callback", opener=opener)
+        self.assertIn(f"code_verifier={verifier}", seen["body"])
+        self.assertTrue(seen["auth"].startswith("Basic "))
+        with tempfile.TemporaryDirectory() as tmp:
+            out = Path(tmp) / "rt"
+            authorize.save_refresh_token(tok, str(out))
+            self.assertEqual((out.read_text(), out.stat().st_mode & 0o777), ("r1", 0o600))
 
 
 class XAuth(unittest.TestCase):

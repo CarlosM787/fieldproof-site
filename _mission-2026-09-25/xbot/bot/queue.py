@@ -283,8 +283,10 @@ def main(argv=None):
                               stamp="FIXTURE · DRY RUN · NOT POSTED")
         series_for, sample, note = truncating_source(fx), True, "Built from the committed fixture (test data)."
     else:
-        series_for = truncating_source(run_daily.load_series(argparse.Namespace(mirror_file=None), end))
-        sample, note = False, "Built from official sources; each morning sees only values dated before it."
+        src = run_daily.load_series(argparse.Namespace(mirror_file=None), end)
+        series_for, sample = truncating_source(src), False
+        note = ("Built from official sources; each morning sees only values dated before it."
+                + (f" Sources passed over: {'; '.join(src.notes)}." if src.notes else ""))
     manifest = build(a.out, days, series_for, cadence=a.cadence, weekday=a.weekday, sample=sample,
                      posted_log=a.posted_log, title=a.title, note=note)
     print(json.dumps(manifest["summary"], indent=2))

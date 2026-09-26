@@ -1,6 +1,8 @@
-# Daily data-visual X bot: pipeline + seven-day sample (dry run)
+# Daily data-visual X bot: pipeline, approval queue and replays (dry run)
 
-Built 2026-09-25/26. **Nothing has been posted. No X account, app or credential was created or used.**
+Built 2026-09-25/26 and hardened 2026-09-26 (phase two). **Nothing has been posted. No X account, app
+or credential was created or used.** Phase two added the audit (`AUDIT_P2.md`) and Carlos's launch
+checklist (`LAUNCH_CHECKLIST_P2.md`).
 
 ## The concept
 
@@ -17,94 +19,89 @@ Switch rule (from the research): make the river the lead if its posts earn ≥ 1
 impressions and ≥ 2× the follows per post over ≥ 8 posts each, or if the grid data is late or
 incomplete on > 10% of days.
 
+**Status.** The river posts (daily and weekly) are built end to end. The grid chart and its EIA-930
+adapter now work on a real EIA file; the grid's post text and fact-check are the next build step
+(checklist step 9).
+
 ## What is built (`bot/`)
 
-`fetch → validate → metrics → render → compose → fact-check → queue → publish → log`
+`fetch → validate → metrics → compose → fact-check → render → queue → posted log → approval → publish → log`
 
 | Stage | Behaviour |
 |---|---|
-| fetch (`sources.py`) | Official keyless sources with retries and backoff: USGS NWIS (Powell), Reclamation hydrodata (Powell, Mead), EIA-930 bulk file (grid). A clearly labelled third-party-mirror reader exists only for this sandbox. |
-| validate (`checks.py`) | Order and duplicates, freshness (newest value ≤ 2 days old), plausible range, day-over-day jumps > 1.5 ft, ≥ 27 of the last 30 days present. Stale data → **skip** (exit 3); bad data → **stop** (exit 4). |
-| render (`render.py`) | 1600×900 PNG. The shaded band is the water above the 3,490 ft minimum power pool, so the headline number is the picture; a faint line shows a year earlier. Source line on the image, not a link in the post. |
-| compose (`compose.py`) | English then Spanish in one post, calm wording, one rotating second fact (a year ago / 30 days / the 3,525 ft target) so posts don't repeat. ASCII signs, because X counts "−" as two characters. Drops the extra fact rather than truncating. |
-| fact-check (`checks.py`) | Re-derives every number independently from the raw series and blocks the post if any number doesn't trace, if it has a URL, if it exceeds 280 X-weighted characters, or if the date is missing in either language. |
-| queue / log | `post.json` (text, alt text EN/ES, image, source, data hash, cost estimate) and `log.jsonl` per day. |
-| publish (`publish.py`) | **Dry run by default.** Live needs the `--live` flag **and** an `X_USER_TOKEN` **and** a file `APPROVED_TO_POST` containing that day's date. Uses the v2 media upload, alt text and create-post endpoints. |
+| fetch (`sources.py`) | Official keyless sources with retries: the USGS Water Data API first (USGS says its legacy NWIS services retire in late 2026), then legacy NWIS, then Reclamation. The first fresh, non-empty series wins, and sources passed over are logged. EIA-930 balance-file adapter (grid) checked against a real 2026 file. A clearly labelled third-party-mirror reader exists only for this sandbox. |
+| validate (`checks.py`) | Order and duplicates, freshness (newest value ≤ 2 days old), plausible range, day-over-day jumps > 1.5 ft, ≥ 27 of the last 30 days present; the weekly post needs 6 of its 7 days. Refuses to post after 2026-12-31 until the threshold wording is re-checked. Stale → **skip** (exit 3); bad → **stop** (exit 4). |
+| compose (`compose.py`) | English then Spanish in one post, calm wording, one rotating second fact (a year ago / 30 days / the 3,525 ft target) so daily posts don't repeat; a weekly variant (level, 7-day change, buffer, a year ago). ASCII signs, because X counts "−" as two characters. Drops an extra fact rather than truncating. Alt text names the source and says recent values are provisional, in both languages. |
+| fact-check (`checks.py`) | Re-derives every number independently from the raw series and blocks the post if any number doesn't trace, if it has a URL, if it exceeds 280 X-weighted characters, if the date is missing in either language, or if the alt text lacks the provisional note or exceeds X's 1,000 characters. |
+| render (`render.py`) | 1600×900 PNG. The shaded band is the water above the 3,490 ft minimum power pool, so the headline number is the picture; a faint line shows a year earlier; the weekly post shades its seven days. The source line is on the image, not a link in the post. `render_grid` draws a day of generation by fuel with storage charging below zero. |
+| posted log (`ledger.py`) | Append-only. Refuses a second post for the same data date (per series), older data, and any text identical to one posted in the last 30 days. Writes `attempt`/`posted` around the create-post call, so a crash can't double-post. |
+| queue (`queue.py`, `approval.py`) | `python -m bot.queue build` renders N mornings into a folder with `APPROVAL_QUEUE.md`, `index.html` (contact sheet) and `queue.json`, and flags identical texts and repeated data dates. `python -m bot.queue publish` posts one morning, only with `--live` and a per-date line in `APPROVED_TO_POST` carrying that post's approval code (a hash of text, alt text and image). |
+| publish (`publish.py`, `xauth.py`) | **Dry run by default.** Live needs `--live`, a matching approval, a clear posted log, and a user token from an OAuth 2.0 refresh. X access tokens last 2 hours and refresh tokens are single-use, so the rotated one is saved for the workflow to store. Uses the v2 media upload, alt text and create-post endpoints. |
+| grid (`grid.py`) | One local day of AZPS + SRP + TEPC by fuel, refused unless all 24 hours are complete; a provenance stamp is required. |
 
-Tests: `python -m unittest discover -s tests -t .` → **10/10 pass**, including one that composes and
-fact-checks a post for **every day of the past year** of real data (366 posts, all ≤ 280 weighted
-characters, every number traced).
+Commands:
+```bash
+python -m bot.queue build --out runs --days 1                     # this morning, official sources, dry run
+python -m bot.queue publish --queue runs                          # what would post (add --live to post)
+python -m bot.run_daily --out runs --cadence weekly --weekday fri # weekly segment (other days do nothing)
+python -m bot.replay --repo <mirror clone> --from 2026-09-12 --to 2026-09-25 --out <private dir>
+python -m bot.authorize --redirect-uri http://localhost:8080/callback --out ~/x_refresh_token   # once, on Carlos's PC
+```
 
-## The seven-day sample (`sample/`)
+Tests: `python -m unittest discover -s tests -t .` → **45/45 pass**, with no network (X calls are
+mocked). Among them: a post composed and fact-checked for **every day of the past year** of real
+data, and a weekly post for every week.
 
-A replay of what the bot would have posted each morning from **Sat Sep 19 to Fri Sep 25, 2026**,
-using only the data that existed that morning: each day reads that day's commit of a third-party
-GitHub cache of the official USGS series (site 09379900, lake elevation). The sandbox's network
-policy blocks usgs.gov and eia.gov, which is why the mirror was used. Production reads USGS or
-Reclamation directly.
+## Samples (kept private; not in git)
 
-| Post morning | Data for | Level | Post (English line) |
-|---|---|---|---|
-| Sep 19 | Sep 18 | 3,516.6 ft | no change in a day; 26.6 ft above the minimum power pool; 8.4 ft below the 3,525 ft target |
-| Sep 20 | Sep 19 | 3,516.7 ft | +0.1; 26.7 ft above; a year ago 3,545.6 |
-| Sep 21 | Sep 20 | 3,516.9 ft | +0.2; 26.9 ft above; 30 days −2.1 ft |
-| Sep 22 | Sep 21 | 3,517.1 ft | +0.2; 27.1 ft above; 7.9 ft below the target |
-| Sep 23 | Sep 22 | 3,517.3 ft | +0.2; 27.3 ft above; a year ago 3,545.3 |
-| Sep 24 | Sep 23 | 3,517.4 ft | +0.1; 27.4 ft above; 30 days −1.1 ft |
-| Sep 25 | Sep 24 | 3,517.5 ft | +0.1; 27.5 ft above; 7.5 ft below the target |
+This repository is public, so rendered posts, mirror caches and queues stay in Carlos's private
+mission report. Replays read a third-party GitHub mirror of the official USGS series (site 09379900),
+because this sandbox's network blocks usgs.gov and eia.gov. Production reads USGS or Reclamation
+directly.
 
-All seven passed validation and fact-check (240–276 weighted characters). The rendered images,
-post bundles and contact sheet are kept **private** (Carlos asked for a private sample; this
-repository is public): they are in his private mission report, not in git. Every image is stamped
-"SAMPLE · DRY RUN · NOT POSTED". Re-create them with
-`python -m bot.replay --repo <clone of the mirror> --from 2026-09-19 --to 2026-09-25 --out sample`.
+- **7-day sample** (phase one): Sat Sep 19 to Fri Sep 25, 2026. All seven passed, at 240–276 weighted
+  characters.
+- **14-morning approval queue** (phase two): Sat Sep 12 to Fri Sep 25, 2026.
+  - All 14 are ready. Fact-check failures: 0. Identical texts: 0. Length: 240–276 X-weighted
+    characters.
+  - The weekly variant has 2 posts (Fridays Sep 18 and Sep 25), each 269 characters.
+- **Grid sample**: Sat Aug 22, 2026, from a third-party copy of EIA's balance file, through the fixed
+  adapter, stamped as a copy (see AUDIT_P2.md §12). The phase-one design mock keeps its SYNTHETIC
+  stamp.
 
-A design mock of the lead concept's layout, with **made-up numbers** stamped as such, is also in the
-private report. The grid adapter (`parse_eia930_balance`) is written but **untested against a real
-EIA file**; the first real grid sample needs an open network (one command, below).
-
-Thresholds (3,490 ft minimum power pool; 3,525 ft protection target from the 2019 drought
-agreement) are REPORTED: widely published Reclamation figures, confirmed here only through
-third-party code. Check them on usbr.gov before the first live post.
+Thresholds (3,490 ft minimum power pool; 3,525 ft protection target from the 2019 drought agreement)
+are REPORTED: widely published Reclamation figures, confirmed here only through third-party code.
+Check them on usbr.gov before the first live post, and again before Jan 1, 2027.
 
 ## X rules this follows (from X's own docs, read from the xdevplatform/docs repo)
 
 - Pay-per-use API: $0.015 per post, **$0.20 if the post contains a URL**, $0.005 for alt text,
   $0.001 per read of your own posts. So: no links in posts; links live in the bio.
 - Automated accounts: turn on the **Automated** label linked to Carlos's own account, say so in the
-  bio, official API only, no identical posts across accounts, reply only when mentioned.
-- Creator Revenue Sharing was retired on Sep 7, 2026; its replacement needs Premium, ≥ 500
-  verified followers and ≥ 500k verified impressions in 90 days. **Not a 90-day money path.**
-- Open: whether media uploads are billed as posts; the minimum credit top-up.
+  bio, official API only, no identical posts, reply only when summoned. Captions come from fixed
+  templates, not an LLM, so X's AI-content approval does not apply.
+- OAuth 2.0 access tokens expire after 2 hours and refresh tokens rotate. X says OAuth 1.0a is being
+  retired.
+- Creator Revenue Sharing ended on Sep 7, 2026. Its replacement, Original Content Rewards, reportedly
+  excludes content "created or posted using automated means", so X payouts are **not a money path**
+  for this bot.
+- Open: whether media uploads are billed; the minimum credit purchase; the OAuth 1.0a retirement date.
 
-## Economics (first 30 days, 30–60 image posts)
+## Economics and launch
 
-Metered X usage ≈ $0.60–3.90; prepay $5–10 with a monthly cap; GitHub Actions $0 on a public repo
-(about 90 minutes a month); optional X Premium $8/month later. Cash ≈ **$5–18**. Carlos's time: a few
-hours of setup, then about 1–2 hours a week. No audience numbers are promised; the research found no
-verified growth benchmarks, so days 1–14 set the baseline.
+First month: metered X usage ≈ $0.60–3.25, and the cash out is the $5–10 prepay. Set a $10 spending
+limit and leave auto-recharge off. GitHub Actions costs $0 (a private repo uses about 150–210 of its
+2,000 free minutes). No Premium is needed. The dated, step-by-step plan is in `LAUNCH_CHECKLIST_P2.md`:
+account, app, token, repository, one open-network dry run, 14 days of per-post approval, then a
+standing approval renewed monthly.
 
-**30 / 60 / 90** (pass thresholds from the research): day 30: posted ≥ 27 of 30 days, 0 wrong-data
-posts, spend ≤ $10, and one of (a post ≥ 1,000 impressions, ≥ 50 followers, ≥ 10 newsletter sign-ups);
-day 60: ≥ 200 followers, median impressions ≥ 2× day 30, ≥ 25 subscribers; day 90: ≥ 1 paid
-commitment (sponsor, data, consulting) or ≥ 100 subscribers with ≥ 40% opens or ≥ 3 qualified leads.
-**Stop rule:** day 60 with median < 150 impressions, < 100 followers and no inbound contact → stop or
-re-point at the challenger. Money paths that don't depend on X: a weekly "Arizona Grid Brief"
-newsletter, sponsor slots, EE consulting, a clean Arizona dataset or alert product, chart licensing.
+**30 / 60 / 90** (from the decision sheet):
+- **Day 30:** posted ≥ 27 of 30 days, 0 wrong-data posts, spend ≤ $10, and one of (a post ≥ 1,000
+  impressions, ≥ 50 followers, ≥ 10 newsletter sign-ups).
+- **Day 60:** ≥ 200 followers, median impressions ≥ 2× day 30, ≥ 25 subscribers.
+- **Day 90:** ≥ 1 paid commitment, or ≥ 100 subscribers with ≥ 40% opens, or ≥ 3 qualified leads.
+- **Stop at day 60:** median < 150 impressions, < 100 followers and no inbound.
 
-## One-time setup (Carlos only; about an hour)
-
-1. Decide the account: a dedicated account (e.g. an "Arizona Grid Daily" handle) with the Automated
-   label linked to Carlos's personal account. Never an account that imitates anyone else.
-2. developer.x.com → create a project and app (pay-per-use) → prepay $5–10 → set a monthly spending
-   cap.
-3. Create an OAuth 2.0 user token for the bot account (scopes: `tweet.write`, `users.read`,
-   `media.write`, `offline.access`). Store it only as a GitHub Actions secret `X_USER_TOKEN`.
-4. Approve a home for the bot (a small repo; the control room's "no new repo" rule means this is
-   Carlos's call). Copy `bot/`, `fonts/`, `tests/` and `workflow/daily.yml.template` →
-   `.github/workflows/daily.yml`.
-5. First run on an open network: `python -m bot.run_daily --out runs` (dry run), and the research
-   lane's `endpoint_smoketest.py` to confirm EIA-930 freshness.
-6. First 14 days: approve each post (`APPROVED_TO_POST` with the date) before setting `LIVE=true`.
+Dry-run posts prove the pipeline, not demand.
 
 Font: IBM Plex Sans Condensed and IBM Plex Mono (SIL Open Font License, `fonts/FONTS_LICENSE.txt`).

@@ -30,6 +30,7 @@ class Source(NamedTuple):
     credit: tuple = compose.CREDIT_USGS          # (English, Spanish) for the alt text
     source_line: str = render.USGS_SOURCE_LINE   # printed on the image
     stamp: str | None = None                     # image stamp for samples and replays
+    notes: tuple = ()                            # why earlier sources were passed over
 
 
 USBR = {"credit": ("U.S. Bureau of Reclamation", "Oficina de Reclamación de EE. UU."),
@@ -75,11 +76,12 @@ def load_series(args, as_of: date) -> Source:
             continue
         got = Source(series, config.SOURCES[key]["label"], **(USBR if key.startswith("usbr") else {}))
         if (as_of - series[-1][0]).days <= config.LIMITS["max_age_days"]:
-            return got
+            return got._replace(notes=tuple(errors))
+        errors.append(f"{key}: newest value {series[-1][0]} is stale")
         if best is None or series[-1][0] > best.series[-1][0]:
             best = got
     if best:
-        return best
+        return best._replace(notes=tuple(errors))
     raise RuntimeError("; ".join(errors))
 
 
@@ -158,7 +160,8 @@ def run(args) -> int:
     except Exception as e:
         log(run_dir, "skip", reason=f"no data: {e}")
         return 3
-    log(run_dir, "fetched", source=src.label, n=len(src.series), newest=src.series[-1][0] if src.series else None)
+    log(run_dir, "fetched", source=src.label, n=len(src.series), newest=src.series[-1][0] if src.series else None,
+        passed_over=list(src.notes))
 
     code, bundle, detail = make_post(src, as_of, run_dir, cadence=cadence, sample=args.sample)
     if code:
