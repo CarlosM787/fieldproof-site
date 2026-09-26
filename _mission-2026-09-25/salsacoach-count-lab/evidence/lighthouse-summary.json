@@ -1,0 +1,55 @@
+{
+  "mobile_runs": [
+    {
+      "perf": 99,
+      "a11y": 100,
+      "bp": 96,
+      "lcp": 1806,
+      "cls": 0,
+      "tbt": 0,
+      "bytes": 151.2
+    },
+    {
+      "perf": 98,
+      "a11y": 100,
+      "bp": 96,
+      "lcp": 1802,
+      "cls": 0,
+      "tbt": 0,
+      "bytes": 151.2
+    },
+    {
+      "perf": 98,
+      "a11y": 100,
+      "bp": 96,
+      "lcp": 1805,
+      "cls": 0,
+      "tbt": 0,
+      "bytes": 151.2
+    }
+  ],
+  "mobile_median": {
+    "perf": 98,
+    "a11y": 100,
+    "bp": 96,
+    "lcp": 1805,
+    "cls": 0,
+    "tbt": 0,
+    "bytes": 151.2
+  },
+  "desktop": {
+    "perf": 100,
+    "a11y": 100,
+    "bp": 96,
+    "lcp": 402,
+    "cls": 0,
+    "tbt": 0,
+    "bytes": 151.2
+  },
+  "note": "Lighthouse 12.8.2 lab, 2026-09-26; mobile = default Moto G Power emulation + simulated slow 4G; served locally (127.0.0.1) with self-hosted fonts, font-display optional + preload of the display font; INP is not measured by Lighthouse",
+  "first_run_before_fix": {
+    "mobile_cls": 0.108,
+    "desktop_cls": 0.312,
+    "cause": "web-font swap reflowed the headline above the stage"
+  }
+}

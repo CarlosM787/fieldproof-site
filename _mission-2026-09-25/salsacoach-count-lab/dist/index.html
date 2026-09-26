@@ -1,0 +1,1287 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>SalsaCoach Count Lab</title>
+<meta name="description" content="See each salsa step land on the count and practise hearing the 1, On1 and On2, leader and follower.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@800&family=JetBrains+Mono:wght@500&display=optional">
+<style>
+:root {
+  color-scheme: dark;
+  --ground: #0a0f1e;
+  --stage: #0d1427;
+  --panel: #131c33;
+  --panel-2: #192440;
+  --line: #243154;
+  --line-soft: #1a2542;
+  --text: #eaf0fa;
+  --muted: #a3b0ca;
+  --faint: #8a98b5;
+  --leader: #6fd3ff;
+  --follower: #ff72b8;
+  --bell: #ff8166;
+  --clave: #ffcb52;
+  --conga: #5fe3b5;
+  --bass: #a48cff;
+  --good: #5fe3b5;
+  --warn: #ffcb52;
+  --radius: 14px;
+  --display: "Big Shoulders Display", "Bahnschrift Condensed", "Avenir Next Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", Impact, sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+html { background: var(--ground); }
+body {
+  background: var(--ground);
+  color: var(--text);
+  font: 16px/1.5 var(--body);
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 14px 48px;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 1120px; margin-inline: auto; display: grid; gap: 18px; }
+.wrap > *, .notes > *, .trainer > *, .dock > * { min-width: 0; }
+a { color: var(--leader); }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--leader); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand b { font: 800 26px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+.brand span { font: 500 12px/1 var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { background: none; border: 0; border-radius: 999px; padding: 6px 12px; min-height: 36px; color: var(--muted); cursor: pointer; font-size: 14px; }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+h1 { font: 800 clamp(34px, 6.2vw, 64px)/.95 var(--display); letter-spacing: .01em; text-transform: uppercase; margin: 6px 0 0; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--leader); }
+.lede { color: var(--muted); max-width: 62ch; margin: 8px 0 0; }
+
+/* stage */
+.stage { position: relative; background: radial-gradient(120% 90% at 50% 100%, #14203d 0%, var(--stage) 60%); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.stage canvas { display: block; width: 100%; aspect-ratio: 16 / 9; touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.hud { position: absolute; inset: 12px 12px auto 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; pointer-events: none; flex-wrap: wrap; }
+.hud > * { pointer-events: auto; }
+.badge { display: inline-flex; flex-direction: column; gap: 2px; background: rgba(10, 15, 30, .78); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; max-width: 30ch; }
+.badge b { font-size: 14px; }
+.badge small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.views { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.views button { background: rgba(10, 15, 30, .78); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; min-height: 32px; color: var(--muted); font-size: 13px; cursor: pointer; }
+.views button[aria-pressed="true"] { color: var(--text); border-color: var(--leader); }
+.count-big { position: absolute; left: 14px; bottom: 6px; font: 800 clamp(64px, 11vw, 120px)/1 var(--display); color: var(--leader); text-shadow: 0 0 28px rgba(111, 211, 255, .35); pointer-events: none; font-variant-numeric: tabular-nums; }
+.count-big small { font-size: .32em; color: var(--muted); margin-left: 6px; letter-spacing: .04em; text-shadow: none; }
+.legend { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 12px; font-size: 13px; color: var(--muted); background: rgba(10, 15, 30, .7); padding: 6px 10px; border-radius: 8px; pointer-events: none; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.legend .hint { color: var(--faint); }
+
+/* count strip + band lanes share one 16-column grid */
+.board { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 76px repeat(16, minmax(18px, 1fr)); gap: 3px; min-width: 520px; position: relative; }
+.grid .lbl { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.count { grid-column: span 2; background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: 8px; padding: 4px 4px 5px; text-align: center; cursor: pointer; color: var(--text); min-height: 64px; display: grid; gap: 2px; align-content: start; }
+.count .n { font: 800 26px/1 var(--display); font-variant-numeric: tabular-nums; }
+.count .g { font: 500 10.5px/1.2 var(--mono); color: var(--muted); letter-spacing: .02em; }
+.count .g.l { color: var(--leader); }
+.count .g.f { color: var(--follower); }
+.count.brk { border-color: #2f4270; }
+.count.hold .n { color: var(--faint); }
+.count.now { background: #1f3159; border-color: var(--leader); box-shadow: 0 0 0 1px var(--leader) inset; }
+.lane-btn { background: none; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 12px; padding: 3px 6px; cursor: pointer; width: 100%; text-align: left; min-height: 28px; display: flex; align-items: center; gap: 6px; }
+.lane-btn i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.lane-btn[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+.cell { height: 28px; border-radius: 5px; background: var(--line-soft); display: grid; place-items: center; }
+.cell.beat { background: #1f2a49; }
+.cell .d { width: 8px; height: 8px; border-radius: 50%; }
+.cell .d.big { width: 13px; height: 13px; }
+.cell.now { outline: 2px solid rgba(234, 240, 250, .8); outline-offset: -2px; }
+.muted-lane .cell .d { opacity: .25; }
+
+/* dock */
+.dock { display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.play { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--leader); color: #04121c; cursor: pointer; display: grid; place-items: center; font-weight: 700; }
+.play svg { width: 26px; height: 26px; }
+.ctrls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.field { display: grid; gap: 4px; }
+.field > span { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.tempo { display: flex; align-items: center; gap: 10px; }
+.tempo input { width: 180px; accent-color: var(--leader); }
+.tempo output { font: 500 15px/1 var(--mono); min-width: 7ch; font-variant-numeric: tabular-nums; }
+select { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-height: 38px; }
+.chk { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); min-height: 38px; cursor: pointer; }
+.chk input { accent-color: var(--leader); width: 18px; height: 18px; }
+.stepper { display: inline-flex; gap: 6px; }
+.stepper button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; min-width: 40px; min-height: 38px; cursor: pointer; }
+
+/* trainer */
+.trainer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+.trainer h2, .notes h2 { font: 800 30px/1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: 0 0 6px; }
+.trainer p { color: var(--muted); margin: 0 0 10px; max-width: 58ch; }
+.tap { width: 100%; min-height: 96px; border-radius: 16px; border: 2px solid var(--leader); background: #10203d; color: var(--text); font: 800 30px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.tap:active, .tap.hit { background: #1b3a66; }
+.verdict { font: 800 34px/1.05 var(--display); text-transform: uppercase; min-height: 1.1em; margin: 4px 0 2px; }
+.verdict.good { color: var(--good); } .verdict.warn { color: var(--warn); } .verdict.five { color: var(--follower); }
+.target { position: relative; height: 54px; border-radius: 10px; background: linear-gradient(90deg, #1a2542 0 28%, #173a3c 28% 72%, #1a2542 72% 100%); border: 1px solid var(--line); margin: 8px 0 4px; }
+.target::after { content: ""; position: absolute; left: 50%; top: 6px; bottom: 6px; width: 2px; background: var(--good); opacity: .7; }
+.target .dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--leader); box-shadow: 0 0 0 2px var(--ground); }
+.target .dot.five { background: var(--follower); }
+.axis { display: flex; justify-content: space-between; font: 500 11px/1 var(--mono); color: var(--faint); }
+.stats { font: 500 13px/1.5 var(--mono); color: var(--muted); margin-top: 8px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-height: 40px; cursor: pointer; }
+
+/* notes / tables (also the page without JavaScript) */
+.notes { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; }
+.notes p, .notes li { color: var(--muted); max-width: 70ch; }
+.notes h3 { margin: 10px 0 4px; font-size: 17px; }
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+th { color: var(--faint); font: 500 11px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+td.c { font: 800 20px/1 var(--display); width: 44px; }
+td.l { color: var(--leader); } td.f { color: var(--follower); }
+tr.hold td { color: var(--faint); }
+.status { border-left: 3px solid var(--warn); padding: 8px 12px; background: var(--panel-2); border-radius: 0 10px 10px 0; }
+details summary { cursor: pointer; color: var(--text); }
+
+@media (max-width: 720px) {
+  .stage canvas { aspect-ratio: 4 / 3.6; }
+  .dock { grid-template-columns: 1fr; }
+  .play { width: 56px; height: 56px; }
+  .trainer { grid-template-columns: 1fr; }
+  .tempo input { width: 150px; }
+  .legend { display: none; }
+  .count-big { font-size: 64px; }
+  .hint { display: none; }
+  .badge { max-width: 100%; padding: 6px 8px; }
+  .badge small { display: none; }
+  .views button { padding: 4px 7px; font-size: 12px; min-height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<noscript><style>.js{display:none!important}</style></noscript>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>SalsaCoach</b><span>Count Lab · prototype</span></div>
+    <div class="seg js" role="group" aria-label="Language / Idioma">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" id="lang-es" data-lang="es" aria-pressed="false">Español</button>
+    </div>
+  </header>
+
+  <section>
+    <h1 data-i18n-html="h1">See every step land. <em>Hear where the 1 lives.</em></h1>
+    <p class="lede" data-i18n="lede">A leader and a follower dance the basic step on a shared floor while a synthesized salsa band plays underneath. Everything you see moves on the band's own clock: the foot lifts late in the beat and the weight lands on the count.</p>
+  </section>
+
+  <section class="stage js" aria-label="Dance floor">
+    <canvas id="floor" tabindex="0" role="img" aria-label="Dance floor"></canvas>
+    <div class="hud">
+      <div class="badge" id="badge"><b id="badge-name">On1</b><small id="badge-rule"></small></div>
+      <div class="views" role="group" id="views" aria-label="Camera">
+        <button type="button" id="view-leader" data-view="leader" aria-pressed="true">Behind leader</button>
+        <button type="button" id="view-follower" data-view="follower" aria-pressed="false">Behind follower</button>
+        <button type="button" id="view-side" data-view="side" aria-pressed="false">Side</button>
+        <button type="button" id="view-top" data-view="top" aria-pressed="false">Above</button>
+      </div>
+    </div>
+    <div class="count-big" id="count-big" aria-hidden="true">1</div>
+    <div class="legend" aria-hidden="true"><span><i style="background:var(--leader)"></i><span data-i18n="leader">Leader</span></span><span><i style="background:var(--follower)"></i><span data-i18n="follower">Follower</span></span><span class="hint" data-i18n="hint">Drag the floor to turn the camera</span></div>
+  </section>
+
+  <section class="board js" aria-label="Count strip and band">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="dock js" aria-label="Controls">
+    <button type="button" class="play" id="play" aria-label="Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>
+    </button>
+    <div class="ctrls">
+      <label class="field"><span data-i18n="tempo">Tempo</span>
+        <span class="tempo"><input type="range" id="bpm" min="90" max="220" step="2" value="150"><output id="bpm-out" for="bpm">150 BPM</output></span>
+      </label>
+      <label class="field"><span data-i18n="pattern">Step pattern</span>
+        <select id="pattern">
+          <option value="on1">On1</option>
+          <option value="on2t">On2 · Torres count</option>
+          <option value="on2c">On2 · 2-3-4 count</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="show">Show</span>
+        <select id="role">
+          <option value="both">Both</option>
+          <option value="leader">Leader</option>
+          <option value="follower">Follower</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="loop">Loop</span>
+        <select id="loop">
+          <option value="all">1–8</option>
+          <option value="first">1–4</option>
+          <option value="second">5–8</option>
+        </select>
+      </label>
+      <div class="field"><span data-i18n="step">Step</span>
+        <span class="stepper"><button type="button" id="prev" aria-label="Previous count">◀</button><button type="button" id="next" aria-label="Next count">▶</button></span>
+      </div>
+      <label class="chk"><input type="checkbox" id="mirror"> <span data-i18n="mirror">Mirror</span></label>
+      <label class="chk"><input type="checkbox" id="reduced"> <span data-i18n="reduced">Reduced motion</span></label>
+    </div>
+  </section>
+
+  <section class="trainer js" aria-labelledby="trainer-title">
+    <div>
+      <h2 id="trainer-title" data-i18n="trainerTitle">Find the 1</h2>
+      <p data-i18n="trainerIntro">Tap on every 1 while the band plays. No sound in this band announces the 1: the clave stays silent there, so your ears have to find it from the bell and the congas.</p>
+      <div class="seg" role="group" id="levels" aria-label="Difficulty">
+        <button type="button" id="lv-guided" data-level="guided" aria-pressed="true">Click on the 1</button>
+        <button type="button" id="lv-band" data-level="band" aria-pressed="false">Band only</button>
+        <button type="button" id="lv-nobell" data-level="nobell" aria-pressed="false">No bell</button>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn" id="calibrate">Calibrate</button>
+        <span class="stats" id="cal-out"></span>
+      </div>
+    </div>
+    <div>
+      <button type="button" class="tap" id="tap">Tap on the 1</button>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+      <div class="target" id="target" aria-hidden="true"></div>
+      <div class="axis" aria-hidden="true"><span>−250 ms</span><span data-i18n="early">early</span><span>0</span><span data-i18n="late">late</span><span>+250 ms</span></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Steps and notes">
+    <div data-lang-block="en" lang="en">
+      <h2>How to read the floor</h2>
+      <p>Filled shoe: the weight is on that foot. Outlined shoe: the free foot. The ring on the floor sits under the hips, and the dotted line drops from the hips to show which foot carries the weight. The leader is celeste and the follower is pink. They face each other, so when the leader breaks forward the follower breaks back, and the couple moves as one.</p>
+      <h2>Where is the 1?</h2>
+      <p>This band plays 2-3 son clave (gold). It strikes 2, 3, 5, the “and” of 6, and 8, and never the 1. The bell’s big strokes (coral) fall on 1, 3, 5 and 7. The congas (mint) slap on 2 and 6, the classic On2 reference, and play two open tones on 4 and 4&amp; and on 8 and 8&amp;, right before 5 and 1. The bass (violet) plays the “and” of 2 and beat 4, so it skips the 1. The bell and the congas mark 1 and 5 the same way. In this band the difference is the clave: silent on 1, sounding on 5.</p>
+      <h2>The steps, count by count</h2>
+      <h3>On1</h3>
+      <p>Steps on 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 1 and 5.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot closes beside the other foot</td><td class="f">Right foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">5</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot closes beside the other foot</td><td class="f">Left foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      </tbody></table></div>
+      <h3>On2 · Torres count</h3>
+      <p>Steps on 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 2 and 6; counts 1 and 5 are small preparation steps.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Left foot small step back (prep)</td><td class="f">Right foot small step forward (prep)</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">5</td><td class="l">Right foot small step forward (prep)</td><td class="f">Left foot small step back (prep)</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      </tbody></table></div>
+      <h3>On2 · 2-3-4 count</h3>
+      <p>Steps on 2-3-4 and 6-7-8, pause on 1 and 5. Breaks on 2 and 6. This is the count the SalsaCoach app scores. Which way the leader breaks on 2 is disputed; this page shows back, as the app does.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr class="hold"><td class="c">1</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr><td class="c">4</td><td class="l">Right foot closes beside the other foot</td><td class="f">Left foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">5</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr><td class="c">8</td><td class="l">Left foot closes beside the other foot</td><td class="f">Right foot closes beside the other foot</td></tr>
+      </tbody></table></div>
+      <h2>Open questions for an instructor</h2>
+      <ol>
+        <li>Which count should the site call On2: the Torres count, the 2-3-4 count, or both under clear names?</li>
+        <li>In the 2-3-4 count, does the leader break back or forward on 2? Sources disagree. This page shows back, as the SalsaCoach app does.</li>
+        <li>In the Torres count, is the 1 danced on the beat or just before it? This page puts the weight on the beat.</li>
+        <li>When does the foot leave the floor? This page lifts it in the last 40% of the beat, so the weight lands on the count.</li>
+        <li>What happens on the pause: nothing, a tap, or either?</li>
+        <li>Default camera: behind the teacher, or facing a mirror?</li>
+      </ol>
+      <p class="status"><b>Status:</b> prototype, not on mysalsacoach.com. The band is synthesized in your browser from traditional patterns; no recordings are used. Step conventions follow the SalsaCoach timing research notes (sections 2, 3, 6 and 7); no instructor has reviewed them yet. Timing was measured in a desktop browser, not yet on a phone or with Bluetooth headphones.</p>
+    </div>
+    <details data-lang-block="es" lang="es">
+      <summary>Versión en español</summary>
+      <h2>Cómo leer el piso</h2>
+      <p>Zapato relleno: el peso está en ese pie. Zapato con contorno: el pie libre. El anillo en el piso queda debajo de la cadera, y la línea punteada baja desde la cadera para mostrar qué pie carga el peso. El líder es celeste y el seguidor(a) es rosa. Están frente a frente: cuando el líder hace el break hacia adelante, el seguidor(a) lo hace hacia atrás, y la pareja se mueve como una sola.</p>
+      <h2>¿Dónde está el uno?</h2>
+      <p>Esta banda toca clave de son 2-3 (dorado). Suena en 2, 3, 5, el «y» del 6 y el 8, y nunca en el 1. Los golpes fuertes de la campana (coral) caen en 1, 3, 5 y 7. Las congas (menta) dan el golpe seco en 2 y 6, la referencia clásica del On2, y tocan dos tonos abiertos en 4 y 4-y, y en 8 y 8-y, justo antes del 5 y del 1. El bajo (violeta) toca el «y» del 2 y el tiempo 4, así que se salta el 1. La campana y las congas marcan el 1 y el 5 igual. En esta banda la diferencia es la clave: calla en el 1 y suena en el 5.</p>
+      <h2>Los pasos, tiempo por tiempo</h2>
+      <h3>On1</h3>
+      <p>Pasos en 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 1 y 5.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo se junta con el otro pie</td><td class="f">Pie derecho se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">5</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho se junta con el otro pie</td><td class="f">Pie izquierdo se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      </tbody></table></div>
+      <h3>On2 · conteo Torres</h3>
+      <p>Pasos en 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 2 y 6; el 1 y el 5 son pasos pequeños de preparación.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Pie izquierdo paso pequeño atrás (preparación)</td><td class="f">Pie derecho paso pequeño adelante (preparación)</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">5</td><td class="l">Pie derecho paso pequeño adelante (preparación)</td><td class="f">Pie izquierdo paso pequeño atrás (preparación)</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      </tbody></table></div>
+      <h3>On2 · conteo 2-3-4</h3>
+      <p>Pasos en 2-3-4 y 6-7-8, pausa en 1 y 5. Breaks en 2 y 6. Es el conteo que califica la app SalsaCoach. Hacia dónde hace el break el líder en el 2 está en disputa; esta página lo muestra hacia atrás, como la app.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr class="hold"><td class="c">1</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">4</td><td class="l">Pie derecho se junta con el otro pie</td><td class="f">Pie izquierdo se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">5</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">8</td><td class="l">Pie izquierdo se junta con el otro pie</td><td class="f">Pie derecho se junta con el otro pie</td></tr>
+      </tbody></table></div>
+      <h2>Preguntas abiertas para un instructor</h2>
+      <ol>
+        <li>¿Qué conteo debe llamar On2 el sitio: el conteo Torres, el conteo 2-3-4, o los dos con nombres claros?</li>
+        <li>En el conteo 2-3-4, ¿el líder hace el break hacia atrás o hacia adelante en el 2? Las fuentes no coinciden. Esta página lo muestra hacia atrás, como la app SalsaCoach.</li>
+        <li>En el conteo Torres, ¿el 1 se baila en el tiempo o justo antes? Esta página pone el peso en el tiempo.</li>
+        <li>¿Cuándo se levanta el pie? Esta página lo levanta en el último 40&nbsp;% del tiempo, para que el peso caiga en el conteo.</li>
+        <li>¿Qué pasa en la pausa: nada, un toque, o cualquiera de los dos?</li>
+        <li>Cámara por defecto: ¿detrás del maestro, o frente a un espejo?</li>
+      </ol>
+      <p class="status"><b>Estado:</b> prototipo, no está en mysalsacoach.com. La banda se sintetiza en tu navegador a partir de patrones tradicionales; no se usan grabaciones. Las convenciones de pasos siguen las notas de investigación de SalsaCoach (secciones 2, 3, 6 y 7); ningún instructor las ha revisado todavía. La sincronización se midió en un navegador de escritorio, todavía no en un teléfono ni con audífonos Bluetooth.</p>
+    </details>
+  </section>
+  <p class="sr" id="live" aria-live="polite"></p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  // SalsaCoach Count Lab: the step and band model. One source of truth:
+// build.mjs imports it to write the static step tables, and inlines it into
+// the page so the animation and the tables can never disagree.
+//
+// Floor frame (metres): x = to the leader's right, y = the leader's forward
+// (toward the follower), z = up. The follower stands facing the leader at
+// y = GEOM.gap. In world coordinates the follower's feet make the same moves
+// as the leader's feet on the same side (her right foot mirrors his left).
+
+const GEOM = { hip: 0.12, brk: 0.32, small: 0.10, gap: 0.95 };
+
+const BK = GEOM.brk, SM = GEOM.small;
+
+// steps[count] = [leader foot, leader-frame y target, kind]
+// kinds: break (change of direction), replace (weight change in place),
+// close (foot returns beside the other), prep (small preparation step)
+const PATTERNS = {
+  on1: {
+    holds: [4, 8],
+    breaks: [1, 5],
+    init: { L: 0, R: 0, w: 'R' },
+    steps: {
+      1: ['L', BK, 'break'], 2: ['R', 0, 'replace'], 3: ['L', 0, 'close'],
+      5: ['R', -BK, 'break'], 6: ['L', 0, 'replace'], 7: ['R', 0, 'close'],
+    },
+    source: '7.3',
+  },
+  on2t: {
+    holds: [4, 8],
+    breaks: [2, 6],
+    init: { L: BK, R: SM, w: 'R' },
+    steps: {
+      1: ['L', -SM, 'prep'], 2: ['R', -BK, 'break'], 3: ['L', -SM, 'replace'],
+      5: ['R', SM, 'prep'], 6: ['L', BK, 'break'], 7: ['R', SM, 'replace'],
+    },
+    source: '7.4',
+  },
+  on2c: {
+    holds: [1, 5],
+    breaks: [2, 6],
+    init: { L: 0, R: 0, w: 'L' },
+    steps: {
+      2: ['R', -BK, 'break'], 3: ['L', 0, 'replace'], 4: ['R', 0, 'close'],
+      6: ['L', BK, 'break'], 7: ['R', 0, 'replace'], 8: ['L', 0, 'close'],
+    },
+    source: '6.13',
+  },
+};
+
+// State after each count: S[0] is the state before count 1 (= after 8).
+function states(p) {
+  const out = [{ ...p.init }];
+  for (let k = 1; k <= 8; k++) {
+    const s = { ...out[k - 1] };
+    const st = p.steps[k];
+    if (st) { s[st[0]] = st[1]; s.w = st[0]; }
+    out.push(s);
+  }
+  return out;
+}
+
+// A pattern must loop: the state after 8 equals the state before 1.
+function loops(p) {
+  const s = states(p), a = s[0], b = s[8];
+  return Math.abs(a.L - b.L) < 1e-9 && Math.abs(a.R - b.R) < 1e-9 && a.w === b.w;
+}
+
+const WORDS = {
+  en: {
+    foot: { L: 'Left foot', R: 'Right foot' },
+    fwd: 'forward', back: 'back', hold: 'Hold: no step',
+    break: 'break', replace: 'in place, weight change', close: 'closes beside the other foot',
+    prepFwd: 'small step forward (prep)', prepBack: 'small step back (prep)',
+  },
+  es: {
+    foot: { L: 'Pie izquierdo', R: 'Pie derecho' },
+    fwd: 'adelante', back: 'atrás', hold: 'Pausa: sin paso',
+    break: 'break', replace: 'en su lugar, cambio de peso', close: 'se junta con el otro pie',
+    prepFwd: 'paso pequeño adelante (preparación)', prepBack: 'paso pequeño atrás (preparación)',
+  },
+};
+
+// Plain-language description of one count for one role.
+function describe(p, count, role, lang) {
+  const w = WORDS[lang] || WORDS.en;
+  const st = p.steps[count];
+  if (!st) return w.hold;
+  const s = states(p);
+  const dy = st[1] - s[count - 1][st[0]];
+  const follower = role === 'follower';
+  const foot = follower ? (st[0] === 'L' ? 'R' : 'L') : st[0];
+  // The follower faces the leader, so his forward is her back.
+  const goesFwd = follower ? dy < 0 : dy > 0;
+  let what;
+  if (st[2] === 'break') what = (goesFwd ? w.fwd : w.back) + ' · ' + w.break;
+  else if (st[2] === 'replace') what = w.replace;
+  else if (st[2] === 'close') what = w.close;
+  else what = goesFwd ? w.prepFwd : w.prepBack;
+  return w.foot[foot] + ' ' + what;
+}
+
+// The band, as 16 eighth-note slots across one 8-count (slot 2k-2 = count k).
+// Traditional salsa patterns, arranged and synthesized for this page:
+// 2-3 son clave strikes 2, 3, 5, 6& and 8 and never the 1.
+const BAND = {
+  bell: { 0: 'm', 2: 'n', 3: 'n', 4: 'm', 6: 'n', 8: 'm', 10: 'n', 11: 'n', 12: 'm', 14: 'n', 15: 'n' },
+  clave: { 2: 'x', 4: 'x', 8: 'x', 11: 'x', 14: 'x' },
+  conga: {
+    0: 'heel', 1: 'tip', 2: 'slap', 3: 'tip', 4: 'heel', 5: 'tip', 6: 'open', 7: 'open',
+    8: 'heel', 9: 'tip', 10: 'slap', 11: 'tip', 12: 'heel', 13: 'tip', 14: 'open', 15: 'open',
+  },
+  // [frequency Hz, length in beats]; anticipated bass on 2& and 4 (and 6&, 8)
+  bass: { 3: [73.42, 0.7], 6: [73.42, 2.3], 11: [110.0, 0.7], 14: [98.0, 2.3] },
+};
+
+const LANES = ['bell', 'clave', 'conga', 'bass'];
+
+
+  // ---------- words ----------
+  const STR = {
+    en: {
+      h1: 'See every step land. <em>Hear where the 1 lives.</em>',
+      lede: "A leader and a follower dance the basic step on a shared floor while a synthesized salsa band plays underneath. Everything you see moves on the band's own clock: the foot lifts late in the beat and the weight lands on the count.",
+      leader: 'Leader', follower: 'Follower', both: 'Both', hint: 'Drag the floor to turn the camera',
+      tempo: 'Tempo', pattern: 'Step pattern', show: 'Show', loop: 'Loop', step: 'Step', mirror: 'Mirror', reduced: 'Reduced motion',
+      play: 'Play', pause: 'Pause', prev: 'Previous count', next: 'Next count',
+      view: { leader: 'Behind leader', follower: 'Behind follower', side: 'Side', top: 'Above' },
+      names: { on1: 'On1', on2t: 'On2 · Torres count', on2c: 'On2 · 2-3-4 count' },
+      rules: {
+        on1: 'Steps 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 1 and 5.',
+        on2t: 'Steps 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 2 and 6; 1 and 5 are small prep steps.',
+        on2c: 'Steps 2-3-4 and 6-7-8, pause on 1 and 5. The count the SalsaCoach app scores. Break direction on 2 is disputed.',
+      },
+      lanes: { bell: 'Bell', clave: 'Clave', conga: 'Congas', bass: 'Bass' },
+      count: 'Count', hold: 'hold',
+      trainerTitle: 'Find the 1',
+      trainerIntro: 'Tap on every 1 while the band plays. No sound in this band announces the 1: the clave stays silent there, so your ears have to find it from the bell and the congas.',
+      levels: { guided: 'Click on the 1', band: 'Band only', nobell: 'No bell' },
+      tap: 'Tap on the 1', calibrate: 'Calibrate', calibrating: 'Tap on every click · ', calDone: 'Calibration: ', calNone: 'Not calibrated',
+      early: 'early', late: 'late',
+      v: { good: 'On the 1', early: 'Early', late: 'Late', five: 'That was the 5', far: 'Keep listening', start: 'Band on. Tap on the next 1.' },
+      stats: (n, med, on, streak) => n + ' taps · median ' + med + ' · ' + on + ' on the 1 · best streak ' + streak,
+      half: 'Half-loop: the feet reset during the pause. Practice drill, not a real step.',
+      liveCount: (k, l, f) => 'Count ' + k + '. Leader: ' + l + '. Follower: ' + f + '.',
+      floor: (name) => name + ' dance floor, leader and follower facing each other',
+    },
+    es: {
+      h1: 'Mira cada paso caer. <em>Escucha dónde vive el uno.</em>',
+      lede: 'Un líder y un(a) seguidor(a) bailan el paso básico en el mismo piso mientras suena una banda de salsa sintetizada. Todo lo que ves se mueve con el reloj de la banda: el pie se levanta al final del tiempo y el peso cae en el conteo.',
+      leader: 'Líder', follower: 'Seguidor(a)', both: 'Ambos', hint: 'Arrastra el piso para girar la cámara',
+      tempo: 'Tempo', pattern: 'Patrón de pasos', show: 'Mostrar', loop: 'Repetir', step: 'Paso a paso', mirror: 'Espejo', reduced: 'Movimiento reducido',
+      play: 'Reproducir', pause: 'Pausa', prev: 'Tiempo anterior', next: 'Tiempo siguiente',
+      view: { leader: 'Detrás del líder', follower: 'Detrás del seguidor(a)', side: 'De lado', top: 'Desde arriba' },
+      names: { on1: 'On1', on2t: 'On2 · conteo Torres', on2c: 'On2 · conteo 2-3-4' },
+      rules: {
+        on1: 'Pasos 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 1 y 5.',
+        on2t: 'Pasos 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 2 y 6; el 1 y el 5 son pasos pequeños de preparación.',
+        on2c: 'Pasos 2-3-4 y 6-7-8, pausa en 1 y 5. Es el conteo que califica la app SalsaCoach. La dirección del break en el 2 está en disputa.',
+      },
+      lanes: { bell: 'Campana', clave: 'Clave', conga: 'Congas', bass: 'Bajo' },
+      count: 'Tiempo', hold: 'pausa',
+      trainerTitle: 'Encuentra el uno',
+      trainerIntro: 'Toca en cada uno mientras suena la banda. Ningún sonido de esta banda anuncia el uno: la clave se queda callada ahí, así que tu oído lo tiene que encontrar con la campana y las congas.',
+      levels: { guided: 'Clic en el 1', band: 'Solo la banda', nobell: 'Sin campana' },
+      tap: 'Toca en el 1', calibrate: 'Calibrar', calibrating: 'Toca en cada clic · ', calDone: 'Calibración: ', calNone: 'Sin calibrar',
+      early: 'antes', late: 'tarde',
+      v: { good: 'En el uno', early: 'Antes', late: 'Tarde', five: 'Ese fue el 5', far: 'Sigue escuchando', start: 'La banda ya suena. Toca en el próximo uno.' },
+      stats: (n, med, on, streak) => n + ' toques · mediana ' + med + ' · ' + on + ' en el uno · mejor racha ' + streak,
+      half: 'Medio ciclo: los pies se reacomodan durante la pausa. Es un ejercicio, no un paso real.',
+      liveCount: (k, l, f) => 'Tiempo ' + k + '. Líder: ' + l + '. Seguidor(a): ' + f + '.',
+      floor: (name) => 'Piso de baile ' + name + ', líder y seguidor(a) frente a frente',
+    },
+  };
+
+  const $ = (id) => document.getElementById(id);
+  const mod = (a, n) => ((a % n) + n) % n;
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  const lerp = (a, b, t) => a + (b - a) * t;
+  const ease = (t) => t * t * (3 - 2 * t);
+  const store = {
+    get(k) { try { return localStorage.getItem('countlab.' + k); } catch (e) { return null; } },
+    set(k, v) { try { localStorage.setItem('countlab.' + k, v); } catch (e) { /* storage blocked */ } },
+  };
+
+  const S = {
+    lang: 'en', pattern: 'on1', role: 'both', view: 'leader', mirror: false, loop: 'all', bpm: 150,
+    reduced: window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches,
+    playing: false, pos: 0, mute: { bell: false, clave: false, conga: false, bass: false },
+  };
+  const STATES = {};
+  for (const id in PATTERNS) STATES[id] = states(PATTERNS[id]);
+
+  // ---------- audio ----------
+  let ctx = null, noiseBuf = null, bus = null, laneGain = {}, voices = null;
+  let startTime = 0, nextTick = 0, timer = 0;
+  const QA = location.hash === '#qa';
+  const qa = QA ? (window.__qa = { flips: [], sched: [] }) : null;
+
+  function makeVoices(ac, dest, noise) {
+    function env(g, t, a, peak, d) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(peak, t + a);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+    }
+    function tone(type, f, t, d, out, peak, a) {
+      const o = ac.createOscillator(), g = ac.createGain();
+      o.type = type; o.frequency.setValueAtTime(f, t);
+      env(g, t, a || 0.002, peak, d);
+      o.connect(g); g.connect(out); o.start(t); o.stop(t + d + 0.05);
+      return o;
+    }
+    function hiss(t, d, out, peak, type, f, q) {
+      const s = ac.createBufferSource(), flt = ac.createBiquadFilter(), g = ac.createGain();
+      s.buffer = noise; flt.type = type; flt.frequency.value = f; flt.Q.value = q;
+      env(g, t, 0.001, peak, d);
+      s.connect(flt); flt.connect(g); g.connect(out); s.start(t); s.stop(t + d + 0.05);
+    }
+    return {
+      clave(t) {
+        tone('sine', 2480, t, 0.055, dest.clave, 0.9, 0.001);
+        tone('triangle', 1240, t, 0.03, dest.clave, 0.2, 0.001);
+      },
+      bell(t, mouth) {
+        const bp = ac.createBiquadFilter();
+        bp.type = 'bandpass'; bp.frequency.value = mouth ? 1500 : 2400; bp.Q.value = 2.5; bp.connect(dest.bell);
+        const d = mouth ? 0.2 : 0.06, p = mouth ? 0.6 : 0.28;
+        tone('square', mouth ? 562 : 842, t, d, bp, p, 0.001);
+        tone('square', mouth ? 846 : 1268, t, d * 0.8, bp, p * 0.55, 0.001);
+      },
+      conga(t, k) {
+        if (k === 'open') {
+          const o = ac.createOscillator(), g = ac.createGain();
+          o.type = 'sine'; o.frequency.setValueAtTime(262, t); o.frequency.exponentialRampToValueAtTime(206, t + 0.05);
+          env(g, t, 0.002, 0.85, 0.26); o.connect(g); g.connect(dest.conga); o.start(t); o.stop(t + 0.32);
+        } else if (k === 'slap') {
+          hiss(t, 0.05, dest.conga, 0.75, 'bandpass', 1900, 1.1);
+          tone('sine', 340, t, 0.05, dest.conga, 0.32, 0.001);
+        } else if (k === 'heel') {
+          tone('sine', 118, t, 0.06, dest.conga, 0.22, 0.003);
+        } else {
+          hiss(t, 0.02, dest.conga, 0.16, 'highpass', 2600, 0.7);
+        }
+      },
+      bass(t, f, len) {
+        const o = ac.createOscillator(), o2 = ac.createOscillator(), g = ac.createGain(), g2 = ac.createGain(), lp = ac.createBiquadFilter();
+        lp.type = 'lowpass'; lp.frequency.value = 480;
+        o.type = 'triangle'; o2.type = 'sine'; o.frequency.value = f; o2.frequency.value = f * 2; g2.gain.value = 0.22;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(0.95, t + 0.008);
+        g.gain.setValueAtTime(0.95, t + len * 0.55);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + len);
+        o.connect(lp); o2.connect(g2); g2.connect(lp); lp.connect(g); g.connect(dest.bass);
+        o.start(t); o2.start(t); o.stop(t + len + 0.05); o2.stop(t + len + 0.05);
+      },
+      click(t, hi) { tone('sine', hi ? 1760 : 1175, t, 0.035, dest.click, hi ? 0.7 : 0.35, 0.001); },
+    };
+  }
+
+  function makeNoise(ac) {
+    const b = ac.createBuffer(1, ac.sampleRate, ac.sampleRate), d = b.getChannelData(0);
+    let x = 12345;
+    for (let i = 0; i < d.length; i++) { x = (x * 1103515245 + 12345) & 0x7fffffff; d[i] = (x / 0x3fffffff) - 1; }
+    return b;
+  }
+
+  const LANE_LEVEL = { bell: 0.5, clave: 0.75, conga: 0.7, bass: 0.95, click: 0.6 };
+
+  function ensureAudio() {
+    if (ctx) return ctx;
+    const AC = window.AudioContext || window.webkitAudioContext;
+    ctx = new AC({ latencyHint: 'interactive' });
+    noiseBuf = makeNoise(ctx);
+    return ctx;
+  }
+
+  function laneOn(k) {
+    if (k === 'click') return trainer.level === 'guided' || trainer.cal;
+    if (trainer.cal) return false;
+    if (k === 'bell' && trainer.level === 'nobell') return false;
+    return !S.mute[k];
+  }
+
+  function buildBus() {
+    const comp = ctx.createDynamicsCompressor();
+    comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.003; comp.release.value = 0.15;
+    bus = ctx.createGain(); bus.gain.value = 0.85;
+    bus.connect(comp); comp.connect(ctx.destination);
+    laneGain = {};
+    for (const k of ['bell', 'clave', 'conga', 'bass', 'click']) {
+      const g = ctx.createGain(); g.gain.value = laneOn(k) ? LANE_LEVEL[k] : 0; g.connect(bus); laneGain[k] = g;
+    }
+    voices = makeVoices(ctx, laneGain, noiseBuf);
+  }
+
+  function applyMutes() {
+    if (!ctx || !laneGain.bell) return;
+    for (const k in laneGain) laneGain[k].gain.setTargetAtTime(laneOn(k) ? LANE_LEVEL[k] : 0, ctx.currentTime, 0.015);
+  }
+
+  const half = () => 30 / S.bpm; // seconds per eighth note
+  const windowOff = () => (S.loop === 'second' ? 4 : 0);
+  const windowLen = () => (S.loop === 'all' ? 8 : 4);
+  // absolute beats since startTime -> position in the 8-count cycle
+  const posFrom = (b) => windowOff() + mod(b, windowLen());
+  const slotOf = (tick) => (S.loop === 'all' ? mod(tick, 16) : windowOff() * 2 + mod(tick, 8));
+
+  function playSlot(voice, s, t, len) {
+    const bell = BAND.bell[s]; if (bell) voice.bell(t, bell === 'm');
+    if (BAND.clave[s]) voice.clave(t);
+    const cg = BAND.conga[s]; if (cg) voice.conga(t, cg);
+    const bs = BAND.bass[s]; if (bs) voice.bass(t, bs[0], bs[1] * len);
+    if (s % 2 === 0 && trainer.cal) voice.click(t, s === 0);
+    else if (s === 0) voice.click(t, true);
+  }
+
+  function schedule() {
+    const until = ctx.currentTime + 0.12;
+    while (startTime + nextTick * half() < until) {
+      const t = startTime + nextTick * half(), s = slotOf(nextTick);
+      playSlot(voices, s, t, 60 / S.bpm);
+      if (qa && s % 2 === 0) qa.sched.push({ count: s / 2 + 1, t: t });
+      nextTick++;
+    }
+  }
+
+  function heardAt(perf) {
+    if (ctx.getOutputTimestamp) {
+      const o = ctx.getOutputTimestamp();
+      if (o && o.contextTime > 0 && o.performanceTime > 0) return o.contextTime + (perf - o.performanceTime) / 1000;
+    }
+    return ctx.currentTime - (ctx.outputLatency || 0) - (performance.now() - perf) / 1000;
+  }
+
+  function start() {
+    ensureAudio();
+    if (ctx.state === 'suspended') ctx.resume();
+    buildBus();
+    const lead = 0.12, b = S.pos - windowOff();
+    startTime = ctx.currentTime + lead - b * 60 / S.bpm;
+    nextTick = Math.ceil(b * 2 - 1e-6);
+    S.playing = true;
+    schedule();
+    timer = setInterval(schedule, 25);
+    setPlayUI();
+    loop();
+  }
+
+  function stop() {
+    if (!S.playing) return;
+    clearInterval(timer);
+    S.pos = currentPos();
+    S.playing = false;
+    const old = bus; old.gain.setTargetAtTime(0, ctx.currentTime, 0.01);
+    setTimeout(() => { try { old.disconnect(); } catch (e) { /* gone */ } }, 300);
+    setPlayUI();
+    S.pos = Math.floor(S.pos) % 8; // settle on a whole count
+    render();
+  }
+
+  function retime(newBpm) {
+    if (S.playing) {
+      const tNext = startTime + nextTick * half();
+      S.bpm = newBpm;
+      startTime = tNext - nextTick * half();
+    } else S.bpm = newBpm;
+  }
+
+  function currentPos() {
+    if (!S.playing || !ctx) return S.pos;
+    const b = (heardAt(performance.now()) - startTime) * S.bpm / 60;
+    return b < 0 ? S.pos : posFrom(b);
+  }
+
+  // ---------- pose on the audio clock ----------
+  const G = GEOM;
+  function poseAt(p) {
+    const P = STATES[S.pattern];
+    const k = Math.floor(p) % 8 + 1, frac = p - Math.floor(p);
+    let next = k % 8 + 1, reset = false;
+    if (S.loop !== 'all') {
+      const first = windowOff() + 1, last = windowOff() + 4;
+      if (k === last) { next = first; reset = true; }
+    }
+    const A = P[k], Bn = P[next];
+    const discrete = S.reduced;
+    if (reset) {
+      const R0 = P[first0()];
+      if (discrete || frac < 0.15) return pose(A, A, 0, false);
+      if (frac < 0.55) return pose(A, R0, ease((frac - 0.15) / 0.4), true);
+      if (frac < 0.6) return pose(R0, R0, 0, false);
+      return pose(R0, Bn, ease((frac - 0.6) / 0.4), false);
+    }
+    if (discrete || frac < 0.6) return pose(A, A, 0, false);
+    return pose(A, Bn, ease((frac - 0.6) / 0.4), false);
+  }
+  function first0() { return S.loop === 'second' ? 4 : 8; }
+  function pose(A, B, u, ghost) {
+    const moving = Math.abs(A.L - B.L) > 1e-6 ? 'L' : (Math.abs(A.R - B.R) > 1e-6 ? 'R' : null);
+    const lift = moving && !ghost ? Math.sin(Math.PI * u) * 0.07 : 0;
+    const wy = (st, f) => st[f];
+    const comA = { x: A.w === 'L' ? -G.hip : G.hip, y: wy(A, A.w) };
+    const comB = { x: B.w === 'L' ? -G.hip : G.hip, y: wy(B, B.w) };
+    return {
+      L: { y: lerp(A.L, B.L, u), z: moving === 'L' ? lift : 0 },
+      R: { y: lerp(A.R, B.R, u), z: moving === 'R' ? lift : 0 },
+      w: u < 0.5 ? A.w : B.w,
+      com: { x: lerp(comA.x, comB.x, u), y: lerp(comA.y, comB.y, u) },
+      moving: moving, u: u, ghost: ghost, from: A, to: B,
+    };
+  }
+
+  // ---------- 3D floor ----------
+  const cv = $('floor'), g2 = cv.getContext('2d');
+  let W = 0, H = 0, DPR = 1;
+  const cam = { yaw: 0.35, pitch: 0.36, dist: 4.4 }, camGoal = { yaw: 0.35, pitch: 0.36 };
+  const PRESET = { leader: [0.35, 0.36], follower: [Math.PI + 0.35, 0.36], side: [Math.PI / 2, 0.16], top: [0.001, 1.5] };
+  const TGT = [0, G.gap / 2, 0.72];
+  let K = null;
+
+  function sizeCanvas() {
+    DPR = Math.min(2, window.devicePixelRatio || 1);
+    const r = cv.getBoundingClientRect();
+    W = Math.max(1, Math.round(r.width * DPR)); H = Math.max(1, Math.round(r.height * DPR));
+    if (cv.width !== W || cv.height !== H) { cv.width = W; cv.height = H; }
+  }
+  const sub = (a, b) => [a[0] - b[0], a[1] - b[1], a[2] - b[2]];
+  const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+  const cross = (a, b) => [a[1] * b[2] - a[2] * b[1], a[2] * b[0] - a[0] * b[2], a[0] * b[1] - a[1] * b[0]];
+  const norm = (a) => { const l = Math.hypot(a[0], a[1], a[2]) || 1; return [a[0] / l, a[1] / l, a[2] / l]; };
+  function camera() {
+    const cp = Math.cos(cam.pitch), sp = Math.sin(cam.pitch), cy = Math.cos(cam.yaw), sy = Math.sin(cam.yaw);
+    const pos = [TGT[0] + cam.dist * sy * cp, TGT[1] - cam.dist * cy * cp, TGT[2] + cam.dist * sp];
+    const f = norm(sub(TGT, pos)), r = norm(cross(f, [0, 0, 1])), u = cross(r, f);
+    const focal = Math.min(W * 1.05, H * 1.9);
+    K = { pos, f, r, u, focal, cx: W / 2, cy: H * 0.53 };
+  }
+  function P3(p) {
+    const d = sub(p, K.pos), z = dot(d, K.f), s = K.focal / Math.max(z, 0.08);
+    let x = K.cx + dot(d, K.r) * s;
+    if (S.mirror) x = 2 * K.cx - x;
+    return [x, K.cy - dot(d, K.u) * s, z];
+  }
+  const css = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  const COL = {};
+  function colors() { for (const n of ['leader', 'follower', 'line', 'text', 'muted', 'faint', 'bell', 'clave']) COL[n] = css('--' + n); }
+  function rgba(hex, a) {
+    const h = hex.replace('#', ''), n = parseInt(h.length === 3 ? h.split('').map((c) => c + c).join('') : h, 16);
+    return 'rgba(' + (n >> 16 & 255) + ',' + (n >> 8 & 255) + ',' + (n & 255) + ',' + a + ')';
+  }
+
+  // shoe outline in foot space: t from heel (0) to toe (1)
+  const SHOE = (function () {
+    const pts = [], N = 12, len = 0.27, heel = -0.1;
+    const hw = (t) => t < 0.12 ? 0.036 * Math.sqrt(t / 0.12) : t < 0.45 ? lerp(0.036, 0.03, (t - 0.12) / 0.33) : t < 0.76 ? lerp(0.03, 0.046, (t - 0.45) / 0.31) : 0.046 * Math.sqrt(Math.max(0, 1 - (t - 0.76) / 0.24));
+    for (let i = 0; i <= N; i++) { const t = i / N; pts.push([hw(t), heel + t * len]); }
+    for (let i = N; i >= 0; i--) { const t = i / N; pts.push([-hw(t), heel + t * len]); }
+    return pts;
+  })();
+
+  function dancers(ps) {
+    // world placement of both dancers; follower feet mirror the leader's on the same world side
+    const list = [];
+    const addDancer = (role) => {
+      const lead = role === 'leader';
+      const base = lead ? 0 : G.gap, fwd = lead ? 1 : -1, right = lead ? 1 : -1;
+      const feet = {};
+      for (const f of ['L', 'R']) {
+        const side = f === 'L' ? -1 : 1; // leader-frame side
+        const own = lead ? f : (f === 'L' ? 'R' : 'L');
+        feet[own] = { x: side * G.hip, y: base + ps[f].y, z: ps[f].z, weighted: ps.w === f, moving: ps.moving === f, lead: f };
+      }
+      list.push({ role, base, fwd, right, feet, com: { x: ps.com.x, y: base + ps.com.y } });
+    };
+    if (S.role !== 'follower') addDancer('leader');
+    if (S.role !== 'leader') addDancer('follower');
+    return list;
+  }
+
+  function drawFloor() {
+    g2.lineWidth = Math.max(1, DPR * 0.8);
+    for (let x = -1.5; x <= 1.501; x += 0.25) line3([x, -1.1, 0], [x, 2.05, 0], Math.abs(x) < 1e-6 ? 0.34 : 0.13);
+    for (let y = -1.1; y <= 2.051; y += 0.25) line3([-1.5, y, 0], [1.5, y, 0], 0.13);
+    // home marks
+    for (const y of [0, G.gap]) { line3([-0.06, y, 0], [0.06, y, 0], 0.5); line3([0, y - 0.06, 0], [0, y + 0.06, 0], 0.5); }
+  }
+  function line3(a, b, alpha) {
+    const A = P3(a), B = P3(b);
+    if (A[2] < 0.1 || B[2] < 0.1) return;
+    g2.strokeStyle = rgba('#5a73ad', Math.min(1, alpha * 1.6));
+    g2.beginPath(); g2.moveTo(A[0], A[1]); g2.lineTo(B[0], B[1]); g2.stroke();
+  }
+
+  function shoePath(ft, fwd, z) {
+    g2.beginPath();
+    SHOE.forEach((p, i) => {
+      const wx = ft.x + p[0] * fwd, wy = ft.y + p[1] * fwd;
+      const q = P3([wx, wy, z]);
+      if (i) g2.lineTo(q[0], q[1]); else g2.moveTo(q[0], q[1]);
+    });
+    g2.closePath();
+  }
+
+  function drawDancer(d, ps) {
+    const col = d.role === 'leader' ? COL.leader : COL.follower;
+    const ghost = ps.ghost;
+    // shadows + shoes
+    for (const f of ['L', 'R']) {
+      const ft = d.feet[f];
+      if (ft.z > 0.002) { shoePath(ft, d.fwd, 0); g2.fillStyle = 'rgba(0,0,0,0.35)'; g2.fill(); }
+      shoePath(ft, d.fwd, ft.z);
+      if (ft.weighted && !ghost) {
+        const q = P3([ft.x, ft.y, 0]);
+        const gr = g2.createRadialGradient(q[0], q[1], 0, q[0], q[1], 40 * DPR);
+        gr.addColorStop(0, rgba(col, 0.95)); gr.addColorStop(1, rgba(col, 0.55));
+        g2.fillStyle = gr; g2.fill();
+      } else { g2.fillStyle = rgba(col, ghost ? 0.06 : 0.12); g2.fill(); }
+      g2.lineWidth = 2 * DPR; g2.strokeStyle = rgba(col, ghost ? 0.4 : 0.95);
+      if (ghost) g2.setLineDash([4 * DPR, 4 * DPR]);
+      g2.stroke(); g2.setLineDash([]);
+      // foot letter at the heel
+      const hq = P3([ft.x, ft.y - 0.15 * d.fwd, 0]);
+      g2.fillStyle = rgba(col, 0.9); g2.font = '600 ' + Math.round(11 * DPR) + 'px ' + (css('--mono') || 'monospace');
+      g2.textAlign = 'center'; g2.textBaseline = 'middle';
+      g2.fillText(f, hq[0], hq[1]);
+    }
+    // weight ring under the hips
+    ring([d.com.x, d.com.y, 0], 0.07, rgba(col, 0.9));
+    // skeleton
+    const lat = d.right; // world x of the dancer's right
+    const pel = [lerp(0, d.com.x, 0.65), d.com.y, 0.93];
+    const hipR = [pel[0] + 0.1 * lat, pel[1], pel[2]], hipL = [pel[0] - 0.1 * lat, pel[1], pel[2]];
+    const chest = [pel[0] * 0.85, pel[1], 1.34], head = [chest[0], chest[1], 1.56];
+    const bones = [[hipL, hipR], [pel, chest], [[chest[0] - 0.18 * lat, chest[1], 1.37], [chest[0] + 0.18 * lat, chest[1], 1.37]]];
+    for (const f of ['L', 'R']) {
+      const ft = d.feet[f], hip = f === 'R' ? hipR : hipL;
+      const ank = [ft.x, ft.y - 0.05 * d.fwd, 0.08 + ft.z];
+      const knee = ik(hip, ank, [0, d.fwd, 0]);
+      bones.push([hip, knee], [knee, ank]);
+    }
+    g2.strokeStyle = rgba(col, ghost ? 0.35 : 0.8); g2.lineWidth = 2.2 * DPR; g2.lineCap = 'round';
+    for (const b of bones) { const a = P3(b[0]), c = P3(b[1]); g2.beginPath(); g2.moveTo(a[0], a[1]); g2.lineTo(c[0], c[1]); g2.stroke(); }
+    // plumb line from the hips to the weight ring
+    const a = P3(pel), c = P3([d.com.x, d.com.y, 0]);
+    g2.setLineDash([3 * DPR, 5 * DPR]); g2.lineWidth = 1.2 * DPR; g2.strokeStyle = rgba(col, 0.6);
+    g2.beginPath(); g2.moveTo(a[0], a[1]); g2.lineTo(c[0], c[1]); g2.stroke(); g2.setLineDash([]);
+    const hq = P3(head), hr = Math.max(4, 0.09 * K.focal / Math.max(hq[2], 0.1));
+    g2.beginPath(); g2.arc(hq[0], hq[1], hr, 0, Math.PI * 2); g2.stroke();
+    g2.fillStyle = rgba(col, 0.95);
+    for (const j of [pel, hipL, hipR, chest]) { const q = P3(j); g2.beginPath(); g2.arc(q[0], q[1], 2.6 * DPR, 0, Math.PI * 2); g2.fill(); }
+  }
+  function ik(hip, ank, fwd) {
+    const L1 = 0.46, dv = sub(ank, hip), d = Math.hypot(dv[0], dv[1], dv[2]), dir = [dv[0] / d, dv[1] / d, dv[2] / d];
+    const mid = [hip[0] + dv[0] / 2, hip[1] + dv[1] / 2, hip[2] + dv[2] / 2];
+    if (d >= 2 * L1) return mid;
+    const h = Math.sqrt(L1 * L1 - (d / 2) * (d / 2)), k = dot(fwd, dir);
+    const n = norm([fwd[0] - k * dir[0], fwd[1] - k * dir[1], fwd[2] - k * dir[2]]);
+    return [mid[0] + n[0] * h, mid[1] + n[1] * h, mid[2] + n[2] * h];
+  }
+  function ring(c, r, col) {
+    g2.beginPath();
+    for (let i = 0; i <= 20; i++) { const a = i / 20 * Math.PI * 2, q = P3([c[0] + Math.cos(a) * r, c[1] + Math.sin(a) * r, c[2]]); if (i) g2.lineTo(q[0], q[1]); else g2.moveTo(q[0], q[1]); }
+    g2.lineWidth = 2 * DPR; g2.strokeStyle = col; g2.stroke();
+  }
+  function arrows(ps, list) {
+    // a floor arrow for a break while the foot travels and for half a beat after it lands
+    const P = PATTERNS[S.pattern];
+    const k = Math.floor(currentShown) % 8 + 1, frac = currentShown - Math.floor(currentShown);
+    let from = null, to = null, alpha = 0, foot = null;
+    let nextK = k % 8 + 1;
+    if (S.loop !== 'all' && k === windowOff() + 4) nextK = windowOff() + 1;
+    if (ps.moving && P.steps[nextK] && P.steps[nextK][2] === 'break' && !ps.ghost) {
+      foot = ps.moving; from = ps.from[foot]; to = ps.to[foot]; alpha = 0.9;
+    } else if (P.steps[k] && P.steps[k][2] === 'break' && frac < 0.5 && !S.reduced) {
+      foot = P.steps[k][0]; const prev = STATES[S.pattern][k - 1]; from = prev[foot]; to = STATES[S.pattern][k][foot]; alpha = 0.9 * (1 - frac * 2);
+    } else if (S.reduced && P.steps[k] && P.steps[k][2] === 'break') {
+      foot = P.steps[k][0]; from = STATES[S.pattern][k - 1][foot]; to = STATES[S.pattern][k][foot]; alpha = 0.9;
+    }
+    if (!foot) return;
+    for (const d of list) {
+      const col = d.role === 'leader' ? COL.leader : COL.follower;
+      const x = (foot === 'L' ? -1 : 1) * G.hip + (foot === 'L' ? -0.09 : 0.09);
+      const a = P3([x, d.base + from, 0.005]), b = P3([x, d.base + to, 0.005]);
+      g2.strokeStyle = rgba(col, alpha); g2.lineWidth = 3 * DPR; g2.beginPath(); g2.moveTo(a[0], a[1]); g2.lineTo(b[0], b[1]); g2.stroke();
+      const ang = Math.atan2(b[1] - a[1], b[0] - a[0]), s = 9 * DPR;
+      g2.fillStyle = rgba(col, alpha); g2.beginPath(); g2.moveTo(b[0], b[1]);
+      g2.lineTo(b[0] - s * Math.cos(ang - 0.45), b[1] - s * Math.sin(ang - 0.45));
+      g2.lineTo(b[0] - s * Math.cos(ang + 0.45), b[1] - s * Math.sin(ang + 0.45)); g2.closePath(); g2.fill();
+    }
+  }
+
+  let currentShown = 0;
+  function draw(p) {
+    sizeCanvas(); camera();
+    g2.clearRect(0, 0, W, H);
+    drawFloor();
+    const ps = poseAt(p);
+    const list = dancers(ps);
+    arrows(ps, list);
+    list.sort((a, b) => P3([0, b.base, 0.9])[2] - P3([0, a.base, 0.9])[2]);
+    for (const d of list) drawDancer(d, ps);
+  }
+
+  // ---------- strip, lanes, labels ----------
+  const grid = $('grid');
+  const laneRows = {};
+  let countCells = [], slotCols = [];
+  function buildGrid() {
+    grid.textContent = '';
+    countCells = []; slotCols = Array.from({ length: 16 }, () => []);
+    const lab = document.createElement('div'); lab.className = 'lbl'; lab.id = 'lbl-count'; grid.appendChild(lab);
+    for (let k = 1; k <= 8; k++) {
+      const b = document.createElement('button'); b.type = 'button'; b.className = 'count'; b.id = 'count-' + k;
+      b.addEventListener('click', () => jumpTo(k - 1));
+      grid.appendChild(b); countCells.push(b);
+    }
+    for (const lane of LANES) {
+      const lb = document.createElement('div'); lb.className = 'lbl';
+      const bt = document.createElement('button'); bt.type = 'button'; bt.className = 'lane-btn'; bt.id = 'lane-' + lane;
+      bt.setAttribute('aria-pressed', String(!S.mute[lane]));
+      const dotEl = document.createElement('i'); dotEl.style.background = 'var(--' + lane + ')';
+      const t = document.createElement('span'); bt.append(dotEl, t);
+      bt.addEventListener('click', () => { S.mute[lane] = !S.mute[lane]; applyMutes(); refreshLanes(); });
+      lb.appendChild(bt); grid.appendChild(lb);
+      const row = [];
+      for (let s = 0; s < 16; s++) {
+        const c = document.createElement('div'); c.className = 'cell' + (s % 2 === 0 ? ' beat' : '');
+        const hit = BAND[lane][s];
+        if (hit) { const d = document.createElement('span'); d.className = 'd' + (hit === 'm' || hit === 'open' || lane === 'clave' || lane === 'bass' ? ' big' : ''); d.style.background = 'var(--' + lane + ')'; c.appendChild(d); }
+        grid.appendChild(c); row.push(c); slotCols[s].push(c);
+      }
+      laneRows[lane] = { btn: bt, cells: row };
+    }
+    refreshGrid();
+  }
+  function glyph(role, k) {
+    const P = PATTERNS[S.pattern], st = P.steps[k];
+    if (!st) return '—';
+    const s = STATES[S.pattern], dy = st[1] - s[k - 1][st[0]];
+    const f = role === 'follower' ? (st[0] === 'L' ? 'R' : 'L') : st[0];
+    const fwd = role === 'follower' ? dy < 0 : dy > 0;
+    const arrow = st[2] === 'replace' ? '•' : st[2] === 'close' ? (fwd ? '↑' : '↓') + '|' : (fwd ? '↑' : '↓');
+    return f + ' ' + arrow;
+  }
+  function refreshGrid() {
+    const T = STR[S.lang], P = PATTERNS[S.pattern];
+    $('lbl-count').textContent = T.count;
+    countCells.forEach((b, i) => {
+      const k = i + 1;
+      const isHold = P.holds.includes(k), isBrk = P.breaks.includes(k);
+      b.className = 'count' + (isHold ? ' hold' : '') + (isBrk ? ' brk' : '');
+      let html = '<span class="n">' + k + '</span>';
+      if (S.role !== 'follower') html += '<span class="g l">' + (isHold ? T.hold : glyph('leader', k)) + '</span>';
+      if (S.role !== 'leader') html += '<span class="g f">' + (isHold ? T.hold : glyph('follower', k)) + '</span>';
+      b.innerHTML = html;
+      b.setAttribute('aria-label', T.count + ' ' + k + '. ' + (isHold ? T.hold : T.leader + ': ' + describe(P, k, 'leader', S.lang) + '. ' + T.follower + ': ' + describe(P, k, 'follower', S.lang)));
+    });
+    refreshLanes();
+    lastCount = -1; lastSlot = -1;
+    markNow(currentShown);
+  }
+  function refreshLanes() {
+    const T = STR[S.lang];
+    for (const lane of LANES) {
+      const r = laneRows[lane]; if (!r) continue;
+      const on = laneOn(lane);
+      r.btn.setAttribute('aria-pressed', String(!S.mute[lane]));
+      r.btn.querySelector('span').textContent = T.lanes[lane];
+      r.cells.forEach((c) => { c.style.opacity = on ? '' : '0.35'; });
+    }
+  }
+  let lastCount = -1, lastSlot = -1;
+  function markNow(p) {
+    const k = Math.floor(p) % 8, slot = Math.floor(p * 2) % 16;
+    if (k !== lastCount) {
+      if (countCells[lastCount]) countCells[lastCount].classList.remove('now');
+      if (countCells[k]) countCells[k].classList.add('now');
+      lastCount = k;
+      const big = $('count-big'), T = STR[S.lang], held = PATTERNS[S.pattern].holds.includes(k + 1);
+      big.innerHTML = (k + 1) + (held ? '<small>' + T.hold + '</small>' : '');
+      if (qa && S.playing) qa.flips.push({ count: k + 1, heard: heardAt(performance.now()), perf: performance.now() });
+    }
+    if (slot !== lastSlot) {
+      if (slotCols[lastSlot]) slotCols[lastSlot].forEach((c) => c.classList.remove('now'));
+      if (S.playing && slotCols[slot]) slotCols[slot].forEach((c) => c.classList.add('now'));
+      lastSlot = slot;
+    }
+  }
+
+  // ---------- render loop ----------
+  let raf = 0, dragging = false;
+  function render() {
+    const p = currentShown = currentPos();
+    const shown = S.reduced ? Math.floor(p) : p;
+    draw(shown);
+    markNow(p);
+  }
+  function loop() {
+    cancelAnimationFrame(raf);
+    const tick = () => {
+      stepCamera();
+      render();
+      if (S.playing || dragging || camMoving()) raf = requestAnimationFrame(tick);
+    };
+    raf = requestAnimationFrame(tick);
+  }
+  function camMoving() { return Math.abs(cam.yaw - camGoal.yaw) > 0.002 || Math.abs(cam.pitch - camGoal.pitch) > 0.002; }
+  function stepCamera() {
+    if (dragging) return;
+    if (S.reduced) { cam.yaw = camGoal.yaw; cam.pitch = camGoal.pitch; return; }
+    cam.yaw += (camGoal.yaw - cam.yaw) * 0.14; cam.pitch += (camGoal.pitch - cam.pitch) * 0.14;
+  }
+
+  // ---------- controls ----------
+  function setPlayUI() {
+    const T = STR[S.lang];
+    $('play').setAttribute('aria-label', S.playing ? T.pause : T.play);
+    $('play-icon').setAttribute('d', S.playing ? 'M6 4.5h4.5v15H6zM13.5 4.5H18v15h-4.5z' : 'M7 4.5v15l13-7.5z');
+  }
+  function jumpTo(k) {
+    const was = S.playing;
+    if (was) { clearInterval(timer); S.playing = false; const old = bus; old.gain.setTargetAtTime(0, ctx.currentTime, 0.01); setTimeout(() => { try { old.disconnect(); } catch (e) { /* gone */ } }, 300); }
+    S.pos = mod(k, 8);
+    if (S.loop !== 'all' && (S.pos < windowOff() || S.pos >= windowOff() + 4)) S.pos = windowOff();
+    if (was) start(); else { render(); announce(); }
+  }
+  function announce() {
+    const T = STR[S.lang], P = PATTERNS[S.pattern], k = Math.floor(S.pos) % 8 + 1;
+    $('live').textContent = T.liveCount(k, describe(P, k, 'leader', S.lang), describe(P, k, 'follower', S.lang));
+  }
+  function setView(v) {
+    S.view = v; [camGoal.yaw, camGoal.pitch] = PRESET[v];
+    // turn the short way round
+    while (camGoal.yaw - cam.yaw > Math.PI) camGoal.yaw -= 2 * Math.PI;
+    while (camGoal.yaw - cam.yaw < -Math.PI) camGoal.yaw += 2 * Math.PI;
+    document.querySelectorAll('#views button').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.view === v)));
+    loop();
+  }
+  function applyLang(l) {
+    S.lang = l; store.set('lang', l);
+    document.documentElement.lang = l;
+    const T = STR[l];
+    document.querySelectorAll('[data-i18n]').forEach((el) => { const v = T[el.dataset.i18n]; if (typeof v === 'string') el.textContent = v; });
+    document.querySelectorAll('[data-i18n-html]').forEach((el) => { el.innerHTML = T[el.dataset.i18nHtml]; });
+    document.querySelectorAll('[data-lang]').forEach((b) => b.setAttribute('aria-pressed', String(b.dataset.lang === l)));
+    for (const v in T.view) $('view-' + v).textContent = T.view[v];
+    for (const o of $('pattern').options) o.textContent = T.names[o.value];
+    const roleSel = $('role'); roleSel.options[0].textContent = T.both; roleSel.options[1].textContent = T.leader; roleSel.options[2].textContent = T.follower;
+    for (const b of document.querySelectorAll('#levels button')) b.textContent = T.levels[b.dataset.level];
+    $('tap').textContent = T.tap; $('calibrate').textContent = T.calibrate;
+    $('prev').setAttribute('aria-label', T.prev); $('next').setAttribute('aria-label', T.next);
+    const en = document.querySelector('[data-lang-block="en"]'), es = document.querySelector('[data-lang-block="es"]');
+    en.hidden = l !== 'en'; es.hidden = l !== 'es'; if (l === 'es') es.open = true;
+    badge(); refreshGrid(); setPlayUI(); calText(); statsText(); render();
+  }
+  function badge() {
+    const T = STR[S.lang];
+    $('badge-name').textContent = T.names[S.pattern];
+    $('badge-rule').textContent = T.rules[S.pattern] + (S.loop !== 'all' ? ' ' + T.half : '');
+    cv.setAttribute('aria-label', T.floor(T.names[S.pattern]));
+  }
+
+  // orbit by drag or arrow keys
+  let lastX = 0, lastY = 0;
+  cv.addEventListener('pointerdown', (e) => { dragging = true; lastX = e.clientX; lastY = e.clientY; cv.setPointerCapture(e.pointerId); loop(); });
+  cv.addEventListener('pointermove', (e) => {
+    if (!dragging) return;
+    const dx = e.clientX - lastX, dy = e.clientY - lastY; lastX = e.clientX; lastY = e.clientY;
+    cam.yaw += (S.mirror ? -1 : 1) * dx * 0.009; cam.pitch = clamp(cam.pitch + dy * 0.006, 0.06, 1.52);
+    camGoal.yaw = cam.yaw; camGoal.pitch = cam.pitch;
+  });
+  const endDrag = () => { dragging = false; document.querySelectorAll('#views button').forEach((b) => b.setAttribute('aria-pressed', 'false')); };
+  cv.addEventListener('pointerup', endDrag); cv.addEventListener('pointercancel', endDrag);
+  cv.addEventListener('keydown', (e) => {
+    const m = { ArrowLeft: [-0.15, 0], ArrowRight: [0.15, 0], ArrowUp: [0, 0.1], ArrowDown: [0, -0.1] }[e.key];
+    if (!m) return;
+    e.preventDefault(); camGoal.yaw += m[0]; camGoal.pitch = clamp(camGoal.pitch + m[1], 0.06, 1.52); loop();
+  });
+
+  $('play').addEventListener('click', () => (S.playing ? stop() : start()));
+  $('bpm').addEventListener('input', (e) => { retime(+e.target.value); $('bpm-out').textContent = S.bpm + ' BPM'; store.set('bpm', S.bpm); });
+  $('pattern').addEventListener('change', (e) => { S.pattern = e.target.value; badge(); refreshGrid(); render(); if (!S.playing) announce(); });
+  $('role').addEventListener('change', (e) => { S.role = e.target.value; refreshGrid(); render(); });
+  $('loop').addEventListener('change', (e) => { S.loop = e.target.value; badge(); jumpTo(windowOff()); });
+  $('prev').addEventListener('click', () => jumpTo(Math.floor(currentPos()) - 1));
+  $('next').addEventListener('click', () => jumpTo(Math.floor(currentPos()) + 1));
+  $('mirror').addEventListener('change', (e) => { S.mirror = e.target.checked; render(); });
+  $('reduced').addEventListener('change', (e) => { S.reduced = e.target.checked; render(); });
+  document.querySelectorAll('#views button').forEach((b) => b.addEventListener('click', () => setView(b.dataset.view)));
+  document.querySelectorAll('[data-lang]').forEach((b) => b.addEventListener('click', () => applyLang(b.dataset.lang)));
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest && e.target.closest('input, select, textarea, #tap')) return;
+    if (e.code === 'Space' && e.target === document.body) { e.preventDefault(); S.playing ? stop() : start(); }
+  });
+
+  // ---------- Find the 1 ----------
+  const trainer = { level: 'guided', taps: [], streak: 0, best: 0, offset: +(store.get('offset') || 0) || 0, cal: false, calTaps: [] };
+  function median(a) { const s = a.slice().sort((x, y) => x - y), n = s.length; return n ? (n % 2 ? s[(n - 1) / 2] : (s[n / 2 - 1] + s[n / 2]) / 2) : 0; }
+  const fmt = (ms) => (ms > 0 ? '+' : ms < 0 ? '−' : '') + Math.abs(Math.round(ms)) + ' ms';
+  function calText() {
+    const T = STR[S.lang];
+    $('cal-out').textContent = trainer.cal ? T.calibrating + trainer.calTaps.length + '/8' : (store.get('offset') !== null ? T.calDone + fmt(trainer.offset) : T.calNone);
+  }
+  function statsText() {
+    const T = STR[S.lang], n = trainer.taps.length;
+    if (!n) { $('stats').textContent = ''; return; }
+    const on = trainer.taps.filter((t) => t.v === 'good').length;
+    const med = median(trainer.taps.filter((t) => t.v !== 'five' && t.v !== 'far').map((t) => t.ms));
+    $('stats').textContent = T.stats(n, fmt(med), on, trainer.best);
+  }
+  function plotTaps() {
+    const tg = $('target'); tg.textContent = '';
+    for (const t of trainer.taps.slice(-12)) {
+      const d = document.createElement('span'); d.className = 'dot' + (t.v === 'five' ? ' five' : '');
+      d.style.left = (50 + clamp(t.ms, -250, 250) / 5) + '%'; tg.appendChild(d);
+    }
+  }
+  function verdict(key, ms) {
+    const T = STR[S.lang], el = $('verdict');
+    el.className = 'verdict ' + (key === 'good' ? 'good' : key === 'five' ? 'five' : 'warn');
+    el.textContent = T.v[key] + (ms !== null && key !== 'five' && key !== 'far' && key !== 'start' ? ' · ' + fmt(ms) : '');
+  }
+  function onTap(ev) {
+    ev.preventDefault();
+    const btn = $('tap'); btn.classList.add('hit'); setTimeout(() => btn.classList.remove('hit'), 90);
+    if (!S.playing) {
+      if (S.loop !== 'all') { S.loop = 'all'; $('loop').value = 'all'; badge(); }
+      S.pos = 0; start(); verdict('start', null); return;
+    }
+    const h = heardAt(ev.timeStamp || performance.now());
+    const b = (h - startTime) * S.bpm / 60, p = posFrom(b), beatMs = 60000 / S.bpm;
+    if (trainer.cal) {
+      const near = Math.round(p); trainer.calTaps.push((p - near) * beatMs);
+      if (trainer.calTaps.length >= 8) {
+        trainer.offset = median(trainer.calTaps); trainer.cal = false; store.set('offset', String(Math.round(trainer.offset)));
+        applyMutes(); refreshLanes();
+      }
+      calText(); return;
+    }
+    if (S.loop !== 'all') { S.loop = 'all'; $('loop').value = 'all'; badge(); }
+    const d1 = (mod(p + 4, 8) - 4) * beatMs - trainer.offset;
+    const d5 = (p - 4) * beatMs - trainer.offset;
+    let v;
+    if (Math.abs(d5) < Math.abs(d1) && Math.abs(d5) <= 150) v = 'five';
+    else if (Math.abs(d1) <= 110) v = 'good';
+    else if (Math.abs(d1) <= 450) v = d1 < 0 ? 'early' : 'late';
+    else v = 'far';
+    trainer.taps.push({ ms: v === 'five' ? d5 : d1, v });
+    if (trainer.taps.length > 64) trainer.taps.shift();
+    trainer.streak = v === 'good' ? trainer.streak + 1 : 0; trainer.best = Math.max(trainer.best, trainer.streak);
+    verdict(v, v === 'five' ? d5 : d1); plotTaps(); statsText();
+  }
+  $('tap').addEventListener('pointerdown', onTap);
+  $('tap').addEventListener('keydown', (e) => { if ((e.code === 'Space' || e.key === 'Enter') && !e.repeat) onTap(e); });
+  $('tap').addEventListener('click', (e) => e.preventDefault());
+  document.querySelectorAll('#levels button').forEach((b) => b.addEventListener('click', () => {
+    trainer.level = b.dataset.level;
+    document.querySelectorAll('#levels button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+    applyMutes(); refreshLanes();
+  }));
+  $('calibrate').addEventListener('click', () => {
+    trainer.cal = true; trainer.calTaps = []; applyMutes(); refreshLanes(); calText();
+    if (!S.playing) { S.pos = 0; start(); }
+  });
+
+  // ---------- video render hooks (only with #render) ----------
+  if (location.hash === '#render') {
+    window.__render = {
+      set(o) { Object.assign(S, o.state || {}); Object.assign(cam, o.cam || {}); Object.assign(camGoal, o.cam || {}); if (o.lang) applyLang(o.lang); badge(); refreshGrid(); },
+      frame(p) { S.playing = false; S.pos = p; currentShown = p; draw(S.reduced ? Math.floor(p) : p); lastCount = -1; lastSlot = -1; markNow(p); for (const c of slotCols.flat()) c.classList.remove('now'); const sl = Math.floor(p * 2) % 16; slotCols[sl].forEach((c) => c.classList.add('now')); return true; },
+      async audio(beats, bpm, sr) {
+        const rate = sr || 44100, secs = beats * 60 / bpm + 1.2;
+        const off = new OfflineAudioContext(2, Math.ceil(secs * rate), rate);
+        const comp = off.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.003; comp.release.value = 0.15; comp.connect(off.destination);
+        const busO = off.createGain(); busO.gain.value = 0.85; busO.connect(comp);
+        const lanes = {}; for (const k of ['bell', 'clave', 'conga', 'bass', 'click']) { const gg = off.createGain(); gg.gain.value = k === 'click' ? 0 : (S.mute[k] ? 0 : LANE_LEVEL[k]); gg.connect(busO); lanes[k] = gg; }
+        const v = makeVoices(off, lanes, makeNoise(off)), hb = 30 / bpm;
+        for (let i = 0; i < beats * 2; i++) playSlot(v, i % 16, 0.1 + i * hb, 60 / bpm);
+        const buf = await off.startRendering();
+        const ch = [buf.getChannelData(0), buf.getChannelData(1)], n = buf.length, out = new DataView(new ArrayBuffer(44 + n * 4));
+        const w = (o, s) => { for (let i = 0; i < s.length; i++) out.setUint8(o + i, s.charCodeAt(i)); };
+        w(0, 'RIFF'); out.setUint32(4, 36 + n * 4, true); w(8, 'WAVE'); w(12, 'fmt '); out.setUint32(16, 16, true); out.setUint16(20, 1, true); out.setUint16(22, 2, true);
+        out.setUint32(24, rate, true); out.setUint32(28, rate * 4, true); out.setUint16(32, 4, true); out.setUint16(34, 16, true); w(36, 'data'); out.setUint32(40, n * 4, true);
+        for (let i = 0; i < n; i++) for (let c = 0; c < 2; c++) out.setInt16(44 + i * 4 + c * 2, clamp(ch[c][i], -1, 1) * 32767, true);
+        const bytes = new Uint8Array(out.buffer); let bin = '';
+        for (let i = 0; i < bytes.length; i += 0x8000) bin += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+        return btoa(bin);
+      },
+    };
+  }
+
+  // ---------- boot ----------
+  colors();
+  const savedLang = store.get('lang');
+  const savedBpm = +store.get('bpm');
+  if (savedBpm >= 90 && savedBpm <= 220) { S.bpm = savedBpm; $('bpm').value = savedBpm; $('bpm-out').textContent = savedBpm + ' BPM'; }
+  $('reduced').checked = S.reduced;
+  buildGrid();
+  applyLang(savedLang === 'es' || (!savedLang && (navigator.language || '').toLowerCase().startsWith('es')) ? 'es' : 'en');
+  setView('leader'); cam.yaw = camGoal.yaw; cam.pitch = camGoal.pitch;
+  if (window.ResizeObserver) new ResizeObserver(() => render()).observe(cv); else window.addEventListener('resize', render);
+  render();
+  calText();
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && S.playing) loop(); });
+})();
+</script>
+</body>
+</html>

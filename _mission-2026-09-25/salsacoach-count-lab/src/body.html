@@ -1,0 +1,105 @@
+<noscript><style>.js{display:none!important}</style></noscript>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>SalsaCoach</b><span>Count Lab · prototype</span></div>
+    <div class="seg js" role="group" aria-label="Language / Idioma">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" id="lang-es" data-lang="es" aria-pressed="false">Español</button>
+    </div>
+  </header>
+
+  <section>
+    <h1 data-i18n-html="h1">See every step land. <em>Hear where the 1 lives.</em></h1>
+    <p class="lede" data-i18n="lede">A leader and a follower dance the basic step on a shared floor while a synthesized salsa band plays underneath. Everything you see moves on the band's own clock: the foot lifts late in the beat and the weight lands on the count.</p>
+  </section>
+
+  <section class="stage js" aria-label="Dance floor">
+    <canvas id="floor" tabindex="0" role="img" aria-label="Dance floor"></canvas>
+    <div class="hud">
+      <div class="badge" id="badge"><b id="badge-name">On1</b><small id="badge-rule"></small></div>
+      <div class="views" role="group" id="views" aria-label="Camera">
+        <button type="button" id="view-leader" data-view="leader" aria-pressed="true">Behind leader</button>
+        <button type="button" id="view-follower" data-view="follower" aria-pressed="false">Behind follower</button>
+        <button type="button" id="view-side" data-view="side" aria-pressed="false">Side</button>
+        <button type="button" id="view-top" data-view="top" aria-pressed="false">Above</button>
+      </div>
+    </div>
+    <div class="count-big" id="count-big" aria-hidden="true">1</div>
+    <div class="legend" aria-hidden="true"><span><i style="background:var(--leader)"></i><span data-i18n="leader">Leader</span></span><span><i style="background:var(--follower)"></i><span data-i18n="follower">Follower</span></span><span class="hint" data-i18n="hint">Drag the floor to turn the camera</span></div>
+  </section>
+
+  <section class="board js" aria-label="Count strip and band">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="dock js" aria-label="Controls">
+    <button type="button" class="play" id="play" aria-label="Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>
+    </button>
+    <div class="ctrls">
+      <label class="field"><span data-i18n="tempo">Tempo</span>
+        <span class="tempo"><input type="range" id="bpm" min="90" max="220" step="2" value="150"><output id="bpm-out" for="bpm">150 BPM</output></span>
+      </label>
+      <label class="field"><span data-i18n="pattern">Step pattern</span>
+        <select id="pattern">
+          <option value="on1">On1</option>
+          <option value="on2t">On2 · Torres count</option>
+          <option value="on2c">On2 · 2-3-4 count</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="show">Show</span>
+        <select id="role">
+          <option value="both">Both</option>
+          <option value="leader">Leader</option>
+          <option value="follower">Follower</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="loop">Loop</span>
+        <select id="loop">
+          <option value="all">1–8</option>
+          <option value="first">1–4</option>
+          <option value="second">5–8</option>
+        </select>
+      </label>
+      <div class="field"><span data-i18n="step">Step</span>
+        <span class="stepper"><button type="button" id="prev" aria-label="Previous count">◀</button><button type="button" id="next" aria-label="Next count">▶</button></span>
+      </div>
+      <label class="chk"><input type="checkbox" id="mirror"> <span data-i18n="mirror">Mirror</span></label>
+      <label class="chk"><input type="checkbox" id="reduced"> <span data-i18n="reduced">Reduced motion</span></label>
+    </div>
+  </section>
+
+  <section class="trainer js" aria-labelledby="trainer-title">
+    <div>
+      <h2 id="trainer-title" data-i18n="trainerTitle">Find the 1</h2>
+      <p data-i18n="trainerIntro">Tap on every 1 while the band plays. No sound in this band announces the 1: the clave stays silent there, so your ears have to find it from the bell and the congas.</p>
+      <div class="seg" role="group" id="levels" aria-label="Difficulty">
+        <button type="button" id="lv-guided" data-level="guided" aria-pressed="true">Click on the 1</button>
+        <button type="button" id="lv-band" data-level="band" aria-pressed="false">Band only</button>
+        <button type="button" id="lv-nobell" data-level="nobell" aria-pressed="false">No bell</button>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn" id="calibrate">Calibrate</button>
+        <span class="stats" id="cal-out"></span>
+      </div>
+    </div>
+    <div>
+      <button type="button" class="tap" id="tap">Tap on the 1</button>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+      <div class="target" id="target" aria-hidden="true"></div>
+      <div class="axis" aria-hidden="true"><span>−250 ms</span><span data-i18n="early">early</span><span>0</span><span data-i18n="late">late</span><span>+250 ms</span></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Steps and notes">
+    <div data-lang-block="en" lang="en">
+{{NOTES_EN}}
+    </div>
+    <details data-lang-block="es" lang="es">
+      <summary>Versión en español</summary>
+{{NOTES_ES}}
+    </details>
+  </section>
+  <p class="sr" id="live" aria-live="polite"></p>
+</div>
