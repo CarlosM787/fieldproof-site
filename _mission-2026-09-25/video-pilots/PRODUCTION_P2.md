@@ -93,9 +93,10 @@ GPU. The numbers below are from `run.py all` (see §6 for the report).
 | A3 compose: 960 frames, x264 CRF 16 `slow` | 84.4 s |
 | A4–A6 checks: loudness, audio clock, A/V in the MP4 | 3.8 s |
 | **Pilot A, total** | **about 2.5 minutes** |
-| B1: both formats (sound, 3,060 frames, two encodes, manifests) | 5 min 16 s (the same code, timed directly) |
-| B2: the number verifier, 17,996 checks | a few seconds |
-| T1: thumbnails | a few seconds |
+| B1: both formats (sound, 3,060 frames, two encodes, manifests) | 311.6 s (5.2 min) |
+| B2: the number verifier, 17,996 checks | 0.1 s |
+| T1: thumbnails | 1.0 s |
+| **Everything (`run.py all`)** | **462.8 s (7.7 min)**, exit 0 |
 | *Experimental:* the 3D Dancers floor (`capture_dancers.mjs`, SwiftShader software WebGL) | about 2 s per frame here, from 5 test frames. Roughly 30 minutes for 960 frames (INFERENCE); probably much faster with `GL=gpu` on the 2070 Super. |
 
 **Carlos's PC** (RTX 2070 Super 8 GB, 32 GB RAM, Windows). The CPU model is not known.
@@ -291,5 +292,6 @@ Versions are the ones in this container.
 ## 6. Reference: the run report from this container
 
 `<out>/run-report.json` records the same fields for any run: step times, sizes, loudness, the
-audio clock and A/V results, and the verifier's summary. The tables in §2 come from `run.py all`
-in this container on 2026-09-26. Pilot B's time comes from running the same code directly.
+audio clock and A/V results, and the verifier's summary. The tables in §2 come from one `run.py all`
+in this container on 2026-09-26 (7.7 min, exit 0). It reproduced the direct renders' loudness and
+number checks exactly.
