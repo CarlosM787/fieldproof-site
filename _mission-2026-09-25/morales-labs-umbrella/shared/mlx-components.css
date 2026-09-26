@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Morales network components — status badge + network bar (v1, 2026-09-26)
+   Drop-in for moraleslabs.com, carlosmoralesjr.com, talkestimate.com,
+   mysalsacoach.com and faroquant.com. No JS, no web-font dependency (it uses
+   the host site's fonts unless --mlx-mono is set), ~2 KB gzipped.
+   Every value is a custom property, so each site keeps its own colours.
+   ========================================================================== */
+
+/* ---- tokens (light) ------------------------------------------------------ */
+:root {
+  --mlx-ink: #14181D;
+  --mlx-muted: #5F5A53;
+  --mlx-line: #DDD2C2;
+  --mlx-bg: transparent;
+  --mlx-link: inherit;
+  --mlx-focus: #AC3A14;
+  --mlx-mono: ui-monospace, 'SFMono-Regular', 'Cascadia Mono', Consolas, 'Liberation Mono', monospace;
+  /* status groups: glyph colour (>=3:1 on its tint) + tint */
+  --mlx-live: #1D7A4F;  --mlx-live-tint: #E3F0E8;
+  --mlx-dev: #8A5A00;   --mlx-dev-tint: #F5EAD8;
+  --mlx-soon: #67615A;  --mlx-soon-tint: #EFEAE2;
+  --mlx-res: #0E6F66;   --mlx-res-tint: #E2EEEC;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --mlx-ink: #F2EEE8; --mlx-muted: #A69F93; --mlx-line: #2C343E; --mlx-focus: #FF8F6B;
+    --mlx-live: #4CC38A; --mlx-live-tint: #1C2E24;
+    --mlx-dev: #E0B45C;  --mlx-dev-tint: #2E2618;
+    --mlx-soon: #A69F93; --mlx-soon-tint: #20262D;
+    --mlx-res: #3FBFB0;  --mlx-res-tint: #182B29;
+  }
+}
+:root[data-theme="dark"] {
+  --mlx-ink: #F2EEE8; --mlx-muted: #A69F93; --mlx-line: #2C343E; --mlx-focus: #FF8F6B;
+  --mlx-live: #4CC38A; --mlx-live-tint: #1C2E24;
+  --mlx-dev: #E0B45C;  --mlx-dev-tint: #2E2618;
+  --mlx-soon: #A69F93; --mlx-soon-tint: #20262D;
+  --mlx-res: #3FBFB0;  --mlx-res-tint: #182B29;
+}
+
+/* ---- status badge ---------------------------------------------------------
+   <span class="mlx-st" data-st="pilot"><i aria-hidden="true"></i>Pilot Prep</span>
+   data-st = live | beta | coming | review | pilot | prototype | portfolio | experiment
+   The text is the status. Glyph shape and colour repeat the group, never replace it:
+   Live = filled dot · Beta = ring + dot · Coming Soon = ring ·
+   In development = half dot · Research = diamond.                               */
+.mlx-st {
+  --c: var(--mlx-soon); --t: var(--mlx-soon-tint);
+  display: inline-flex; align-items: center; gap: .5em;
+  font: 500 .72rem/1 var(--mlx-mono); letter-spacing: .06em; text-transform: uppercase;
+  color: var(--mlx-ink); background: var(--t);
+  border: 1px solid color-mix(in srgb, var(--c) 45%, transparent);
+  border-radius: 999px; padding: .38em .7em .36em .6em; white-space: nowrap;
+}
+.mlx-st > i { width: .72em; height: .72em; flex: none; border-radius: 50%; box-sizing: border-box; border: .14em solid var(--c); }
+.mlx-st[data-st="live"] { --c: var(--mlx-live); --t: var(--mlx-live-tint); }
+.mlx-st[data-st="live"] > i { background: var(--c); }
+.mlx-st[data-st="beta"] { --c: var(--mlx-dev); --t: var(--mlx-dev-tint); }
+.mlx-st[data-st="beta"] > i { background: radial-gradient(circle, var(--c) 0 32%, transparent 36%); }
+.mlx-st[data-st="review"], .mlx-st[data-st="pilot"], .mlx-st[data-st="prototype"] { --c: var(--mlx-dev); --t: var(--mlx-dev-tint); }
+.mlx-st[data-st="review"] > i, .mlx-st[data-st="pilot"] > i, .mlx-st[data-st="prototype"] > i { background: linear-gradient(90deg, var(--c) 50%, transparent 50%); }
+.mlx-st[data-st="portfolio"], .mlx-st[data-st="experiment"] { --c: var(--mlx-res); --t: var(--mlx-res-tint); }
+.mlx-st[data-st="portfolio"] > i, .mlx-st[data-st="experiment"] > i { border-radius: 1px; transform: rotate(45deg) scale(.86); }
+@media (forced-colors: active) { .mlx-st { border-color: CanvasText; } .mlx-st > i { border-color: CanvasText; } }
+
+/* ---- reality facts: three yes/no facts, always as text ---------------------
+   <ul class="mlx-facts" aria-label="What is real today">
+     <li data-v="yes">Website<span class="v">: yes</span></li>
+     <li data-v="no">Use today<span class="v">: no</span></li>
+     <li data-v="no">Buy<span class="v">: no</span></li></ul>
+   The check/dash glyphs are decorative (empty alt text); the hidden ": yes/no" is read. */
+.mlx-facts { display: flex; flex-wrap: wrap; gap: .35rem .9rem; list-style: none; margin: 0; padding: 0;
+  font: 500 .72rem/1.3 var(--mlx-mono); letter-spacing: .04em; color: var(--mlx-muted); }
+.mlx-facts li { display: inline-flex; align-items: center; gap: .4em; }
+.mlx-facts li::before { font-weight: 700; }
+.mlx-facts li[data-v="yes"] { color: var(--mlx-ink); }
+.mlx-facts li[data-v="yes"]::before { content: "\2713"; content: "\2713" / ""; color: var(--mlx-live); }
+.mlx-facts li[data-v="no"]::before { content: "\2014"; content: "\2014" / ""; }
+.mlx-facts small { font: inherit; letter-spacing: 0; text-transform: none; color: var(--mlx-muted); }
+.mlx-facts .v { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---- network bar ------------------------------------------------------------
+   One strip that says who built what, on every site. Top variant for the two
+   hub sites, foot variant for product sites. The current site is plain text. */
+.mlx-net { background: var(--mlx-bg); color: var(--mlx-muted); border-bottom: 1px solid var(--mlx-line);
+  font-size: .8125rem; line-height: 1.4; }
+.mlx-net--foot { border-bottom: 0; border-top: 1px solid var(--mlx-line); }
+.mlx-net__in { max-width: var(--mlx-wrap, 72rem); margin-inline: auto; padding: .5rem clamp(1rem, 4vw, 2rem);
+  display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1.1rem; }
+.mlx-net__by { margin: 0; }
+.mlx-net ul { display: flex; flex-wrap: wrap; align-items: baseline; gap: .25rem 1rem; list-style: none; margin: 0; padding: 0; }
+.mlx-net a { color: var(--mlx-ink); text-decoration: underline; text-decoration-color: var(--mlx-line);
+  text-underline-offset: .22em; text-decoration-thickness: 1px;
+  display: inline-block; min-height: 24px; line-height: 24px; margin: 0; } /* WCAG 2.2 target size; margin reset against host rules such as footer a */
+.mlx-net a:hover { text-decoration-color: currentColor; }
+.mlx-net a:focus-visible { outline: 2px solid var(--mlx-focus); outline-offset: 2px; border-radius: 2px; }
+.mlx-net [aria-current] { color: var(--mlx-ink); font-weight: 600; }
+.mlx-net small { font-size: inherit; color: var(--mlx-muted); }
+/* phones: one line; the site list scrolls sideways instead of stacking three rows deep */
+@media (max-width: 40rem) {
+  .mlx-net__in { flex-wrap: nowrap; gap: .9rem; padding-block: .45rem; }
+  .mlx-net__by { flex: none; }
+  .mlx-net ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; gap: .9rem;
+    -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent); mask-image: linear-gradient(90deg, #000 85%, transparent); }
+  .mlx-net ul::-webkit-scrollbar { display: none; }
+  .mlx-net li { flex: none; }
+  .mlx-net li:last-child { padding-right: 1.2rem; }
+}

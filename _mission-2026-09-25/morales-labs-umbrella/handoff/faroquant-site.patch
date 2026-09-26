@@ -1,0 +1,123 @@
+diff --git a/website/es/metodologia/index.html b/website/es/metodologia/index.html
+index 4c68bb7..2045dbe 100644
+--- a/website/es/metodologia/index.html
++++ b/website/es/metodologia/index.html
+@@ -102,6 +102,17 @@
+   footer .disc{max-width:700px;margin:14px auto 0;color:var(--dim);font-size:.8rem}
+   .lang a{border:1px solid var(--line);border-radius:99px;padding:5px 12px !important}
+   @media(max-width:760px){nav .links a:not(.keep){display:none}}
++/* Morales network bar v1 (2026-09-26); shared with moraleslabs.com, carlosmoralesjr.com and the product sites */
++.mlx-net{--mlx-ink:var(--text);--mlx-muted:var(--muted);--mlx-line:var(--line);--mlx-focus:var(--beam);color:var(--mlx-muted);border-top:1px solid var(--mlx-line);font-size:.8125rem;line-height:1.4;text-align:left}
++.mlx-net__in{max-width:700px;margin-inline:auto;padding:.7rem clamp(1rem,4vw,1.5rem) 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1.1rem}
++.mlx-net p.mlx-net__by{margin:0}
++.mlx-net ul{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1rem;list-style:none;margin:0;padding:0}
++.mlx-net a{color:var(--mlx-ink);text-decoration:underline;text-decoration-color:var(--mlx-line);text-underline-offset:.22em;display:inline-block;min-height:24px;line-height:24px;margin:0}
++.mlx-net a:hover{text-decoration-color:currentColor}
++.mlx-net a:focus-visible{outline:2px solid var(--mlx-focus);outline-offset:2px;border-radius:2px}
++.mlx-net [aria-current]{color:var(--mlx-ink);font-weight:600}
++footer .mlx-net{margin-top:18px}
++footer .mlx-net__in{justify-content:center}
+ </style>
+ </head>
+ <body>
+@@ -233,6 +244,12 @@
+   <footer>
+     <p><a href="/">Inicio de FaroQuant</a> · <a href="https://github.com/CarlosM787/faro">GitHub</a> · <a href="/methodology/" hreflang="en">English</a></p>
+     <p class="disc">FaroQuant es una herramienta educativa de análisis, no un asesor de inversiones. Nada de lo que produce es asesoría de inversión ni una recomendación de comprar o vender ningún valor. Los mercados implican riesgo, incluida la posible pérdida del capital.</p>
++    <div class="mlx-net mlx-net--foot" role="navigation" aria-label="Sitios de Carlos Morales Jr.">
++      <div class="mlx-net__in">
++        <p class="mlx-net__by">Creado por <a href="https://carlosmoralesjr.com/about/" rel="author">Carlos Morales Jr.</a> · <a href="https://moraleslabs.com/projects/faroquant/">Un producto de Morales Labs</a></p>
++        <ul><li><a href="https://moraleslabs.com/">Morales Labs</a></li><li><a href="https://talkestimate.com/">TalkEstimate</a></li><li><a href="https://mysalsacoach.com/">SalsaCoach</a></li><li><span aria-current="page">FaroQuant</span></li><li><a href="https://carlosbuilds.substack.com/">Carlos Builds</a></li></ul>
++      </div>
++    </div>
+   </footer>
+ </div>
+ </body>
+diff --git a/website/index.html b/website/index.html
+index 42db5bc..8a41fc6 100644
+--- a/website/index.html
++++ b/website/index.html
+@@ -169,6 +169,17 @@
+   footer{border-top:1px solid var(--line);padding:44px 0 56px;color:var(--muted);font-size:.85rem;text-align:center}
+   footer .disc{max-width:700px;margin:16px auto 0;color:var(--dim);font-size:.8rem}
+   footer .legal a{color:var(--muted);margin:0 8px}
++/* Morales network bar v1 (2026-09-26); shared with moraleslabs.com, carlosmoralesjr.com and the product sites */
++.mlx-net{--mlx-ink:var(--text);--mlx-muted:var(--muted);--mlx-line:var(--line);--mlx-focus:var(--beam);color:var(--mlx-muted);border-top:1px solid var(--mlx-line);font-size:.8125rem;line-height:1.4;text-align:left}
++.mlx-net__in{max-width:700px;margin-inline:auto;padding:.7rem clamp(1rem,4vw,1.5rem) 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1.1rem}
++.mlx-net p.mlx-net__by{margin:0}
++.mlx-net ul{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1rem;list-style:none;margin:0;padding:0}
++.mlx-net a{color:var(--mlx-ink);text-decoration:underline;text-decoration-color:var(--mlx-line);text-underline-offset:.22em;display:inline-block;min-height:24px;line-height:24px;margin:0}
++.mlx-net a:hover{text-decoration-color:currentColor}
++.mlx-net a:focus-visible{outline:2px solid var(--mlx-focus);outline-offset:2px;border-radius:2px}
++.mlx-net [aria-current]{color:var(--mlx-ink);font-weight:600}
++footer .mlx-net{margin-top:18px}
++footer .mlx-net__in{justify-content:center}
+ </style>
+ </head>
+ <body>
+@@ -354,6 +365,12 @@ tool result → flagged if not</code></div>
+       <a href="legal/Faro-Investment-Disclaimer.pdf" data-i18n="foot.disclaimer"></a>
+     </p>
+     <p class="disc" data-i18n="foot.disc"></p>
++    <div class="mlx-net mlx-net--foot" role="navigation" aria-label="Sites by Carlos Morales Jr.">
++      <div class="mlx-net__in">
++        <p class="mlx-net__by"><span data-i18n="net.by">Built by</span> <a href="https://carlosmoralesjr.com/about/" rel="author">Carlos Morales Jr.</a> · <a href="https://moraleslabs.com/projects/faroquant/"><span data-i18n="net.ml">A Morales Labs product</span></a></p>
++        <ul><li><a href="https://moraleslabs.com/">Morales Labs</a></li><li><a href="https://talkestimate.com/">TalkEstimate</a></li><li><a href="https://mysalsacoach.com/">SalsaCoach</a></li><li><span aria-current="page">FaroQuant</span></li><li><a href="https://carlosbuilds.substack.com/">Carlos Builds</a></li></ul>
++      </div>
++    </div>
+   </footer>
+ </div>
+ 
+@@ -410,7 +427,7 @@ const T = {
+     "quick.h":"Running in five minutes",
+     "quick.p":"That's the whole install. No API keys required — add ANTHROPIC_API_KEY later to switch the copilot to Claude with zero code changes.",
+     "foot.by":"Built by an electrical engineer (M.S. Finance, University of Arizona). Open source under MIT.",
+-    "foot.privacy":"Privacy Policy","foot.terms":"Terms of Use","foot.disclaimer":"Investment Disclaimer",
++    "net.by":"Built by","net.ml":"A Morales Labs product","foot.privacy":"Privacy Policy","foot.terms":"Terms of Use","foot.disclaimer":"Investment Disclaimer",
+     "foot.disc":"Faro is an educational analytics tool, not an investment adviser. Nothing it produces is investment advice or a recommendation to buy or sell any security. Markets involve risk, including possible loss of principal."
+   },
+   es: {
+@@ -464,7 +481,7 @@ const T = {
+     "quick.h":"Funcionando en cinco minutos",
+     "quick.p":"Esa es toda la instalación. No se requieren claves API — agrega ANTHROPIC_API_KEY después para cambiar el copiloto a Claude sin tocar el código.",
+     "foot.by":"Creado por un ingeniero eléctrico (M.S. Finance, University of Arizona). Código abierto bajo MIT.",
+-    "foot.privacy":"Política de Privacidad","foot.terms":"Términos de Uso","foot.disclaimer":"Aviso Legal de Inversión",
++    "net.by":"Creado por","net.ml":"Un producto de Morales Labs","foot.privacy":"Política de Privacidad","foot.terms":"Términos de Uso","foot.disclaimer":"Aviso Legal de Inversión",
+     "foot.disc":"Faro es una herramienta educativa de análisis, no un asesor de inversiones. Nada de lo que produce es asesoría de inversión ni una recomendación de comprar o vender ningún valor. Los mercados implican riesgo, incluida la posible pérdida del capital."
+   }
+ };
+diff --git a/website/methodology/index.html b/website/methodology/index.html
+index 82c3aa9..52a0d4c 100644
+--- a/website/methodology/index.html
++++ b/website/methodology/index.html
+@@ -101,6 +101,17 @@
+   footer .disc{max-width:700px;margin:14px auto 0;color:var(--dim);font-size:.8rem}
+   .lang a{border:1px solid var(--line);border-radius:99px;padding:5px 12px !important}
+   @media(max-width:760px){nav .links a:not(.keep){display:none}}
++/* Morales network bar v1 (2026-09-26); shared with moraleslabs.com, carlosmoralesjr.com and the product sites */
++.mlx-net{--mlx-ink:var(--text);--mlx-muted:var(--muted);--mlx-line:var(--line);--mlx-focus:var(--beam);color:var(--mlx-muted);border-top:1px solid var(--mlx-line);font-size:.8125rem;line-height:1.4;text-align:left}
++.mlx-net__in{max-width:700px;margin-inline:auto;padding:.7rem clamp(1rem,4vw,1.5rem) 0;display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1.1rem}
++.mlx-net p.mlx-net__by{margin:0}
++.mlx-net ul{display:flex;flex-wrap:wrap;align-items:baseline;gap:.25rem 1rem;list-style:none;margin:0;padding:0}
++.mlx-net a{color:var(--mlx-ink);text-decoration:underline;text-decoration-color:var(--mlx-line);text-underline-offset:.22em;display:inline-block;min-height:24px;line-height:24px;margin:0}
++.mlx-net a:hover{text-decoration-color:currentColor}
++.mlx-net a:focus-visible{outline:2px solid var(--mlx-focus);outline-offset:2px;border-radius:2px}
++.mlx-net [aria-current]{color:var(--mlx-ink);font-weight:600}
++footer .mlx-net{margin-top:18px}
++footer .mlx-net__in{justify-content:center}
+ </style>
+ </head>
+ <body>
+@@ -232,6 +243,12 @@
+   <footer>
+     <p><a href="/">FaroQuant home</a> · <a href="https://github.com/CarlosM787/faro">GitHub</a> · <a href="/es/metodologia/" hreflang="es">Español</a></p>
+     <p class="disc">FaroQuant is an educational analytics tool, not an investment adviser. Nothing it produces is investment advice or a recommendation to buy or sell any security. Markets involve risk, including possible loss of principal.</p>
++    <div class="mlx-net mlx-net--foot" role="navigation" aria-label="Sites by Carlos Morales Jr.">
++      <div class="mlx-net__in">
++        <p class="mlx-net__by">Built by <a href="https://carlosmoralesjr.com/about/" rel="author">Carlos Morales Jr.</a> · <a href="https://moraleslabs.com/projects/faroquant/">A Morales Labs product</a></p>
++        <ul><li><a href="https://moraleslabs.com/">Morales Labs</a></li><li><a href="https://talkestimate.com/">TalkEstimate</a></li><li><a href="https://mysalsacoach.com/">SalsaCoach</a></li><li><span aria-current="page">FaroQuant</span></li><li><a href="https://carlosbuilds.substack.com/">Carlos Builds</a></li></ul>
++      </div>
++    </div>
+   </footer>
+ </div>
+ </body>

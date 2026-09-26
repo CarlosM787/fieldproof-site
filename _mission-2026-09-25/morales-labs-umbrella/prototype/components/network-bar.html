@@ -1,0 +1,20 @@
+<!-- Morales network bar v1 (2026-09-26). Needs mlx-components.css.
+     Product sites (talkestimate.com, mysalsacoach.com, faroquant.com): the LAST element of the
+     footer (class mlx-net--foot), person link to /about/ with rel="author" (as their bylines do).
+     Hubs (moraleslabs.com, carlosmoralesjr.com): above the header (class mlx-net--top), rel="me".
+     Use <div role="navigation"> (as below) on any site whose CSS styles the bare nav element;
+     the hubs, whose CSS does not, use <nav> with the same class and label.
+     On each site, replace that site's own <li><a> with <li><span aria-current="page">Name</span></li>.
+     Links carry no tracking parameters here; carlosmoralesjr.com adds its own UTM tags at build time. -->
+<div class="mlx-net mlx-net--foot" role="navigation" aria-label="Sites by Carlos Morales Jr.">
+  <div class="mlx-net__in">
+    <p class="mlx-net__by">Built by <a href="https://carlosmoralesjr.com/about/" rel="author">Carlos Morales Jr.</a></p>
+    <ul>
+      <li><a href="https://moraleslabs.com/">Morales Labs</a></li>
+      <li><a href="https://talkestimate.com/">TalkEstimate</a></li>
+      <li><a href="https://mysalsacoach.com/">SalsaCoach</a></li>
+      <li><a href="https://faroquant.com/">FaroQuant</a></li>
+      <li><a href="https://carlosbuilds.substack.com/">Carlos Builds</a></li>
+    </ul>
+  </div>
+</div>
