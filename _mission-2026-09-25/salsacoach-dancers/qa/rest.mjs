@@ -1,0 +1,12 @@
+import { writeFileSync } from 'node:fs';
+import { serve, launch } from './serve.mjs';
+const { server, url } = await serve();
+const browser = await launch();
+const page = await browser.newPage({ viewport: { width: 1000, height: 700 } });
+page.on('pageerror', (e) => console.log('ERR', String(e)));
+await page.goto(url + 'index.html#render');
+await page.evaluate(() => window.__dance.ready);
+await page.evaluate(() => { window.__dance.set({ view: 'side' }); window.__dance.frame(0); return window.__dance.rest(); });
+const d = await page.evaluate(() => window.__dance.shot());
+writeFileSync(process.argv[2], Buffer.from(d.split(',')[1], 'base64'));
+await browser.close(); server.close();

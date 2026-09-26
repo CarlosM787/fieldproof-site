@@ -1,0 +1,18 @@
+{
+  "name": "salsacoach-dancers",
+  "private": true,
+  "type": "module",
+  "description": "Two life-size salsa dancers driven by the SalsaCoach Count Lab step table and audio clock (private prototype).",
+  "scripts": {
+    "build": "node build.mjs",
+    "qa": "node qa/qa.mjs"
+  },
+  "devDependencies": {
+    "three": "0.170.0",
+    "esbuild": "0.24.0",
+    "@gltf-transform/core": "^4.5.0",
+    "@gltf-transform/extensions": "^4.5.0",
+    "@gltf-transform/functions": "^4.5.0",
+    "meshoptimizer": "^1.3.0"
+  }
+}

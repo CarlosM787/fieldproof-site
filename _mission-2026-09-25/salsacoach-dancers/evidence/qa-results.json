@@ -1,0 +1,312 @@
+{
+  "when": "2026-09-26T07:21:19.321Z",
+  "passed": 33,
+  "total": 33,
+  "results": [
+    {
+      "name": "desktop: dancers load without script errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "on1: every step lands on its count (ball within 1 mm of its spot no earlier than 0.01 beat = 4 ms at 150 BPM before the count, never after)",
+      "ok": true,
+      "detail": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ]
+    },
+    {
+      "name": "on1: feet leave the floor only after 0.6 of the beat",
+      "ok": true,
+      "detail": [
+        0.6299999999999999,
+        0.6299999999999999
+      ]
+    },
+    {
+      "name": "on1: planted feet do not slide during [count, count + 0.6) (max movement < 0.1 mm)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on1: legs reach every target (no stretch error)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on1: hips over the weighted foot on every count, both dancers",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "on1: knees bend forward in every sample",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "on1: joined hands stay together (gap 5-16 cm)",
+      "ok": true,
+      "detail": [
+        0.1,
+        0.1
+      ]
+    },
+    {
+      "name": "on2t: every step lands on its count (ball within 1 mm of its spot no earlier than 0.01 beat = 4 ms at 150 BPM before the count, never after)",
+      "ok": true,
+      "detail": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ]
+    },
+    {
+      "name": "on2t: feet leave the floor only after 0.6 of the beat",
+      "ok": true,
+      "detail": [
+        0.6299999999999999,
+        0.63
+      ]
+    },
+    {
+      "name": "on2t: planted feet do not slide during [count, count + 0.6) (max movement < 0.1 mm)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on2t: legs reach every target (no stretch error)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on2t: hips over the weighted foot on every count, both dancers",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "on2t: knees bend forward in every sample",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "on2t: joined hands stay together (gap 5-16 cm)",
+      "ok": true,
+      "detail": [
+        0.1,
+        0.1
+      ]
+    },
+    {
+      "name": "on2c: every step lands on its count (ball within 1 mm of its spot no earlier than 0.01 beat = 4 ms at 150 BPM before the count, never after)",
+      "ok": true,
+      "detail": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ]
+    },
+    {
+      "name": "on2c: feet leave the floor only after 0.6 of the beat",
+      "ok": true,
+      "detail": [
+        0.6299999999999999,
+        0.63
+      ]
+    },
+    {
+      "name": "on2c: planted feet do not slide during [count, count + 0.6) (max movement < 0.1 mm)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on2c: legs reach every target (no stretch error)",
+      "ok": true,
+      "detail": "0 mm"
+    },
+    {
+      "name": "on2c: hips over the weighted foot on every count, both dancers",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "on2c: knees bend forward in every sample",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "on2c: joined hands stay together (gap 5-16 cm)",
+      "ok": true,
+      "detail": [
+        0.1,
+        0.1
+      ]
+    },
+    {
+      "name": "reduced motion: poses snap to the count (no travel between counts)",
+      "ok": true,
+      "detail": 0
+    },
+    {
+      "name": "pose solve (both dancers, CPU) under 2 ms median on this machine",
+      "ok": true,
+      "detail": {
+        "median": 0.044,
+        "p95": 0.15,
+        "unit": "ms per frame, both dancers"
+      }
+    },
+    {
+      "name": "desktop: loads, no errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "desktop: no horizontal scroll",
+      "ok": true
+    },
+    {
+      "name": "desktop: axe finds no violations",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "phone: loads, no errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "phone: no horizontal scroll",
+      "ok": true
+    },
+    {
+      "name": "phone ES: no horizontal scroll",
+      "ok": true
+    },
+    {
+      "name": "phone: axe finds no violations",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "no JS: the step table is still there (8 counts)",
+      "ok": true,
+      "detail": 8
+    },
+    {
+      "name": "audio clock: each new count is drawn within one frame after it is heard",
+      "ok": true,
+      "detail": {
+        "counts": 15,
+        "lagMsMedian": 67.46353968216745,
+        "lagMsMax": 191.4015396823532,
+        "frameMsMedian": 123.1000000005588,
+        "outputLatency": 0.032,
+        "baseLatency": 0.01,
+        "note": "headless Chromium with software WebGL; frame interval is not a phone measurement"
+      }
+    }
+  ],
+  "data": {
+    "on1": {
+      "touches": 8,
+      "touchErrBeats": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ],
+      "liftFrac": [
+        0.6299999999999999,
+        0.6299999999999999
+      ],
+      "plantedDriftMm": 0,
+      "legReachMm": 0,
+      "armReachMm": 0,
+      "weightMiss": [],
+      "kneeBackSamples": 0,
+      "handGapM": [
+        0.1,
+        0.1
+      ]
+    },
+    "on2t": {
+      "touches": 8,
+      "touchErrBeats": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ],
+      "liftFrac": [
+        0.6299999999999999,
+        0.63
+      ],
+      "plantedDriftMm": 0,
+      "legReachMm": 0,
+      "armReachMm": 0,
+      "weightMiss": [],
+      "kneeBackSamples": 0,
+      "handGapM": [
+        0.1,
+        0.1
+      ]
+    },
+    "on2c": {
+      "touches": 8,
+      "touchErrBeats": [
+        -0.010000000000000009,
+        -0.009999999999999787
+      ],
+      "liftFrac": [
+        0.6299999999999999,
+        0.63
+      ],
+      "plantedDriftMm": 0,
+      "legReachMm": 0,
+      "armReachMm": 0,
+      "weightMiss": [],
+      "kneeBackSamples": 0,
+      "handGapM": [
+        0.1,
+        0.1
+      ]
+    },
+    "poseCpuMs": {
+      "median": 0.044,
+      "p95": 0.15,
+      "unit": "ms per frame, both dancers"
+    },
+    "load_desktop": {
+      "ready": true,
+      "wallMs": 7890,
+      "dancersLoadMs": 656,
+      "bytes": 2180677,
+      "files": 13,
+      "heapMB": 5.5,
+      "drawCalls": 24,
+      "triangles": 21614,
+      "textures": 16,
+      "tier": "full (1024 px + normal maps)",
+      "dpr": 1
+    },
+    "axe_desktop": [],
+    "load_phone": {
+      "ready": true,
+      "wallMs": 4244,
+      "dancersLoadMs": 2695,
+      "bytes": 1139093,
+      "files": 9,
+      "heapMB": 8.2,
+      "drawCalls": 24,
+      "triangles": 21614,
+      "textures": 12,
+      "tier": "lite (512 px, no normal maps)",
+      "dpr": 1.5
+    },
+    "axe_phone": [],
+    "audioSync": {
+      "counts": 15,
+      "lagMsMedian": 67.46353968216745,
+      "lagMsMax": 191.4015396823532,
+      "frameMsMedian": 123.1000000005588,
+      "outputLatency": 0.032,
+      "baseLatency": 0.01,
+      "note": "headless Chromium with software WebGL; frame interval is not a phone measurement"
+    }
+  }
+}

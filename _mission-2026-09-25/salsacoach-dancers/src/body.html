@@ -1,0 +1,56 @@
+<div class="wrap" id="top">
+  <header class="top">
+    <div class="brand"><b>SalsaCoach</b><span data-i18n="tag">Dancers · private prototype</span></div>
+    <div class="seg" role="group" aria-label="Language / Idioma"><button type="button" data-lang="en" aria-pressed="true">EN</button><button type="button" data-lang="es" aria-pressed="false">ES</button></div>
+  </header>
+  <main class="wrap main">
+  <h1 data-i18n="h1">Watch the step land on the count</h1>
+  <p class="lede" data-i18n="lede">Two dancers in closed hold dance the salsa basic to a band synthesized in your browser. Their feet, weight and hips follow the Count Lab step table beat for beat, so what you see is what you count.</p>
+  <section class="stage">
+    <canvas id="stage" role="img" aria-label="Two dancers in closed hold dancing the On1 basic, count 1."></canvas>
+    <div id="poster" class="poster"><p id="posterText" data-i18n="loading">Loading the dancers…</p></div>
+    <div class="count-big" id="countBig" aria-hidden="true">1</div>
+    <p class="badge" id="badge">On1 · Matches the Count Lab step table</p>
+    <div class="legend" aria-hidden="true"><span><i class="lead"></i><span data-i18n="leader">Leader</span></span><span><i class="foll"></i><span data-i18n="follower">Follower</span></span><span class="hint" data-i18n="drag">Drag to turn the camera</span></div>
+  </section>
+  <div class="strip" id="strip" role="group" aria-label="Counts"></div>
+  <section class="dock" aria-label="Controls">
+    <button type="button" id="play" class="play" aria-pressed="false"><svg class="ic-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg><svg class="ic-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z" fill="currentColor"/></svg><span id="playLabel">Play</span></button>
+    <div class="ctl tempo"><label for="tempo" data-i18n="tempo">Tempo</label><div class="row"><input type="range" id="tempo" min="60" max="220" step="2" value="150"><output id="tempoOut" for="tempo">150</output><span data-i18n="bpm">BPM</span></div></div>
+    <div class="ctl"><label for="pattern" data-i18n="pattern">Step pattern</label><select id="pattern"><option value="on1">On1</option><option value="on2t">On2 · Torres count · preview</option><option value="on2c">On2 · 2-3-4 count · preview</option></select></div>
+    <div class="ctl"><span class="lbl" data-i18n="loop">Loop</span><div class="seg" role="group"><button type="button" data-loop="all" aria-pressed="true">1–8</button><button type="button" data-loop="first" aria-pressed="false">1–4</button><button type="button" data-loop="second" aria-pressed="false">5–8</button></div></div>
+    <div class="ctl"><span class="lbl" data-i18n="show">Show</span><div class="seg" role="group"><button type="button" data-role="both" aria-pressed="true" data-i18n="both">Both</button><button type="button" data-role="leader" aria-pressed="false" data-i18n="leader">Leader</button><button type="button" data-role="follower" aria-pressed="false" data-i18n="follower">Follower</button></div></div>
+    <div class="ctl"><span class="lbl" data-i18n="view">Camera</span><div class="seg" role="group"><button type="button" data-view="leader" aria-pressed="true" data-i18n="vLeader">Behind leader</button><button type="button" data-view="follower" aria-pressed="false" data-i18n="vFollower">Behind follower</button><button type="button" data-view="side" aria-pressed="false" data-i18n="vSide">Side</button><button type="button" data-view="top" aria-pressed="false" data-i18n="vTop">Above</button></div></div>
+    <div class="ctl checks"><label><input type="checkbox" id="mirror"><span data-i18n="mirror">Mirror</span></label><label><input type="checkbox" id="reduced"><span data-i18n="reduced">Reduced motion</span></label></div>
+    <div class="ctl stepper"><button type="button" id="prev"><span aria-hidden="true">◀ </span><span data-i18n="prev">Previous count</span></button><button type="button" id="next"><span data-i18n="next">Next count</span><span aria-hidden="true"> ▶</span></button></div>
+  </section>
+  <section class="nowbox" aria-label="This count">
+    <p><b class="lead" data-i18n="leader">Leader</b><span id="nowLeader">{{NOW_L}}</span></p>
+    <p><b class="foll" data-i18n="follower">Follower</b><span id="nowFollower">{{NOW_F}}</span></p>
+  </section>
+  <p id="live" class="sr" aria-live="polite"></p>
+  <section class="board" tabindex="0" aria-label="Step table / Tabla de pasos"><table id="steps">{{TABLE}}</table></section>
+  <section class="notes">
+    <div class="en">
+      <h2>What this is</h2>
+      <p><b>Timing is exact; the body is an approximation.</b> The page runs the Count Lab's step table and audio clock unchanged: a foot leaves the floor at 0.6 of the beat and lands on the count, and the weight changes on the landing. The dancers are posed in real time from that table with inverse kinematics. It is not motion capture, so the hips, arms and heads are a considered guess that an instructor should review.</p>
+      <ul>
+        <li><b>On1</b> uses the same steps as the Count Lab. <b>Both On2 counts are previews</b> until an instructor reviews them.</li>
+        <li>Distances are life-size: the break is 24 cm and the partners stand 42 cm apart, ankle to ankle. The Count Lab draws them wider so the schematic stays readable.</li>
+        <li>On the floor, a filled footprint means that foot carries the weight. An outline shows where a foot in the air will land, and a ring pulses when the step lands on the count.</li>
+        <li>Avatars: Microsoft Rocketbox Avatar Library, MIT licence. The band is synthesized in your browser from traditional patterns, with no recordings.</li>
+      </ul>
+    </div>
+    <div class="es">
+      <h2>Qué es esto</h2>
+      <p><b>El tiempo es exacto; el cuerpo es una aproximación.</b> La página usa sin cambios la tabla de pasos y el reloj de audio del Count Lab: el pie se despega del piso al 0.6 del tiempo y cae en el conteo, y el peso cambia al apoyar. Los bailarines se animan en tiempo real desde esa tabla con cinemática inversa. No es captura de movimiento: caderas, brazos y cabezas son una aproximación que debe revisar un instructor.</p>
+      <ul>
+        <li><b>On1</b> usa los mismos pasos que el Count Lab. <b>Los dos conteos On2 son vistas previas</b> hasta que los revise un instructor.</li>
+        <li>Las distancias son de tamaño real: el break mide 24 cm y la pareja está a 42 cm, tobillo a tobillo. El Count Lab las dibuja más amplias para que el esquema se lea bien.</li>
+        <li>En el piso, una huella rellena indica el pie que lleva el peso. Un contorno muestra dónde caerá el pie que está en el aire, y un anillo late cuando el paso cae en el conteo.</li>
+        <li>Avatares: Microsoft Rocketbox Avatar Library, licencia MIT. La banda se sintetiza en tu navegador con patrones tradicionales, sin grabaciones.</li>
+      </ul>
+    </div>
+  </section>
+  </main>
+</div>

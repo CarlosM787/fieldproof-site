@@ -1,0 +1,53 @@
+/* review sections (review build only) */
+.review { display: grid; gap: 14px; padding-top: 18px; border-top: 1px solid var(--line); }
+.review h2 { font: 800 clamp(26px, 4vw, 38px)/1 var(--display); text-transform: uppercase; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+.kicker { margin: 0; font: 600 12px/1.2 var(--mono); letter-spacing: .1em; text-transform: uppercase; color: var(--warm); }
+.muted { margin: 0; color: var(--muted); max-width: 72ch; }
+.trio { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 12px; }
+.trio figure, .evtext figure { margin: 0; display: grid; gap: 6px; }
+.trio img, .evtext img { width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); background: var(--stage); }
+figcaption { font-size: 14px; color: var(--muted); }
+figcaption b { color: var(--text); }
+table.cmp th[scope="row"] { font: 600 14px/1.3 var(--body); width: 22%; }
+table.cmp td { font-size: 14px; }
+.player { display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.vwrap { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); background: #000; }
+.vwrap video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; }
+video.mirror { transform: scaleX(-1); }
+.vcount { position: absolute; left: 12px; bottom: 6px; font: 800 64px/1 var(--display); color: var(--leader); text-shadow: 0 0 20px rgba(0, 0, 0, .6); pointer-events: none; }
+.vlabel { position: absolute; right: 10px; top: 10px; padding: 4px 9px; border-radius: 999px; background: rgba(10, 15, 30, .78); border: 1px solid var(--warm); color: var(--warm); font: 600 12px/1.3 var(--mono); }
+.vctl { display: grid; gap: 12px; }
+.play.small { min-height: 44px; padding: 0 18px; font-size: 15px; justify-self: start; }
+.chk { display: inline-flex; gap: 8px; align-items: center; min-height: 36px; }
+.chk input { width: 18px; height: 18px; accent-color: var(--leader); }
+.vnote { margin: 0; font-size: 14px; color: var(--muted); }
+.vnote.warn { color: var(--warm); }
+.cant { margin: 0; padding-left: 18px; font-size: 14px; color: var(--muted); display: grid; gap: 4px; }
+.cant b { color: var(--text); }
+.plan { background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; }
+.plan summary { cursor: pointer; font-weight: 700; }
+.plan ul { margin: 10px 0 0; padding-left: 18px; display: grid; gap: 6px; color: var(--muted); }
+.hero { display: grid; grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); gap: 0; border-radius: 16px; overflow: hidden; border: 1px solid var(--line); background: linear-gradient(135deg, #16122a, #0d1427 60%); }
+.hero-copy { padding: clamp(18px, 4vw, 40px); display: grid; gap: 12px; align-content: center; }
+.hero-kicker { margin: 0; font: 800 18px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--follower); }
+.hero-h { margin: 0; font: 800 clamp(38px, 6vw, 64px)/.92 var(--display); text-transform: uppercase; }
+.hero-es { margin: 0; color: var(--leader); font-weight: 700; }
+.hero-sub { margin: 0; color: var(--muted); max-width: 42ch; }
+.hero-cta { display: flex; gap: 10px; flex-wrap: wrap; }
+.btn { display: inline-flex; align-items: center; min-height: 46px; padding: 0 18px; border-radius: 999px; background: var(--leader); color: #04121c; font-weight: 700; text-decoration: none; }
+.btn.ghost { background: transparent; color: var(--text); border: 1px solid var(--line); }
+.hero-media { position: relative; min-height: 260px; background: #120f22; }
+.hero-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.why { margin: 0; padding-left: 18px; display: grid; gap: 6px; color: var(--muted); max-width: 80ch; }
+.why b { color: var(--text); }
+.evgrid { display: grid; grid-template-columns: minmax(0, 360px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.phonevid { margin: 0; display: grid; gap: 6px; }
+.phonevid video { width: 100%; height: auto; border-radius: 14px; border: 1px solid var(--line); background: #000; }
+.evtext { display: grid; gap: 12px; }
+.facts { margin: 0; padding-left: 18px; display: grid; gap: 4px; color: var(--muted); font-size: 15px; }
+.facts b { color: var(--text); }
+@media (max-width: 720px) {
+  .player, .hero, .evgrid { grid-template-columns: minmax(0, 1fr); }
+  .hero-media { min-height: 0; aspect-ratio: 1 / 1; }
+  table.cmp th[scope="row"] { width: auto; }
+}
