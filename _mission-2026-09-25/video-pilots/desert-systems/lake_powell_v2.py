@@ -1,6 +1,8 @@
 """Pilot B v2: "Three years of Lake Powell, turned into sound" as a story (16:9) and a Short (9:16).
 
-  python lake_powell_v2.py <csv> <fonts dir> <out dir> [--only long|short] [--final]
+  python lake_powell_v2.py <csv> <fonts dir> <out dir> [--only long|short] [--final] [--encoder auto|nvenc|x264]
+  python lake_powell_v2.py <csv> <fonts dir> <out dir> --layout-only      manifests only (no sound, no video): for
+                                                                           review/overlap_check.py and the tests
 
 Same data as v1 (USGS 09379900 daily lake elevation, Sep 25, 2023 to Sep 24, 2026). What changed:
 * A story without a voice: the three years are cut into seven data segments (the lake falls, a spring
@@ -14,6 +16,12 @@ Same data as v1 (USGS 09379900 daily lake elevation, Sep 25, 2023 to Sep 24, 202
   notes at 131-147 Hz. Now: mallets A3-G6 (one per data week, pitch = level), a drone whose partials
   reach 880 Hz (loudness = feet above 3,490), a chime on each week the lake rose, a low gong at the
   3,525 ft crossing, New Year bells. Mallets pan left to right with the calendar (mono-safe).
+Phase three (layout): every string is drawn through Ink, which records its bounding box, so the
+manifest lists every text box on every frame (plus the pen, its bracket and the drawn curve), and
+review/overlap_check.py fails the build on any collision or any text outside the format's safe area
+(SAFE below). The chart-label placer had an interval bug (a new label could sit up to 9 px into the
+one below it: "-11.3" under "below 3,525 ft" in the last frames); it is fixed and every static text
+is now reserved space for the placer.
 Thresholds (3,490 ft minimum power pool; 3,525 ft protection target, 2019 drought plan) are
 REPORTED Reclamation figures: check them on usbr.gov before any upload.
 """
@@ -21,22 +29,41 @@ import argparse
 import json
 import subprocess
 import sys
-from datetime import date, timedelta
+from datetime import date
 from pathlib import Path
 
-import imageio_ffmpeg
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parent / "review"))
+sys.path.insert(0, str(HERE.parent))
 from audio_check import MODELS, ebur128, master, phone_table, read_audio, speaker, stereo  # noqa: E402
+import encode  # noqa: E402
 
 SR, FPS = 48000, 30
 MIN_POOL, TARGET = 3490.0, 3525.0
 BG, INK, MUTED, WATER, AMBER, LINE = (11, 26, 36), (234, 242, 245), (150, 172, 184), (98, 210, 232), (242, 165, 65), (159, 179, 191)
 DROP, GRID, YEARL = (244, 128, 108), (19, 48, 63), (27, 58, 76)
 MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+
+# Safe areas (x0, y0, x1, y1): no text may leave them (review/overlap_check.py keeps its own copy).
+#  16:9  the 90% title-safe area (5% margins), broadcast practice (INFERENCE for YouTube: the player's
+#        title bar, controls and captions sit at the edges).
+#  9:16  YouTube Shorts: nothing in the top 10%, the bottom 25% or the right 10% (the Shorts UI: top
+#        bar; title, channel and sound chip; the like/comment/share rail). REPORTED: Google's
+#        vertical-video ad guidance as quoted in search results, 2026-09-26 (support.google.com is
+#        blocked here). Plus a 5% left margin (INFERENCE).
+SAFE = {(1920, 1080): (96, 54, 1824, 1026), (1080, 1920): (54, 192, 972, 1440)}
+
+LAYOUT = {
+    "long": {"size": (1920, 1080), "box": (110, 430, 1600, 950), "kicker": (110, 56), "mark": (1820, 56, "ra"),
+             "head": (110, 118), "beat": (960, 108), "beat_w": 860, "hook_x": 110, "hook_w": 1700,
+             "foot": [(110, 964), (110, 994)], "foot_size": 24},
+    "short": {"size": (1080, 1920), "box": (70, 856, 900, 1330), "kicker": (60, 200), "mark": (960, 200, "ra"),
+              "head": (60, 236), "beat": (60, 512), "beat_w": 860, "hook_x": 60, "hook_w": 900,
+              "foot": [(60, 1352), (60, 1388)], "foot_size": 28},
+}
 
 
 def signed(x, fmt=",.1f"):
@@ -205,6 +232,25 @@ class Fonts:
         return self.cache[key]
 
 
+MEASURE = ImageDraw.Draw(Image.new("RGB", (1, 1)))   # text boxes depend on font and anchor only
+
+
+class Ink:
+    """Draws a string (or only measures it, when there is nothing to draw on) and records its
+    bounding box as [role, text, x0, y0, x1, y1]. Boxes are Pillow's ink boxes for the anchor used,
+    i.e. exactly where the glyphs land."""
+
+    def __init__(self):
+        self.boxes = []
+
+    def text(self, d, xy, s, font, fill, anchor="la", role="text"):
+        if d is not None:
+            d.text(xy, s, font=font, fill=fill, anchor=anchor)
+        box = MEASURE.textbbox(xy, s, font=font, anchor=anchor)
+        self.boxes.append([role, s, *[int(v) for v in box]])
+        return box
+
+
 def mixc(a, b, k):
     return tuple(int(a[i] + (b[i] - a[i]) * k) for i in range(3))
 
@@ -268,9 +314,16 @@ def wrap2(d, text, font, maxw):
     return best[1]
 
 
+def boxes_clash(a, b, pad):
+    """True when boxes a and b (x0, y0, x1, y1) come closer than `pad` px on both axes."""
+    return a[0] < b[2] + pad and a[2] > b[0] - pad and a[1] < b[3] + pad and a[3] > b[1] - pad
+
+
 class Labels:
-    """Places persistent chart labels once, avoiding the whole final curve, the chart edges and each
-    other; tries positions in order of preference and moves further out if needed."""
+    """Places persistent chart labels once, avoiding the whole final curve, the chart edges, every
+    static text and each other; tries positions in order of preference and moves further out if
+    needed. (Phase three: the vertical test used `y1 > b[1] + pad`, which let a label sit up to `pad`
+    px inside the one below it; boxes_clash() applies the pad on all four sides.)"""
 
     def __init__(self, ch, d, reserved=()):
         self.ch, self.d, self.boxes = ch, d, [tuple(b) for b in reserved]
@@ -287,10 +340,10 @@ class Labels:
         m = (xs >= x0 - pad) & (xs <= x1 + pad)
         if np.any((ys[m] >= y0 - pad - 4) & (ys[m] <= y1 + pad + 4)):
             return False
-        return not any(x0 < b[2] + pad and x1 > b[0] - pad and y0 < b[3] + pad and y1 > b[1] + pad for b in self.boxes)
+        return not any(boxes_clash(box, b, pad) for b in self.boxes)
 
-    def place(self, text, font, x, y, prefer):
-        for dist in (0, 14, 30, 50, 80, 120, 170):
+    def place(self, text, font, x, y, prefer, dists=(0, 14, 30, 50, 80, 120, 170)):
+        for dist in dists:
             for anchor, dx, dy in prefer:
                 ax, ay = x + dx * (1 + dist / 20), y + dy * (1 + dist / 20)
                 box = self.d.textbbox((ax, ay), text, font=font, anchor=anchor)
@@ -299,34 +352,335 @@ class Labels:
                     return ax, ay, anchor
         raise ValueError(f"no room for chart label {text!r}")
 
+    def place_along(self, text, font, points, prefer, dists=(0, 14, 30)):
+        """A label that belongs to a stretch of the curve: try each (x, y) in `points` (in order of
+        preference) close in, before moving any of them further out."""
+        for ring in (dists, (50, 80, 120, 170)):
+            for x, y in points:
+                try:
+                    return self.place(text, font, x, y, prefer, ring)
+                except ValueError:
+                    pass
+        raise ValueError(f"no room for chart label {text!r}")
 
-# ---------------------------------------------------------------- one video
-def render(kind, days, vals, F, fonts, out, final):
-    long = kind == "long"
-    W, H = (1920, 1080) if long else (1080, 1920)
-    if long:
-        hook_s, legend_s, draw_s, end_s = 3.4, 3.4, 56.0, 8.0
-        box = (110, 430, 1600, 950)
-        head_xy, beat_xy, beat_w = (110, 118), (960, 108), 900
-    else:
-        hook_s, legend_s, draw_s, end_s = 2.6, 2.6, 32.0, 6.0
-        box = (70, 800, 900, 1330)
-        head_xy, beat_xy, beat_w = (60, 196), (60, 470), 860
-    draw0 = hook_s + legend_s
-    total = draw0 + draw_s + end_s
-    rel, _ = timeline(days, F, draw_s)
-    pen_t = draw0 + rel
-    T = {"total": total, "draw0": draw0, "hook_end": hook_s, "pen_t": pen_t, "draw_end": draw0 + draw_s}
-    n = F["n"]
-    fs = fonts
-    manifest = {"kind": kind, "size": [W, H], "seconds": total, "timeline": {"hook_s": hook_s, "legend_s": legend_s, "draw_s": draw_s, "end_s": end_s},
-                "text": [], "beats": [], "chart_labels": [], "frames": []}
-    said = manifest["text"]
+
+# ---------------------------------------------------------------- one video: plan, frames, render
+class Plan:
+    """Everything that is fixed for one video: timeline, static layers (with their text boxes), the
+    chart, the placed labels and the wrapped strings. Frames are drawn from it (frame())."""
+
+    def __init__(self, kind, days, vals, F, fonts, final):
+        self.kind, self.days, self.vals, self.F, self.fs, self.final = kind, days, vals, F, fonts, final
+        self.long = long = kind == "long"
+        lay = self.lay = LAYOUT[kind]
+        self.W, self.H = lay["size"]
+        if long:
+            self.hook_s, self.legend_s, self.draw_s, self.end_s = 3.4, 3.4, 56.0, 8.0
+        else:
+            self.hook_s, self.legend_s, self.draw_s, self.end_s = 2.6, 2.6, 32.0, 6.0
+        self.draw0 = self.hook_s + self.legend_s
+        self.total = self.draw0 + self.draw_s + self.end_s
+        rel, _ = timeline(days, F, self.draw_s)
+        self.pen_t = self.draw0 + rel
+        self.T = {"total": self.total, "draw0": self.draw0, "hook_end": self.hook_s, "pen_t": self.pen_t, "draw_end": self.draw0 + self.draw_s}
+        self.n = F["n"]
+        self.said = []
+        self.wraps = {}
+        self._static()
+        self._beats_and_labels()
+        self.ci, self.li = F["cross_i"], F["low_i"]
+
+    # ---- static layers: `plain` (intro: background, kicker, source line) and `base` (plain + the chart)
+    def _static(self):
+        long, fs, lay, W, H = self.long, self.fs, self.lay, self.W, self.H
+        self.plain = Image.new("RGB", (W, H), BG)
+        self.base = Image.new("RGB", (W, H), BG)
+        d = self.d = ImageDraw.Draw(self.base)
+        ch = self.ch = Chart(lay["box"], self.days, self.vals)
+        self.ink_base, self.ink_plain = Ink(), Ink()
+        lab = fs("m", 26 if long else 24)
+        for v in range(3480, 3601, 20):
+            yv = ch.Y(v)
+            d.line([(ch.x0, yv), (ch.x1, yv)], fill=GRID, width=1)
+            if long:
+                self.ink_base.text(d, (ch.x1 + 18, yv), f"{v:,}", lab, MUTED, "lm", role="axis")
+        # (the Short has no y-axis labels: the headline carries the level, and the chart stays uncluttered)
+        for i, dd in enumerate(self.days):
+            if dd.month == 1 and dd.day == 1:
+                d.line([(ch.X(i), ch.y0 - 6), (ch.X(i), ch.y1)], fill=YEARL, width=2)
+                self.ink_base.text(d, (ch.X(i) + 8, ch.y0 - 8), str(dd.year), lab, MUTED, "lb", role="year")
+        d.line([(ch.x0, ch.Y(MIN_POOL)), (ch.x1, ch.Y(MIN_POOL))], fill=AMBER, width=3)
+        tl = fs("s", 30 if long else 26)
+        t_pool = "3,490 ft · minimum power pool" if long else "3,490 ft · min. power pool"
+        self.ink_base.text(d, (ch.x0 + 8, ch.Y(MIN_POOL) + 8), t_pool, tl, AMBER, "la", role="threshold")
+        for xx in range(int(ch.x0), int(ch.x1), 14):
+            d.line([(xx, ch.Y(TARGET)), (xx + 6, ch.Y(TARGET))], fill=LINE, width=2)
+        t_target = "3,525 ft · protection target"
+        self.ink_base.text(d, (ch.x0 + 8, ch.Y(TARGET) - 8), t_target, tl, LINE, "lb", role="threshold")
+        self.said += [t_pool, t_target]
+        fsz = lay["foot_size"]
+        if long:
+            foot = [f"Data: USGS 09379900, Lake Powell at Glen Canyon Dam, daily elevation (provisional), {en_date(self.days[0])} to {en_date(self.days[-1])}.",
+                    "Thresholds: U.S. Bureau of Reclamation. Chart and sound made in code, no recordings."]
+        else:
+            foot = ["Data: USGS 09379900 (provisional),", f"{en_date(self.days[0])} to {en_date(self.days[-1])}. Sound made in code."]
+        for layer, ink in ((self.base, self.ink_base), (self.plain, self.ink_plain)):
+            dl = ImageDraw.Draw(layer)
+            ink.text(dl, lay["kicker"], "DESERT SYSTEMS, SONIFIED", fs("s", 30 if long else 26), MUTED, role="kicker")
+            for xy, t_ in zip(lay["foot"], foot):
+                ink.text(dl, xy, t_, fs("r", fsz), MUTED, role="source")
+            if not self.final:
+                mx, my, manc = lay["mark"]
+                ink.text(dl, (mx, my), "PRIVATE PILOT v2 · NOT PUBLISHED", fs("m", 20), (70, 92, 104), manc, role="draft-mark")
+        sx0, _, sx1, _ = SAFE[(W, H)]
+        for t_ in foot:
+            if d.textlength(t_, font=fs("r", fsz)) > sx1 - sx0:
+                raise ValueError(f"source line too long: {t_!r}")
+        self.said += foot
+
+    # ---- story beats and the labels they leave on the chart (placed once, avoiding curve, static text and each other)
+    def _beats_and_labels(self):
+        long, fs, ch, vals, days, F = self.long, self.fs, self.ch, self.vals, self.days, self.F
+        self.beats = []
+        for k, (sg, (en, es)) in enumerate(zip(F["segments"], SEG_TEXT)):
+            self.beats.append({"k": k, "a": sg["a"], "b": sg["b"], "change": sg["change"], "en": en, "es": es,
+                               "t0": self.pen_t[sg["a"]], "t1": self.pen_t[sg["b"]]})
+        L = Labels(ch, self.d, reserved=[b[2:] for b in self.ink_base.boxes])
+        lf = fs("b", 44 if long else 38)
+        sf = fs("s", 30 if long else 26)
+        up = [("mb", 0, -16), ("lb", 10, -16), ("rb", -10, -16), ("mt", 0, 22)]
+        down = [("mt", 0, 30), ("lt", 10, 30), ("rt", -10, 30), ("mb", 0, -22)]
+        # Point labels first: each belongs to one spot (the ring on the 3,525 ft line, the record low),
+        # so it may only move a little. Segment labels then search along their own stretch of curve.
+        ci, li = F["cross_i"], F["low_i"]
+        cross_label = "below 3,525 ft"
+        low_label = f"{vals[li]:,.1f} ft · {en_date(days[li], year=False)} · lowest"
+        cross_at = L.place(cross_label, sf, ch.X(ci), ch.Y(TARGET), [("rt", -12, 12), ("lt", 12, 12), ("lb", 12, -12), ("rb", -12, -12)],
+                           dists=(0, 14, 30))
+        low_at = L.place(low_label, sf, ch.X(li), ch.Y(vals[li]), [("rt", -14, 18), ("rb", -14, -18), ("mt", 0, 24)], dists=(0, 14, 30))
+        placed = []
+        for b in self.beats:
+            if b["change"] >= 0:                         # a rise: over its peak
+                pts, pref = [(ch.X(b["b"]), ch.Y(vals[b["b"]]))], up
+            else:                                        # a drop: under its middle, else elsewhere along it
+                span = b["b"] - b["a"]
+                idx = [b["a"] + int(round(span * q)) for q in (0.5, 0.4, 0.6, 0.3, 0.7, 0.2, 0.8)]
+                pts, pref = [(ch.X(i), ch.Y(vals[i])) for i in idx], down
+            placed.append((b["b"], signed(b["change"]), lf, WATER if b["change"] >= 0 else DROP,
+                           L.place_along(signed(b["change"]), lf, pts, pref), "chart-label"))
+        placed.append((ci, cross_label, sf, LINE, cross_at, "chart-label"))
+        placed.append((li, low_label, sf, INK, low_at, "chart-label"))
+        self.placed = placed
+        # the pen's bracket breaks around every text it could cross
+        self.bracket_avoid = [b[2:] for b in self.ink_base.boxes if b[0] == "threshold"]
+        self.label_boxes = {p[1]: self.d.textbbox((p[4][0], p[4][1]), p[1], font=p[2], anchor=p[4][2]) for p in placed}
+
+    def lines(self, text, font, width):
+        key = (text, font.size, width)
+        if key not in self.wraps:
+            self.wraps[key] = wrap2(self.d, text, font, width)
+        return self.wraps[key]
+
+    def once(self, *texts):
+        for t_ in texts:
+            if t_ not in self.said:
+                self.said.append(t_)
+
+    def frame(self, f, draw=True):
+        """Frame f. Returns (image or None, record). The record holds the numbers verify_powell.py
+        checks and, for overlap_check.py, the layer, every dynamic text box and the moving marks."""
+        long, fs, lay, W, H, ch, vals, days, F = self.long, self.fs, self.lay, self.W, self.H, self.ch, self.vals, self.days, self.F
+        t = (f + 0.5) / FPS
+        draw0, hook_s = self.draw0, self.hook_s
+        ink = Ink()
+        rec = {"f": f}
+        if t < draw0:
+            layer = "plain"
+            im = self.plain.copy() if draw else None
+        elif t < draw0 + 0.5:
+            layer = "blend"                                   # plain -> base: base's texts are a superset
+            im = Image.blend(self.plain, self.base, (t - draw0) / 0.5) if draw else None
+        else:
+            layer = "base"
+            im = self.base.copy() if draw else None
+        dr = ImageDraw.Draw(im) if draw else None
+        marks = []
+        if t < draw0:
+            cx = lay["hook_x"]
+            if t < hook_s:                                   # cold open: where the lake is today
+                col = lambda c: mixc(BG, c, min(1.0, t / 0.35))
+                y0 = 250 if long else 360
+                s1 = f"{F['buffer_end']:,.1f} ft"
+                date_line = f"Lake Powell · {en_date(days[-1])}"
+                ink.text(dr, (cx, y0 - (72 if long else 66)), date_line, fs("s", 44 if long else 40), col(MUTED), role="hook")
+                ink.text(dr, (cx, y0), s1, fs("b", 250 if long else 210), col(AMBER), role="hook")
+                yy = y0 + (290 if long else 250)
+                en_l = self.lines("of water left above the level Glen Canyon Dam needs to make power", fs("s", 56 if long else 50), lay["hook_w"])
+                for ln in en_l:
+                    ink.text(dr, (cx, yy), ln, fs("s", 56 if long else 50), col(INK), role="hook")
+                    yy += 68 if long else 62
+                es_l = self.lines("de agua sobre el nivel que la presa Glen Canyon necesita para generar energía", fs("r", 38 if long else 36), lay["hook_w"])
+                for ln in es_l:
+                    ink.text(dr, (cx, yy + 10), ln, fs("r", 38 if long else 36), col(MUTED), role="hook")
+                    yy += 48 if long else 46
+                rec["hook"] = s1
+                self.once(date_line, s1, *en_l, *es_l)
+            else:                                            # the rules of the sound
+                col = lambda c: mixc(BG, c, min(1.0, (t - hook_s) / 0.35))
+                yy = 250 if long else 400
+                h1 = "How did it get here?"
+                ink.text(dr, (cx, yy), h1, fs("b", 96 if long else 84), col(INK), role="rules")
+                yy += 136 if long else 124
+                rules = [("One note per week of data.", "Una nota por cada semana de datos."), ("Higher note = higher lake.", "Nota más alta = lago más alto."),
+                         ("Chime = a week the lake rose.", "Campanita = una semana en que subió."),
+                         ("Hum = water above the 3,490 ft line.", "Zumbido = agua sobre la línea de 3,490 pies.")]
+                for en, es in rules:
+                    ink.text(dr, (cx, yy), en, fs("s", 50 if long else 46), col(INK), role="rules")
+                    if long:
+                        ink.text(dr, (cx + 900, yy + 10), es, fs("r", 36), col(MUTED), role="rules")
+                        yy += 76
+                    else:
+                        ink.text(dr, (cx, yy + 58), es, fs("r", 34), col(MUTED), role="rules")
+                        yy += 122
+                self.once(h1, *[x for r in rules for x in r])
+        else:
+            i = int(np.clip(np.searchsorted(self.pen_t, t, side="right") - 1, 0, self.n - 1))
+            if draw:
+                ch.advance(i, 5)
+                fl, ln = ch.layers(min(1.0, (t - draw0) / 0.4))
+                im.paste(fl, (ch.x0, ch.y0), fl)
+                im.paste(ln, (ch.x0, ch.y0), ln)
+                dr = ImageDraw.Draw(im)
+            rec["curve_upto"] = i
+            visible_labels = []
+            for day_i, text, font, colr, (lx, ly, anc), role in self.placed:
+                if i >= day_i:
+                    visible_labels.append(ink.text(dr, (lx, ly), text, font, colr, anc, role=role))
+            if i >= self.ci:
+                xc, yc = ch.X(self.ci), ch.Y(TARGET)
+                if draw:
+                    dr.ellipse([xc - 7, yc - 7, xc + 7, yc + 7], outline=LINE, width=3)
+                marks.append(["cross-ring", xc - 8.5, yc - 8.5, xc + 8.5, yc + 8.5])
+            xp, yp = ch.X(i), ch.Y(vals[i])
+            # the water left above 3,490 (a vertical bracket), broken where it would cross any text
+            y_a, y_b = yp + 14, ch.Y(MIN_POOL) - 2
+            gaps = sorted((bb[1] - 4, bb[3] + 4) for bb in self.bracket_avoid + visible_labels if bb[0] - 4 <= xp <= bb[2] + 4)
+            for g0, g1 in gaps + [(y_b, y_b)]:
+                if g0 > y_a:
+                    seg_end = min(g0, y_b)
+                    if draw:
+                        dr.line([(xp, y_a), (xp, seg_end)], fill=AMBER, width=3)
+                    marks.append(["bracket", xp - 1.5, y_a, xp + 1.5, seg_end])
+                y_a = max(y_a, g1)
+            if draw:
+                dr.ellipse([xp - 11, yp - 11, xp + 11, yp + 11], fill=WATER, outline=BG, width=3)
+            marks.append(["pen", xp - 11, yp - 11, xp + 11, yp + 11])
+            hx, hy = lay["head"]
+            s_big, s_date = f"{vals[i]:,.1f} ft", f"Lake Powell · {en_date(days[i])}"
+            s_buf = f"{vals[i] - MIN_POOL:,.1f} ft above the minimum power pool"
+            big, sub = fs("b", 136 if long else 120), fs("r", 38 if long else 36)
+            ink.text(dr, (hx, hy), s_big, big, INK, role="headline")
+            ink.text(dr, (hx, hy + (156 if long else 140)), s_date, sub, MUTED, role="headline")
+            ink.text(dr, (hx, hy + (204 if long else 186)), s_buf, sub, AMBER, role="headline")
+            rec.update({"day": i, "date": str(days[i]), "big": s_big, "date_text": s_date, "buffer_text": s_buf})
+            bx, by = lay["beat"]
+            bt_en, bt_es, bt_num = fs("b", 54 if long else 50), fs("r", 38 if long else 36), fs("b", 92 if long else 84)
+            if t < draw0 + self.draw_s + 0.2:                # the running segment, with a live counter
+                cur = next((b for b in self.beats if b["a"] <= i < b["b"]), self.beats[-1])
+                run = vals[min(i, cur["b"])] - vals[cur["a"]]
+                a3 = min(1.0, (t - cur["t0"]) / 0.3) if cur["k"] else 1.0
+                colr = WATER if cur["change"] >= 0 else DROP
+                yy = by
+                for ln_ in self.lines(cur["en"], bt_en, lay["beat_w"]):
+                    ink.text(dr, (bx, yy), ln_, bt_en, mixc(BG, INK, a3), role="beat")
+                    yy += 62 if long else 58
+                ctr = signed(run) + " ft"
+                ink.text(dr, (bx, yy + 4), ctr, bt_num, mixc(BG, colr, a3), role="counter")
+                yy += 110 if long else 100
+                for ln_ in self.lines(cur["es"], bt_es, lay["beat_w"]):
+                    ink.text(dr, (bx, yy), ln_, bt_es, mixc(BG, MUTED, a3), role="beat")
+                    yy += 46
+                rec.update({"beat": cur["k"], "counter": ctr, "counter_from_day": cur["a"], "counter_to_day": min(i, cur["b"])})
+                self.once(cur["en"], cur["es"])
+            else:                                            # end card, in the same block (the chart stays visible)
+                a4 = min(1.0, (t - draw0 - self.draw_s - 0.2) / 0.5)
+                sp = F["springs"]
+                e1 = "Each spring added less:"
+                e2 = f"{signed(sp[2024]['rise'])} → {signed(sp[2025]['rise'])} → {signed(sp[2026]['rise'])} ft"
+                e3 = f"Three years: {signed(F['change'])} ft"
+                e4 = f"Cada primavera sumó menos. Tres años: {signed(F['change'])} pies."
+                yy = by
+                ink.text(dr, (bx, yy), e1, bt_en, mixc(BG, INK, a4), role="end")
+                ink.text(dr, (bx, yy + (64 if long else 60)), e2, fs("b", 72 if long else 64), mixc(BG, WATER, a4), role="end")
+                ink.text(dr, (bx, yy + (152 if long else 142)), e3, fs("b", 54 if long else 50), mixc(BG, DROP, a4), role="end")
+                yy += 222 if long else 208
+                for ln_ in self.lines(e4, bt_es, lay["beat_w"]):
+                    ink.text(dr, (bx, yy), ln_, bt_es, mixc(BG, MUTED, a4), role="end")
+                    yy += 46
+                rec["end"] = [e1, e2, e3, e4]
+                self.once(e1, e2, e3, e4)
+        rec["layer"] = layer
+        rec["texts"] = ink.boxes
+        rec["marks"] = [[m[0]] + [round(v, 1) for v in m[1:]] for m in marks]
+        return im, rec
+
+    def plate(self):
+        """The finished chart with no text at all (grid, thresholds, water, curve, pen): the thumbnail
+        template's background, so a thumbnail never shows half-cropped labels."""
+        ch = Chart(self.lay["box"], self.days, self.vals)
+        ch.advance(self.n - 1, 5)
+        im = Image.new("RGB", (self.W, self.H), BG)
+        d = ImageDraw.Draw(im)
+        for v in range(3480, 3601, 20):
+            d.line([(ch.x0, ch.Y(v)), (ch.x1, ch.Y(v))], fill=GRID, width=1)
+        for i, dd in enumerate(self.days):
+            if dd.month == 1 and dd.day == 1:
+                d.line([(ch.X(i), ch.y0 - 6), (ch.X(i), ch.y1)], fill=YEARL, width=2)
+        d.line([(ch.x0, ch.Y(MIN_POOL)), (ch.x1, ch.Y(MIN_POOL))], fill=AMBER, width=3)
+        for xx in range(int(ch.x0), int(ch.x1), 14):
+            d.line([(xx, ch.Y(TARGET)), (xx + 6, ch.Y(TARGET))], fill=LINE, width=2)
+        fl, ln = ch.layers(1.0)
+        im.paste(fl, (ch.x0, ch.y0), fl)
+        im.paste(ln, (ch.x0, ch.y0), ln)
+        d = ImageDraw.Draw(im)
+        xp, yp = ch.X(self.n - 1), ch.Y(self.vals[-1])
+        d.line([(xp, yp + 14), (xp, ch.Y(MIN_POOL) - 2)], fill=AMBER, width=3)
+        d.ellipse([xp - 11, yp - 11, xp + 11, yp + 11], fill=WATER, outline=BG, width=3)
+        return im
+
+    def layout_manifest(self):
+        ch = self.ch
+        return {"safe_area": list(SAFE[(self.W, self.H)]),
+                "static": {"plain": self.ink_plain.boxes, "base": self.ink_base.boxes},
+                "chart_box": [ch.x0, ch.y0, ch.x1, ch.y1], "curve_width_px": 5,
+                "curve_px": [[round(ch.X(i), 1), round(ch.Y(v), 1)] for i, v in enumerate(self.vals)]}
+
+    def manifest_head(self):
+        return {"kind": self.kind, "size": [self.W, self.H], "seconds": self.total, "final": self.final,
+                "timeline": {"hook_s": self.hook_s, "legend_s": self.legend_s, "draw_s": self.draw_s, "end_s": self.end_s},
+                "text": self.said, "beats": [{"en": b["en"], "es": b["es"], "from": str(self.days[b["a"]]), "to": str(self.days[b["b"]]),
+                                              "change": b["change"], "final_counter": f"{signed(b['change'])} ft",
+                                              "on_screen_s": [round(b["t0"], 2), round(b["t1"], 2)]} for b in self.beats],
+                "chart_labels": [p[1] for p in self.placed], "layout": self.layout_manifest()}
+
+
+def layout_only(kind, days, vals, F, fonts, final=False):
+    """The manifest a render would write, without sound or video (fast: text boxes are measured, not drawn)."""
+    plan = Plan(kind, days, vals, F, fonts, final)
+    frames = [plan.frame(f, draw=False)[1] for f in range(int(round(plan.total * FPS)))]
+    return {**plan.manifest_head(), "frames": frames}
+
+
+def render(kind, days, vals, F, fonts, out, final, encoder="auto"):
+    plan = Plan(kind, days, vals, F, fonts, final)
+    W, H, total = plan.W, plan.H, plan.total
+    manifest = plan.manifest_head()
+    manifest["frames"] = []
 
     # ---- sound
-    stems = sound(days, vals, F, T)
+    stems = sound(days, vals, F, plan.T)
     mix = sum(stems.values())
-    target = -14.5 if long else -14.0
+    target = -14.5 if plan.long else -14.0
     y, gain_db, lim = master(mix, target, -1.6)
     wav = out.with_suffix(".wav")
     write_wav(wav, y)
@@ -336,229 +690,38 @@ def render(kind, days, vals, F, fonts, out, final):
                          "phone": {m: ebur128(speaker(read_audio(wav), m)) for m in MODELS},
                          "stems": phone_table(read_audio(wav), {k: v * g for k, v in stems.items() if np.abs(v).max() > 0})}
 
-    # ---- static layers: `plain` (intro: background, kicker, source line) and `base` (plain + the chart)
-    plain = Image.new("RGB", (W, H), BG)
-    base = Image.new("RGB", (W, H), BG)
-    d = ImageDraw.Draw(base)
-    ch = Chart(box, days, vals)
-    reserved = []
-    lab = fs("m", 26 if long else 24)
-    for v in range(3480, 3601, 20):
-        yv = ch.Y(v)
-        d.line([(ch.x0, yv), (ch.x1, yv)], fill=GRID, width=1)
-        if long:
-            d.text((ch.x1 + 18, yv), f"{v:,}", font=lab, fill=MUTED, anchor="lm")
-    # (the Short has no y-axis labels: the headline carries the level, and the chart stays uncluttered)
-    for i, dd in enumerate(days):
-        if dd.month == 1 and dd.day == 1:
-            d.line([(ch.X(i), ch.y0 - 6), (ch.X(i), ch.y1)], fill=YEARL, width=2)
-            d.text((ch.X(i) + 8, ch.y0 - 8), str(dd.year), font=lab, fill=MUTED, anchor="lb")
-    d.line([(ch.x0, ch.Y(MIN_POOL)), (ch.x1, ch.Y(MIN_POOL))], fill=AMBER, width=3)
-    tl = fs("s", 30 if long else 26)
-    t_pool = "3,490 ft · minimum power pool" if long else "3,490 ft · min. power pool"
-    d.text((ch.x0 + 8, ch.Y(MIN_POOL) + 8), t_pool, font=tl, fill=AMBER, anchor="la")
-    for xx in range(int(ch.x0), int(ch.x1), 14):
-        d.line([(xx, ch.Y(TARGET)), (xx + 6, ch.Y(TARGET))], fill=LINE, width=2)
-    t_target = "3,525 ft · protection target"
-    d.text((ch.x0 + 8, ch.Y(TARGET) - 8), t_target, font=tl, fill=LINE, anchor="lb")
-    reserved.append(d.textbbox((ch.x0 + 8, ch.Y(TARGET) - 8), t_target, font=tl, anchor="lb"))
-    label_boxes = [d.textbbox((ch.x0 + 8, ch.Y(TARGET) - 8), t_target, font=tl, anchor="lb")]
-    said += [t_pool, t_target]
-    for layer in (base, plain):
-        dl = ImageDraw.Draw(layer)
-        dl.text((110 if long else 60, 56 if long else 150), "DESERT SYSTEMS, SONIFIED", font=fs("s", 30 if long else 26), fill=MUTED)
-        if long:
-            foot = [f"Data: USGS 09379900, Lake Powell at Glen Canyon Dam, daily elevation (provisional), {en_date(days[0])} to {en_date(days[-1])}.",
-                    "Thresholds: U.S. Bureau of Reclamation. Chart and sound made in code, no recordings."]
-            dl.text((110, 1000), foot[0], font=fs("r", 24), fill=MUTED)
-            dl.text((110, 1032), foot[1], font=fs("r", 24), fill=MUTED)
-        else:
-            foot = ["Data: USGS 09379900 (provisional),", f"{en_date(days[0])} to {en_date(days[-1])}. Sound made in code."]
-            dl.text((60, 1392), foot[0], font=fs("r", 28), fill=MUTED)
-            dl.text((60, 1428), foot[1], font=fs("r", 28), fill=MUTED)
-        if not final:
-            dl.text((W - 40, 56) if long else (60, 1880), "PRIVATE PILOT v2 · NOT PUBLISHED", font=fs("m", 20), fill=(70, 92, 104),
-                    anchor="ra" if long else "la")
-    for t_ in foot:
-        if d.textlength(t_, font=fs("r", 24 if long else 28)) > W - 2 * (110 if long else 60):
-            raise ValueError(f"source line too long: {t_!r}")
-    said += foot
-
-    # ---- story beats and the labels they leave on the chart (placed once, avoiding curve and each other)
-    beats = []
-    for k, (sg, (en, es)) in enumerate(zip(F["segments"], SEG_TEXT)):
-        beats.append({"k": k, "a": sg["a"], "b": sg["b"], "change": sg["change"], "en": en, "es": es, "t0": pen_t[sg["a"]], "t1": pen_t[sg["b"]]})
-        manifest["beats"].append({"en": en, "es": es, "from": str(days[sg["a"]]), "to": str(days[sg["b"]]), "change": sg["change"],
-                                  "final_counter": f"{signed(sg['change'])} ft", "on_screen_s": [round(pen_t[sg["a"]], 2), round(pen_t[sg["b"]], 2)]})
-    L = Labels(ch, d, reserved)
-    lf = fs("b", 44 if long else 38)
-    sf = fs("s", 30 if long else 26)
-    up = [("mb", 0, -16), ("lb", 10, -16), ("rb", -10, -16), ("mt", 0, 22)]
-    down = [("mt", 0, 30), ("lt", 10, 30), ("rt", -10, 30), ("mb", 0, -22)]
-    placed = []
-    for b in beats:
-        if b["change"] >= 0:
-            x, yv, pref = ch.X(b["b"]), ch.Y(vals[b["b"]]), up
-        else:
-            mid = (b["a"] + b["b"]) // 2
-            x, yv, pref = ch.X(mid), ch.Y(vals[mid]), down
-        placed.append((b["b"], signed(b["change"]), lf, WATER if b["change"] >= 0 else DROP, L.place(signed(b["change"]), lf, x, yv, pref)))
-    ci, li = F["cross_i"], F["low_i"]
-    cross_label = "below 3,525 ft"
-    low_label = f"{vals[li]:,.1f} ft · {en_date(days[li], year=False)} · lowest"
-    placed.append((ci, cross_label, sf, LINE, L.place(cross_label, sf, ch.X(ci), ch.Y(TARGET), [("rb", -12, -12), ("lb", 12, -12), ("rt", -12, 12)])))
-    placed.append((li, low_label, sf, INK, L.place(low_label, sf, ch.X(li), ch.Y(vals[li]), [("rt", -14, 18), ("rb", -14, -18), ("mt", 0, 24)])))
-    manifest["chart_labels"] = [t for _, t, _, _, _ in placed]
-
     # ---- frames
-    ff = imageio_ffmpeg.get_ffmpeg_exe()
-    cmd = [ff, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(FPS), "-i", "-",
-           "-i", str(wav), "-map", "0:v", "-map", "1:a", "-vf", "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p",
-           "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-tune", "animation",
-           "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-t", f"{total:.3f}", "-movflags", "+faststart", str(out)]
+    enc = encode.choose(encoder)
+    cmd = encode.pipe_cmd(enc, W, H, FPS, wav, total, out, crf=16)
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     frames = int(round(total * FPS))
-    still_at = {int(x * FPS): name for name, x in (("hook", 1.6), ("legend", hook_s + 2.0), ("spring24", pen_t[beats[1]["b"]] + 0.4),
-                                                    ("drain25", pen_t[beats[4]["a"]] + 4.0), ("cross", pen_t[ci] + 1.0), ("end", total - 1.0))}
-    big, sub = fs("b", 136 if long else 120), fs("r", 38 if long else 36)
-    bt_en, bt_es, bt_num = fs("b", 54 if long else 50), fs("r", 38 if long else 36), fs("b", 92 if long else 84)
-    wraps = {}
-
-    def lines(text, font, width):
-        key = (text, font.size)
-        if key not in wraps:
-            wraps[key] = wrap2(d, text, font, width)
-        return wraps[key]
-
-    def once(*texts):
-        for t_ in texts:
-            if t_ not in said:
-                said.append(t_)
-
+    beats = plan.beats
+    still_at = {int(x * FPS): name for name, x in (("hook", 1.6), ("legend", plan.hook_s + 2.0), ("spring24", plan.pen_t[beats[1]["b"]] + 0.4),
+                                                    ("drain25", plan.pen_t[beats[4]["a"]] + 4.0), ("cross", plan.pen_t[plan.ci] + 1.0), ("end", total - 1.0))}
+    import time
+    t_draw = t_pipe = 0.0
     for f in range(frames):
-        t = (f + 0.5) / FPS
-        if t < draw0:
-            im = plain.copy()
-        elif t < draw0 + 0.5:
-            im = Image.blend(plain, base, (t - draw0) / 0.5)
-        else:
-            im = base.copy()
-        dr = ImageDraw.Draw(im)
-        rec = {"f": f}
-        if t < draw0:
-            cx = 110 if long else 60
-            if t < hook_s:                                   # cold open: where the lake is today
-                col = lambda c: mixc(BG, c, min(1.0, t / 0.35))
-                y0 = 250 if long else 360
-                s1 = f"{F['buffer_end']:,.1f} ft"
-                date_line = f"Lake Powell · {en_date(days[-1])}"
-                dr.text((cx, y0 - (72 if long else 66)), date_line, font=fs("s", 44 if long else 40), fill=col(MUTED))
-                dr.text((cx, y0), s1, font=fs("b", 250 if long else 210), fill=col(AMBER))
-                yy = y0 + (290 if long else 250)
-                en_l = lines("of water left above the level Glen Canyon Dam needs to make power", fs("s", 56 if long else 50), W - 2 * cx)
-                for ln in en_l:
-                    dr.text((cx, yy), ln, font=fs("s", 56 if long else 50), fill=col(INK))
-                    yy += 68 if long else 62
-                es_l = lines("de agua sobre el nivel que la presa Glen Canyon necesita para generar energía", fs("r", 38 if long else 36), W - 2 * cx)
-                for ln in es_l:
-                    dr.text((cx, yy + 10), ln, font=fs("r", 38 if long else 36), fill=col(MUTED))
-                    yy += 48 if long else 46
-                rec["hook"] = s1
-                once(date_line, s1, *en_l, *es_l)
-            else:                                            # the rules of the sound
-                col = lambda c: mixc(BG, c, min(1.0, (t - hook_s) / 0.35))
-                yy = 250 if long else 400
-                h1 = "How did it get here?"
-                dr.text((cx, yy), h1, font=fs("b", 96 if long else 84), fill=col(INK))
-                yy += 136 if long else 124
-                rules = [("One note per week of data.", "Una nota por cada semana de datos."), ("Higher note = higher lake.", "Nota más alta = lago más alto."),
-                         ("Chime = a week the lake rose.", "Campanita = una semana en que subió."),
-                         ("Hum = water above the 3,490 ft line.", "Zumbido = agua sobre la línea de 3,490 pies.")]
-                for en, es in rules:
-                    dr.text((cx, yy), en, font=fs("s", 50 if long else 46), fill=col(INK))
-                    if long:
-                        dr.text((cx + 900, yy + 10), es, font=fs("r", 36), fill=col(MUTED))
-                        yy += 76
-                    else:
-                        dr.text((cx, yy + 58), es, font=fs("r", 34), fill=col(MUTED))
-                        yy += 122
-                once(h1, *[x for r in rules for x in r])
-        else:
-            i = int(np.clip(np.searchsorted(pen_t, t, side="right") - 1, 0, n - 1))
-            ch.advance(i, 5)
-            fl, ln = ch.layers(min(1.0, (t - draw0) / 0.4))
-            im.paste(fl, (ch.x0, ch.y0), fl)
-            im.paste(ln, (ch.x0, ch.y0), ln)
-            dr = ImageDraw.Draw(im)
-            for day_i, text, font, colr, (lx, ly, anc) in placed:
-                if i >= day_i:
-                    dr.text((lx, ly), text, font=font, fill=colr, anchor=anc)
-            if i >= ci:
-                xc, yc = ch.X(ci), ch.Y(TARGET)
-                dr.ellipse([xc - 7, yc - 7, xc + 7, yc + 7], outline=LINE, width=3)
-            xp, yp = ch.X(i), ch.Y(vals[i])
-            # the water left above 3,490 (a vertical bracket), broken where it would cross a threshold label
-            y_a, y_b = yp + 14, ch.Y(MIN_POOL) - 2
-            gaps = sorted((bb[1] - 4, bb[3] + 4) for bb in label_boxes if bb[0] - 4 <= xp <= bb[2] + 4)
-            for g0, g1 in gaps + [(y_b, y_b)]:
-                if g0 > y_a:
-                    dr.line([(xp, y_a), (xp, min(g0, y_b))], fill=AMBER, width=3)
-                y_a = max(y_a, g1)
-            dr.ellipse([xp - 11, yp - 11, xp + 11, yp + 11], fill=WATER, outline=BG, width=3)
-            hx, hy = head_xy
-            s_big, s_date = f"{vals[i]:,.1f} ft", f"Lake Powell · {en_date(days[i])}"
-            s_buf = f"{vals[i] - MIN_POOL:,.1f} ft above the minimum power pool"
-            dr.text((hx, hy), s_big, font=big, fill=INK)
-            dr.text((hx, hy + (156 if long else 140)), s_date, font=sub, fill=MUTED)
-            dr.text((hx, hy + (204 if long else 186)), s_buf, font=sub, fill=AMBER)
-            rec.update({"day": i, "date": str(days[i]), "big": s_big, "date_text": s_date, "buffer_text": s_buf})
-            bx, by = beat_xy
-            if t < draw0 + draw_s + 0.2:                     # the running segment, with a live counter
-                cur = next((b for b in beats if b["a"] <= i < b["b"]), beats[-1])
-                run = vals[min(i, cur["b"])] - vals[cur["a"]]
-                a3 = min(1.0, (t - cur["t0"]) / 0.3) if cur["k"] else 1.0
-                colr = WATER if cur["change"] >= 0 else DROP
-                yy = by
-                for ln_ in lines(cur["en"], bt_en, beat_w):
-                    dr.text((bx, yy), ln_, font=bt_en, fill=mixc(BG, INK, a3))
-                    yy += 62 if long else 58
-                ctr = signed(run) + " ft"
-                dr.text((bx, yy + 4), ctr, font=bt_num, fill=mixc(BG, colr, a3))
-                yy += 110 if long else 100
-                for ln_ in lines(cur["es"], bt_es, beat_w):
-                    dr.text((bx, yy), ln_, font=bt_es, fill=mixc(BG, MUTED, a3))
-                    yy += 46
-                rec.update({"beat": cur["k"], "counter": ctr, "counter_from_day": cur["a"], "counter_to_day": min(i, cur["b"])})
-                once(cur["en"], cur["es"])
-            else:                                            # end card, in the same block (the chart stays visible)
-                a4 = min(1.0, (t - draw0 - draw_s - 0.2) / 0.5)
-                sp = F["springs"]
-                e1 = "Each spring added less:"
-                e2 = f"{signed(sp[2024]['rise'])} → {signed(sp[2025]['rise'])} → {signed(sp[2026]['rise'])} ft"
-                e3 = f"Three years: {signed(F['change'])} ft"
-                e4 = f"Cada primavera sumó menos. Tres años: {signed(F['change'])} pies."
-                yy = by
-                dr.text((bx, yy), e1, font=bt_en, fill=mixc(BG, INK, a4))
-                dr.text((bx, yy + (64 if long else 60)), e2, font=fs("b", 72 if long else 64), fill=mixc(BG, WATER, a4))
-                dr.text((bx, yy + (152 if long else 142)), e3, font=fs("b", 54 if long else 50), fill=mixc(BG, DROP, a4))
-                yy += 222 if long else 208
-                for ln_ in lines(e4, bt_es, beat_w):
-                    dr.text((bx, yy), ln_, font=bt_es, fill=mixc(BG, MUTED, a4))
-                    yy += 46
-                rec["end"] = [e1, e2, e3, e4]
-                once(e1, e2, e3, e4)
+        t0 = time.perf_counter()
+        im, rec = plan.frame(f)
+        t1 = time.perf_counter()
         manifest["frames"].append(rec)
         p.stdin.write(im.tobytes())
+        t_pipe += time.perf_counter() - t1
+        t_draw += t1 - t0
         if f in still_at:
             im.save(out.with_name(f"{out.stem}-still-{still_at[f]}.jpg"), quality=90)
     p.stdin.close()
+    t0 = time.perf_counter()
     if p.wait():
         raise SystemExit("ffmpeg failed")
+    t_tail = time.perf_counter() - t0
+    manifest["text"] = plan.said
+    plan.plate().save(out.with_name(f"{out.stem}-plate.png"))
     manifest["mp4"] = ebur128(out)
-    out.with_suffix(".json").write_text(json.dumps(manifest, indent=0, ensure_ascii=False) + "\n")
+    manifest["encode"] = {**enc.describe(), "draw_s": round(t_draw, 1), "pipe_wait_s": round(t_pipe, 1), "encoder_tail_s": round(t_tail, 1)}
+    out.with_suffix(".json").write_text(json.dumps(manifest, ensure_ascii=False, separators=(",", ":")) + "\n")
     print(json.dumps({"out": str(out), "seconds": total, "mp4": manifest["mp4"], "wav": manifest["audio"]["wav"],
-                      "beats_on_screen_s": [round(b["t1"] - b["t0"], 1) for b in beats]}))
+                      "encode": manifest["encode"], "beats_on_screen_s": [round(b["t1"] - b["t0"], 1) for b in beats]}))
 
 
 def main():
@@ -568,6 +731,10 @@ def main():
     ap.add_argument("outdir")
     ap.add_argument("--only", choices=["long", "short"])
     ap.add_argument("--final", action="store_true", help="drop the private-pilot mark (only after Carlos approves an upload)")
+    ap.add_argument("--encoder", choices=["auto", "nvenc", "x264"], default="auto",
+                    help="auto: NVIDIA NVENC when this FFmpeg has it and a test encode works, else libx264")
+    ap.add_argument("--layout-only", action="store_true", help="write the layout manifests only (no sound, no video)")
+    ap.add_argument("--plate-only", action="store_true", help="write only <name>-plate.png (the text-free chart, for thumbnails)")
     a = ap.parse_args()
     days, vals = load(a.csv)
     F = facts(days, vals)
@@ -584,8 +751,16 @@ def main():
                  "rebound_after_low": F["rebound"]}
     (out / "lake-powell-v2-facts.json").write_text(json.dumps(facts_out, indent=1, default=float) + "\n")
     for kind in (["long", "short"] if not a.only else [a.only]):
-        name = "lake-powell-v2.mp4" if kind == "long" else "lake-powell-short-v2.mp4"
-        render(kind, days, vals, F, fonts, out / name, a.final)
+        name = "lake-powell-v2" if kind == "long" else "lake-powell-short-v2"
+        if a.plate_only:
+            Plan(kind, days, vals, F, fonts, a.final).plate().save(out / f"{name}-plate.png")
+            print("wrote", out / f"{name}-plate.png")
+        elif a.layout_only:
+            m = layout_only(kind, days, vals, F, fonts, a.final)
+            (out / f"{name}.layout.json").write_text(json.dumps(m, ensure_ascii=False, separators=(",", ":")) + "\n")
+            print("wrote", out / f"{name}.layout.json", len(m["frames"]), "frames")
+        else:
+            render(kind, days, vals, F, fonts, out / f"{name}.mp4", a.final, a.encoder)
 
 
 if __name__ == "__main__":

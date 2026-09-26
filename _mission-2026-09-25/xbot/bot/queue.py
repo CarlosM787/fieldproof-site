@@ -261,7 +261,8 @@ def main(argv=None):
     pub = sub.add_parser("publish", help="publish one queued morning (dry run unless --live)")
     pub.add_argument("--queue", required=True)
     pub.add_argument("--date", help="post morning YYYY-MM-DD (default: today in Arizona)")
-    pub.add_argument("--cadence", choices=("daily", "weekly"), default="daily")
+    pub.add_argument("--cadence", choices=("daily", "weekly", "grid", "river-weekly"), default="daily",
+                     help="grid and river-weekly posts are queued by python -m bot.sample_queue")
     pub.add_argument("--posted-log")
     pub.add_argument("--live", action="store_true")
     a = p.parse_args(argv)

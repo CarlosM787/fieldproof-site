@@ -1,0 +1,104 @@
+{
+  "_about": "Desert Systems thumbnail. Numbers come from the render's facts JSON (--facts), so they match the video. Background: the render's text-free chart plate (--var plate=.../lake-powell-v2-plate.png), cropped to the chart.",
+  "fonts": {
+    "bold": "../../../xbot/fonts/IBMPlexSansCondensed-700.ttf",
+    "semi": "../../../xbot/fonts/IBMPlexSansCondensed-600.ttf",
+    "mono": "../../../xbot/fonts/IBMPlexMono-500.ttf"
+  },
+  "background": {
+    "image": "{plate}",
+    "crop": [
+      110,
+      400,
+      1720,
+      1000
+    ],
+    "focus": [
+      0.5,
+      0.5
+    ],
+    "darken": 0.1,
+    "color": "#0b1a24"
+  },
+  "gradients": [
+    {
+      "x0": 620,
+      "x1": 1060,
+      "from": 0.8,
+      "to": 0.0,
+      "color": "#0b1a24"
+    }
+  ],
+  "blocks": [
+    {
+      "text": "LAKE POWELL · 3 YEARS IN SOUND",
+      "font": "semi",
+      "size": 30,
+      "color": "#aabfca",
+      "xy": [
+        56,
+        40
+      ],
+      "max_w": 900
+    },
+    {
+      "text": "{buffer_end} ft left",
+      "font": "bold",
+      "size": 150,
+      "min_size": 110,
+      "color": "#f2a541",
+      "xy": [
+        56,
+        84
+      ],
+      "max_w": 1000
+    },
+    {
+      "text": "above the level Glen Canyon Dam needs to make power",
+      "font": "semi",
+      "size": 44,
+      "min_size": 36,
+      "max_lines": 2,
+      "color": "#eaf2f5",
+      "xy": [
+        56,
+        262
+      ],
+      "max_w": 640
+    },
+    {
+      "text": "Each spring added less: {rise_2024} → {rise_2025} → {rise_2026} ft",
+      "font": "semi",
+      "size": 30,
+      "min_size": 26,
+      "color": "#62d2e8",
+      "xy": [
+        56,
+        400
+      ],
+      "max_w": 640,
+      "max_lines": 2
+    }
+  ],
+  "badge": {
+    "text": "EN · ES",
+    "font": "mono",
+    "size": 24,
+    "color": "#0b1a24",
+    "fill": "#62d2e8",
+    "xy": [
+      1096,
+      48
+    ]
+  },
+  "avoid": [
+    [
+      1100,
+      650,
+      1280,
+      720
+    ]
+  ],
+  "margin_pct": 4,
+  "min_contrast": 3.0
+}

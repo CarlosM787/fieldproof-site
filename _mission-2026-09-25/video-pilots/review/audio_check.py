@@ -210,9 +210,28 @@ def master(x, target_lufs, ceiling_dbtp, passes=4):
     return y, gain_db, g
 
 
+def clip_counts(path):
+    """Samples at or beyond full scale. A 16-bit WAV: |s| >= 32767. Anything else (e.g. the AAC in an
+    MP4, decoded to float): |x| >= 1.0. Also counts samples above -0.1 dBFS."""
+    path = str(path)
+    if path.endswith(".wav"):
+        with wave.open(path) as w:
+            if w.getsampwidth() == 2:
+                s = np.frombuffer(w.readframes(w.getnframes()), dtype="<i2").astype(np.int32)
+                return {"file": Path(path).name, "samples": int(s.size), "clipped_samples": int((np.abs(s) >= 32767).sum()),
+                        "over_-0.1_dBFS": int((np.abs(s) >= 0.98855 * 32768).sum())}
+    x = read_audio(path)
+    return {"file": Path(path).name, "samples": int(x.size), "clipped_samples": int((np.abs(x) >= 1.0).sum()),
+            "over_-0.1_dBFS": int((np.abs(x) >= 0.98855).sum())}
+
+
 def main():
     cmd, args = sys.argv[1], sys.argv[2:]
-    if cmd == "loudness":
+    if cmd == "clip":
+        # python audio_check.py clip <mp4> [<wav>]: loudness of the first file plus clipped samples of each
+        out = {"loudness": ebur128(args[0]), "clip": [clip_counts(p) for p in args if Path(p).exists()]}
+        print(json.dumps(out))
+    elif cmd == "loudness":
         for p in args:
             print(p, json.dumps(ebur128(p)))
     elif cmd == "stereo":

@@ -97,3 +97,37 @@ PRICE_POST, PRICE_ALT_TEXT, PRICE_MEDIA_UPLOAD_WORST_CASE = 0.015, 0.005, 0.015
 
 MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]
+
+# ---------------------------------------------------------------- phase three: Arizona Grid Daily + weekly river
+# Balancing authorities in the grid post (EIA-930 respondent codes). VERIFIED 2026-09-26 in a third-party copy of
+# EIA's EIA930_BALANCE_2026_Jul_Dec.csv (sha256 f94cde6b...bf20): AZPS, SRP, TEPC, WALC and DEAA are present; HGMA,
+# GRIF and GRMA are not. The post covers the three Arizona utilities. WALC (WAPA Desert Southwest) also spans Nevada
+# and California, and DEAA (Arlington Valley) is generation-only (its demand column is blank), so both are named in
+# the methods note instead of being summed into "Arizona" (PROPOSED; one line to change).
+GRID_BAS = ("AZPS", "SRP", "TEPC")
+GRID_BA_NAMES = {"AZPS": ("APS", "Arizona Public Service"), "SRP": ("SRP", "Salt River Project"),
+                 "TEPC": ("TEP", "Tucson Electric Power")}
+GRID_OTHER_AZ_BAS = {"WALC": "WAPA Desert Southwest (spans AZ, NV, CA)", "DEAA": "Arlington Valley (generation only)"}
+GRID_ACCOUNT_NAME = "Arizona Grid Daily"
+# EIA-930 hourly values are revised for about a day after first release (AUDIT_P2.md §4), so the post for day D goes
+# out on the morning of D + 2, after a second reading of D agrees with the first one within these tolerances.
+GRID_POST_LAG_DAYS = 2
+GRID_REVISION_TOLERANCE = {"mw": 50.0, "share": 0.02}
+GRID_SOURCE_URL = "https://www.eia.gov/electricity/gridmonitor/"
+PRELIMINARY_EN = "EIA-930 hourly data are preliminary and may be revised."
+PRELIMINARY_ES = "Los datos horarios del EIA-930 son preliminares y pueden cambiar."
+CREDIT_EIA = ("U.S. Energy Information Administration, EIA-930", "Administración de Información Energética de EE. UU., EIA-930")
+GRID_FUEL_NAMES = {"gas": ("gas", "gas"), "nuclear": ("nuclear", "nuclear"), "coal": ("coal", "carbón"), "solar": ("solar", "solar"),
+                   "wind": ("wind", "eólica"), "hydro": ("hydro", "hidro"), "oil": ("oil", "petróleo"), "other": ("other", "otras"),
+                   "storage": ("batteries", "baterías")}
+WEEKDAYS_EN = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"]
+WEEKDAYS_ES = ["lun", "mar", "mié", "jue", "vie", "sáb", "dom"]
+
+# Weekly river segment: Lake Powell (USGS 09379900) and Lake Mead (Reclamation, Lake Mead 921, parameter 49).
+# Minimum power pools are REPORTED (search results 2026-09-26; usbr.gov is blocked here): Powell 3,490 ft, Mead
+# about 950 ft. Confirm both on usbr.gov before the first post (THRESHOLD_LABELS_VALID_THROUGH applies to both).
+RIVER_LAKES = {
+    "powell": {"en": "Lake Powell", "es": "Lago Powell", "min_power_pool_ft": 3490.0, "credit": "USGS 09379900"},
+    "mead": {"en": "Lake Mead", "es": "Lago Mead", "min_power_pool_ft": 950.0, "credit": "Reclamation (Lake Mead)"},
+}
+KINDS.update({"grid": "az-grid-daily", "river-weekly": "river-weekly"})

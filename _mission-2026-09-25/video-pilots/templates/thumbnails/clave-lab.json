@@ -1,0 +1,18 @@
+{
+  "_about": "Clave Lab thumbnail. Text comes from the episode spec (--episode): hook_en is the title, line1_en the hook line. Background: a still of the dancers' feet from the render (--var still=.../still-feet.jpg), cropped to the floor.",
+  "fonts": {"display": "../../fonts/BigShouldersDisplay-800.ttf", "bold": "../../fonts/AtkinsonHyperlegible-700.ttf",
+            "regular": "../../fonts/AtkinsonHyperlegible-400.ttf", "mono": "../../fonts/JetBrainsMono-500.ttf"},
+  "background": {"image": "{still}", "crop": [20, 458, 1060, 1158], "focus": [0.5, 0.35], "darken": 0.15, "color": "#0a0f1e"},
+  "gradients": [{"x0": 520, "x1": 900, "from": 0.92, "to": 0.0, "color": "#0a0f1e"}],
+  "blocks": [
+    {"text": "CLAVE LAB · SALSA TIMING", "font": "mono", "size": 28, "color": "#c4cfe4", "xy": [56, 40], "max_w": 700},
+    {"text": "{hook_en}", "font": "display", "size": 190, "min_size": 120, "max_lines": 2, "line_height": 0.95,
+     "color": "#6fd3ff", "xy": [56, 78], "max_w": 640},
+    {"text": "{line1_en}", "font": "bold", "size": 50, "min_size": 40, "max_lines": 2, "color": "#ffcb52", "xy": [56, 500], "max_w": 620},
+    {"text": "{line1_es}", "font": "regular", "size": 30, "min_size": 26, "max_lines": 2, "color": "#e6ecf7", "xy": [56, 610], "max_w": 620}
+  ],
+  "badge": {"text": "EN · ES", "font": "mono", "size": 24, "color": "#0a0f1e", "fill": "#6fd3ff", "xy": [1096, 48]},
+  "avoid": [[1100, 650, 1280, 720]],
+  "margin_pct": 4,
+  "min_contrast": 3.0
+}

@@ -32,6 +32,8 @@ import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
 HERE = Path(__file__).resolve().parent
+sys.path.insert(0, str(HERE.parent))
+import encode  # noqa: E402  (NVENC when it works, else x264: see ../encode.py)
 W, H = 1080, 1920
 BG, PANEL, LINE, TEXT, MUTED, DIM = (10, 15, 30), (19, 28, 51), (36, 49, 84), (236, 241, 250), (196, 207, 228), (104, 118, 146)
 COL = {"leader": (111, 211, 255), "bell": (255, 129, 102), "clave": (255, 203, 82), "conga": (95, 227, 181), "bass": (164, 140, 255)}
@@ -361,6 +363,7 @@ def main():
     ap.add_argument("--seconds", type=float, help="render only the first N seconds (tests)")
     ap.add_argument("--stills", action="store_true")
     ap.add_argument("--write-clock", help="write the per-frame clock JSON for external floor renderers and exit")
+    ap.add_argument("--encoder", choices=["auto", "nvenc", "x264"], default="auto")
     ARGS = a = ap.parse_args()
 
     ep = node_json(f"import('./{a.episode}').then(m=>console.log(JSON.stringify(m.EPISODE)))")
@@ -376,13 +379,9 @@ def main():
     clock = Clock(ep, band)
     base = base_layer(F, not a.final)
     out = Path(a.out)
-    ff = imageio_ffmpeg.get_ffmpeg_exe()
-    cmd = [ff, "-y", "-loglevel", "error", "-f", "rawvideo", "-pix_fmt", "rgb24", "-s", f"{W}x{H}", "-r", str(ep["fps"]), "-i", "-",
-           "-i", str(a.audio), "-map", "0:v", "-map", "1:a",
-           "-vf", "scale=out_color_matrix=bt709:out_range=tv,format=yuv420p",
-           "-c:v", "libx264", "-preset", "slow", "-crf", "16", "-tune", "animation",
-           "-colorspace", "bt709", "-color_primaries", "bt709", "-color_trc", "bt709", "-color_range", "tv",
-           "-c:a", "aac", "-b:a", "192k", "-ar", "48000", "-t", f"{n / ep['fps']:.3f}", "-movflags", "+faststart", str(out)]
+    enc = encode.choose(a.encoder)
+    cmd = encode.pipe_cmd(enc, W, H, ep["fps"], a.audio, n / ep["fps"], out, crf=16)
+    print("encoder:", enc.name, "(" + ("GPU" if enc.gpu else "CPU") + ")")
     p = subprocess.Popen(cmd, stdin=subprocess.PIPE)
     cache = {}
     stills = {}

@@ -85,8 +85,11 @@ def load_series(args, as_of: date) -> Source:
     raise RuntimeError("; ".join(errors))
 
 
+FOLDER_SUFFIX = {"daily": "", "weekly": "-weekly", "grid": "-grid", "river-weekly": "-river"}
+
+
 def post_folder(as_of: date, cadence: str) -> str:
-    return as_of.isoformat() + ("-weekly" if cadence == "weekly" else "")
+    return as_of.isoformat() + FOLDER_SUFFIX[cadence]
 
 
 def make_post(src: Source, as_of: date, run_dir: Path, cadence: str = "daily", sample=False):
