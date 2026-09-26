@@ -43,9 +43,9 @@ in the browser. No recordings are used.
 | Check | Result |
 |---|---|
 | QA suite (`qa/qa.mjs`) | 15/15 pass: layout at 1440 and 384 px, no horizontal scroll, EN/ES switch, no-JS tables (24 rows), reduced motion follows the OS, axe WCAG 2.1 A/AA 0 violations, sync, tap judge |
-| Visual count flip after the beat is heard | 120 BPM median 14.1 ms · 180 BPM 4.5 ms · 220 BPM 9.6 ms (p95 ≤ 16.8 ms, never early; n = 17 each) |
-| Tap judge (synthetic taps) | three taps aimed at 1 scored "On the 1" (+11 to +13 ms); a tap on 5 scored "That was the 5" |
-| Weight | whole page 22.1 KB gzipped (JS 15.0 KB, CSS 3.1 KB); 151 KB transferred including fonts |
+| Visual count flip after the beat is heard | Latest run (2026-09-26 03:24 UTC): 120 BPM median 5.0 ms · 180 BPM 11.0 ms · 220 BPM 9.4 ms (p95 ≤ 17.2 ms, never early; n = 16–17). Earlier runs landed in the same 0–17 ms band; the number moves with where the frame clock falls |
+| Tap judge (synthetic taps) | three taps aimed at 1 scored "On the 1" (+8 ms); a tap on 5 scored "That was the 5" |
+| Weight | whole page 21.4 KB gzipped (JS 14.3 KB, CSS 3.1 KB), about 150 KB transferred including fonts. The video-capture hooks are stripped from this build and live only in `dist/render.html` (noindex, never deployed) |
 | Lighthouse 12.8.2, mobile (median of 3) | Performance 98 · LCP 1.81 s · CLS 0 · TBT 0 ms · Accessibility 100 |
 | Lighthouse, desktop | Performance 100 · LCP 0.40 s · CLS 0 |
 

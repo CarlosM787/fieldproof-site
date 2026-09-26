@@ -1,5 +1,5 @@
 {
-  "when": "2026-09-26T03:17:47.913Z",
+  "when": "2026-09-26T03:24:29.574Z",
   "chromium": "141.0.7390.37",
   "results": [
     {
@@ -57,11 +57,11 @@
       "name": "sync @120 BPM: every count flips 0-34 ms after it is heard (<= 2 frames)",
       "ok": true,
       "detail": {
-        "n": 17,
-        "min": 10.6,
-        "median": 11,
-        "p95": 11.7,
-        "max": 11.7,
+        "n": 16,
+        "min": 4.7,
+        "median": 5,
+        "p95": 5.4,
+        "max": 5.4,
         "early": 0
       }
     },
@@ -70,10 +70,10 @@
       "ok": true,
       "detail": {
         "n": 17,
-        "min": 4,
-        "median": 4.3,
-        "p95": 4.9,
-        "max": 4.9,
+        "min": 10.8,
+        "median": 11,
+        "p95": 11.3,
+        "max": 11.3,
         "early": 0
       }
     },
@@ -82,10 +82,10 @@
       "ok": true,
       "detail": {
         "n": 17,
-        "min": 1.1,
-        "median": 8.7,
-        "p95": 16.1,
-        "max": 16.1,
+        "min": 1.9,
+        "median": 9.4,
+        "p95": 17.2,
+        "max": 17.2,
         "early": 0
       }
     },
@@ -95,11 +95,11 @@
       "detail": [
         {
           "target": 1,
-          "verdict": "On the 1 · +11 ms"
+          "verdict": "On the 1 · +8 ms"
         },
         {
           "target": 1,
-          "verdict": "On the 1 · +10 ms"
+          "verdict": "On the 1 · +8 ms"
         },
         {
           "target": 5,
@@ -107,34 +107,34 @@
         },
         {
           "target": 1,
-          "verdict": "On the 1 · +10 ms"
+          "verdict": "On the 1 · +8 ms"
         }
       ]
     }
   ],
   "timing": {
     "120": {
-      "n": 17,
-      "min": 10.6,
-      "median": 11,
-      "p95": 11.7,
-      "max": 11.7,
+      "n": 16,
+      "min": 4.7,
+      "median": 5,
+      "p95": 5.4,
+      "max": 5.4,
       "early": 0
     },
     "180": {
       "n": 17,
-      "min": 4,
-      "median": 4.3,
-      "p95": 4.9,
-      "max": 4.9,
+      "min": 10.8,
+      "median": 11,
+      "p95": 11.3,
+      "max": 11.3,
       "early": 0
     },
     "220": {
       "n": 17,
-      "min": 1.1,
-      "median": 8.7,
-      "p95": 16.1,
-      "max": 16.1,
+      "min": 1.9,
+      "median": 9.4,
+      "p95": 17.2,
+      "max": 17.2,
       "early": 0
     }
   }

@@ -85,7 +85,10 @@ function tables(lang) {
 }
 
 const model = read('src/model.js').replace(/^export /gm, '');
-const app = read('src/app.js').replace('/*__MODEL__*/', model);
+const appAll = read('src/app.js').replace('/*__MODEL__*/', model);
+// The #render hooks drive the video pilots only; production pages ship without them.
+const app = appAll.replace(/  \/\/ @render-start[\s\S]*?\/\/ @render-end\n/, '');
+if (app === appAll) throw new Error('render hooks not found: markers changed?');
 const css = read('src/style.css');
 const body = read('src/body.html')
   .replace('{{NOTES_EN}}', TXT.en.body.replace('{{TABLES}}', tables('en')))
@@ -120,6 +123,8 @@ ${app}</script>
 </html>
 `;
 writeFileSync(here + 'dist/index.html', full);
+// Capture-only page for ../video-pilots (same page plus the #render hooks; noindex, never deployed)
+writeFileSync(here + 'dist/render.html', full.replace(`<script>\n${app}</script>`, () => `<script>\n${appAll}</script>`));
 
 const kb = (n) => (n / 1024).toFixed(1) + ' KB';
 const report = {

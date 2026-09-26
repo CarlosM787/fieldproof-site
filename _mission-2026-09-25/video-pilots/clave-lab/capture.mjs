@@ -23,7 +23,7 @@ await new Promise((r) => server.once('listening', r));
 
 const browser = await chromium.launch({ executablePath: process.env.CHROME || '/opt/pw-browsers/chromium-1194/chrome-linux/chrome' });
 const page = await browser.newPage({ viewport: { width: 1120, height: 900 }, deviceScaleFactor: 2 });
-await page.goto(`http://127.0.0.1:${server.address().port}/#render`, { waitUntil: 'load' });
+await page.goto(`http://127.0.0.1:${server.address().port}/render.html#render`, { waitUntil: 'load' });
 await page.evaluate(() => window.__render.set({ state: { pattern: 'on1', role: 'both', loop: 'all', reduced: false }, lang: 'en' }));
 
 // audio first: the page's own synth, rendered offline, with the per-measure mix from the episode

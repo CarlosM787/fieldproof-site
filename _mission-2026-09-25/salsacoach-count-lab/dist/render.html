@@ -1,6 +1,500 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>SalsaCoach Count Lab</title>
+<meta name="description" content="See each salsa step land on the count and practise hearing the 1, On1 and On2, leader and follower.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=Big+Shoulders+Display:wght@800&family=JetBrains+Mono:wght@500&display=optional">
+<style>
+:root {
+  color-scheme: dark;
+  --ground: #0a0f1e;
+  --stage: #0d1427;
+  --panel: #131c33;
+  --panel-2: #192440;
+  --line: #243154;
+  --line-soft: #1a2542;
+  --text: #eaf0fa;
+  --muted: #a3b0ca;
+  --faint: #8a98b5;
+  --leader: #6fd3ff;
+  --follower: #ff72b8;
+  --bell: #ff8166;
+  --clave: #ffcb52;
+  --conga: #5fe3b5;
+  --bass: #a48cff;
+  --good: #5fe3b5;
+  --warn: #ffcb52;
+  --radius: 14px;
+  --display: "Big Shoulders Display", "Bahnschrift Condensed", "Avenir Next Condensed", "Roboto Condensed", sans-serif-condensed, "Arial Narrow", Impact, sans-serif;
+  --body: "Atkinson Hyperlegible", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+html { background: var(--ground); }
+body {
+  background: var(--ground);
+  color: var(--text);
+  font: 16px/1.5 var(--body);
+  margin: 0;
+  padding-inline: 16px;
+  padding-block: 14px 48px;
+  -webkit-text-size-adjust: 100%;
+}
+.wrap { max-width: 1120px; margin-inline: auto; display: grid; gap: 18px; }
+.wrap > *, .notes > *, .trainer > *, .dock > * { min-width: 0; }
+a { color: var(--leader); }
+button, select, input { font: inherit; color: inherit; }
+:focus-visible { outline: 2px solid var(--leader); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* header */
+.top { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.brand { display: flex; align-items: baseline; gap: 10px; }
+.brand b { font: 800 26px/1 var(--display); letter-spacing: .02em; text-transform: uppercase; }
+.brand span { font: 500 12px/1 var(--mono); color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+.seg { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 999px; padding: 3px; gap: 2px; }
+.seg button { background: none; border: 0; border-radius: 999px; padding: 6px 12px; min-height: 36px; color: var(--muted); cursor: pointer; font-size: 14px; }
+.seg button[aria-pressed="true"] { background: var(--panel-2); color: var(--text); box-shadow: inset 0 0 0 1px var(--line); }
+h1 { font: 800 clamp(34px, 6.2vw, 64px)/.95 var(--display); letter-spacing: .01em; text-transform: uppercase; margin: 6px 0 0; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--leader); }
+.lede { color: var(--muted); max-width: 62ch; margin: 8px 0 0; }
+
+/* stage */
+.stage { position: relative; background: radial-gradient(120% 90% at 50% 100%, #14203d 0%, var(--stage) 60%); border: 1px solid var(--line); border-radius: var(--radius); overflow: hidden; }
+.stage canvas { display: block; width: 100%; aspect-ratio: 16 / 9; touch-action: none; cursor: grab; }
+.stage canvas:active { cursor: grabbing; }
+.hud { position: absolute; inset: 12px 12px auto 12px; display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; pointer-events: none; flex-wrap: wrap; }
+.hud > * { pointer-events: auto; }
+.badge { display: inline-flex; flex-direction: column; gap: 2px; background: rgba(10, 15, 30, .78); border: 1px solid var(--line); border-radius: 10px; padding: 8px 10px; max-width: 30ch; }
+.badge b { font-size: 14px; }
+.badge small { color: var(--muted); font-size: 12px; line-height: 1.35; }
+.views { display: flex; gap: 4px; flex-wrap: wrap; justify-content: flex-end; }
+.views button { background: rgba(10, 15, 30, .78); border: 1px solid var(--line); border-radius: 8px; padding: 5px 9px; min-height: 32px; color: var(--muted); font-size: 13px; cursor: pointer; }
+.views button[aria-pressed="true"] { color: var(--text); border-color: var(--leader); }
+.count-big { position: absolute; left: 14px; bottom: 6px; font: 800 clamp(64px, 11vw, 120px)/1 var(--display); color: var(--leader); text-shadow: 0 0 28px rgba(111, 211, 255, .35); pointer-events: none; font-variant-numeric: tabular-nums; }
+.count-big small { font-size: .32em; color: var(--muted); margin-left: 6px; letter-spacing: .04em; text-shadow: none; }
+.legend { position: absolute; right: 12px; bottom: 12px; display: flex; gap: 12px; font-size: 13px; color: var(--muted); background: rgba(10, 15, 30, .7); padding: 6px 10px; border-radius: 8px; pointer-events: none; }
+.legend i { display: inline-block; width: 10px; height: 10px; border-radius: 3px; margin-right: 6px; vertical-align: -1px; }
+.legend .hint { color: var(--faint); }
+
+/* count strip + band lanes share one 16-column grid */
+.board { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; overflow-x: auto; }
+.grid { display: grid; grid-template-columns: 76px repeat(16, minmax(18px, 1fr)); gap: 3px; min-width: 520px; position: relative; }
+.grid .lbl { font-size: 12px; color: var(--muted); display: flex; align-items: center; gap: 6px; }
+.count { grid-column: span 2; background: var(--panel-2); border: 1px solid var(--line-soft); border-radius: 8px; padding: 4px 4px 5px; text-align: center; cursor: pointer; color: var(--text); min-height: 64px; display: grid; gap: 2px; align-content: start; }
+.count .n { font: 800 26px/1 var(--display); font-variant-numeric: tabular-nums; }
+.count .g { font: 500 10.5px/1.2 var(--mono); color: var(--muted); letter-spacing: .02em; }
+.count .g.l { color: var(--leader); }
+.count .g.f { color: var(--follower); }
+.count.brk { border-color: #2f4270; }
+.count.hold .n { color: var(--faint); }
+.count.now { background: #1f3159; border-color: var(--leader); box-shadow: 0 0 0 1px var(--leader) inset; }
+.lane-btn { background: none; border: 1px solid var(--line); border-radius: 7px; color: var(--muted); font-size: 12px; padding: 3px 6px; cursor: pointer; width: 100%; text-align: left; min-height: 28px; display: flex; align-items: center; gap: 6px; }
+.lane-btn i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.lane-btn[aria-pressed="false"] { opacity: .45; text-decoration: line-through; }
+.cell { height: 28px; border-radius: 5px; background: var(--line-soft); display: grid; place-items: center; }
+.cell.beat { background: #1f2a49; }
+.cell .d { width: 8px; height: 8px; border-radius: 50%; }
+.cell .d.big { width: 13px; height: 13px; }
+.cell.now { outline: 2px solid rgba(234, 240, 250, .8); outline-offset: -2px; }
+.muted-lane .cell .d { opacity: .25; }
+
+/* dock */
+.dock { display: grid; grid-template-columns: auto 1fr; gap: 14px 18px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 14px; }
+.play { width: 64px; height: 64px; border-radius: 50%; border: 0; background: var(--leader); color: #04121c; cursor: pointer; display: grid; place-items: center; font-weight: 700; }
+.play svg { width: 26px; height: 26px; }
+.ctrls { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; }
+.field { display: grid; gap: 4px; }
+.field > span { font: 500 11px/1 var(--mono); letter-spacing: .08em; text-transform: uppercase; color: var(--faint); }
+.tempo { display: flex; align-items: center; gap: 10px; }
+.tempo input { width: 180px; accent-color: var(--leader); }
+.tempo output { font: 500 15px/1 var(--mono); min-width: 7ch; font-variant-numeric: tabular-nums; }
+select { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; padding: 7px 10px; min-height: 38px; }
+.chk { display: inline-flex; gap: 8px; align-items: center; font-size: 14px; color: var(--muted); min-height: 38px; cursor: pointer; }
+.chk input { accent-color: var(--leader); width: 18px; height: 18px; }
+.stepper { display: inline-flex; gap: 6px; }
+.stepper button { background: var(--panel-2); border: 1px solid var(--line); border-radius: 8px; min-width: 40px; min-height: 38px; cursor: pointer; }
+
+/* trainer */
+.trainer { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 18px; background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+.trainer h2, .notes h2 { font: 800 30px/1 var(--display); text-transform: uppercase; letter-spacing: .02em; margin: 0 0 6px; }
+.trainer p { color: var(--muted); margin: 0 0 10px; max-width: 58ch; }
+.tap { width: 100%; min-height: 96px; border-radius: 16px; border: 2px solid var(--leader); background: #10203d; color: var(--text); font: 800 30px/1 var(--display); text-transform: uppercase; letter-spacing: .03em; cursor: pointer; touch-action: manipulation; user-select: none; -webkit-user-select: none; }
+.tap:active, .tap.hit { background: #1b3a66; }
+.verdict { font: 800 34px/1.05 var(--display); text-transform: uppercase; min-height: 1.1em; margin: 4px 0 2px; }
+.verdict.good { color: var(--good); } .verdict.warn { color: var(--warn); } .verdict.five { color: var(--follower); }
+.target { position: relative; height: 54px; border-radius: 10px; background: linear-gradient(90deg, #1a2542 0 28%, #173a3c 28% 72%, #1a2542 72% 100%); border: 1px solid var(--line); margin: 8px 0 4px; }
+.target::after { content: ""; position: absolute; left: 50%; top: 6px; bottom: 6px; width: 2px; background: var(--good); opacity: .7; }
+.target .dot { position: absolute; top: 50%; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: var(--leader); box-shadow: 0 0 0 2px var(--ground); }
+.target .dot.five { background: var(--follower); }
+.axis { display: flex; justify-content: space-between; font: 500 11px/1 var(--mono); color: var(--faint); }
+.stats { font: 500 13px/1.5 var(--mono); color: var(--muted); margin-top: 8px; }
+.row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+.btn { background: var(--panel-2); border: 1px solid var(--line); border-radius: 10px; padding: 8px 12px; min-height: 40px; cursor: pointer; }
+
+/* notes / tables (also the page without JavaScript) */
+.notes { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; display: grid; gap: 14px; }
+.notes p, .notes li { color: var(--muted); max-width: 70ch; }
+.notes h3 { margin: 10px 0 4px; font-size: 17px; }
+.tw { overflow-x: auto; }
+table { border-collapse: collapse; width: 100%; min-width: 520px; font-size: 14px; }
+th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+th { color: var(--faint); font: 500 11px/1.2 var(--mono); letter-spacing: .06em; text-transform: uppercase; }
+td.c { font: 800 20px/1 var(--display); width: 44px; }
+td.l { color: var(--leader); } td.f { color: var(--follower); }
+tr.hold td { color: var(--faint); }
+.status { border-left: 3px solid var(--warn); padding: 8px 12px; background: var(--panel-2); border-radius: 0 10px 10px 0; }
+details summary { cursor: pointer; color: var(--text); }
+
+@media (max-width: 720px) {
+  .stage canvas { aspect-ratio: 4 / 3.6; }
+  .dock { grid-template-columns: 1fr; }
+  .play { width: 56px; height: 56px; }
+  .trainer { grid-template-columns: 1fr; }
+  .tempo input { width: 150px; }
+  .legend { display: none; }
+  .count-big { font-size: 64px; }
+  .hint { display: none; }
+  .badge { max-width: 100%; padding: 6px 8px; }
+  .badge small { display: none; }
+  .views button { padding: 4px 7px; font-size: 12px; min-height: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+<noscript><style>.js{display:none!important}</style></noscript>
+<div class="wrap">
+  <header class="top">
+    <div class="brand"><b>SalsaCoach</b><span>Count Lab · prototype</span></div>
+    <div class="seg js" role="group" aria-label="Language / Idioma">
+      <button type="button" id="lang-en" data-lang="en" aria-pressed="true">English</button>
+      <button type="button" id="lang-es" data-lang="es" aria-pressed="false">Español</button>
+    </div>
+  </header>
+
+  <section>
+    <h1 data-i18n-html="h1">See every step land. <em>Hear where the 1 lives.</em></h1>
+    <p class="lede" data-i18n="lede">A leader and a follower dance the basic step on a shared floor while a synthesized salsa band plays underneath. Everything you see moves on the band's own clock: the foot lifts late in the beat and the weight lands on the count.</p>
+  </section>
+
+  <section class="stage js" aria-label="Dance floor">
+    <canvas id="floor" tabindex="0" role="img" aria-label="Dance floor"></canvas>
+    <div class="hud">
+      <div class="badge" id="badge"><b id="badge-name">On1</b><small id="badge-rule"></small></div>
+      <div class="views" role="group" id="views" aria-label="Camera">
+        <button type="button" id="view-leader" data-view="leader" aria-pressed="true">Behind leader</button>
+        <button type="button" id="view-follower" data-view="follower" aria-pressed="false">Behind follower</button>
+        <button type="button" id="view-side" data-view="side" aria-pressed="false">Side</button>
+        <button type="button" id="view-top" data-view="top" aria-pressed="false">Above</button>
+      </div>
+    </div>
+    <div class="count-big" id="count-big" aria-hidden="true">1</div>
+    <div class="legend" aria-hidden="true"><span><i style="background:var(--leader)"></i><span data-i18n="leader">Leader</span></span><span><i style="background:var(--follower)"></i><span data-i18n="follower">Follower</span></span><span class="hint" data-i18n="hint">Drag the floor to turn the camera</span></div>
+  </section>
+
+  <section class="board js" aria-label="Count strip and band">
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <section class="dock js" aria-label="Controls">
+    <button type="button" class="play" id="play" aria-label="Play">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path id="play-icon" fill="currentColor" d="M7 4.5v15l13-7.5z"/></svg>
+    </button>
+    <div class="ctrls">
+      <label class="field"><span data-i18n="tempo">Tempo</span>
+        <span class="tempo"><input type="range" id="bpm" min="90" max="220" step="2" value="150"><output id="bpm-out" for="bpm">150 BPM</output></span>
+      </label>
+      <label class="field"><span data-i18n="pattern">Step pattern</span>
+        <select id="pattern">
+          <option value="on1">On1</option>
+          <option value="on2t">On2 · Torres count</option>
+          <option value="on2c">On2 · 2-3-4 count</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="show">Show</span>
+        <select id="role">
+          <option value="both">Both</option>
+          <option value="leader">Leader</option>
+          <option value="follower">Follower</option>
+        </select>
+      </label>
+      <label class="field"><span data-i18n="loop">Loop</span>
+        <select id="loop">
+          <option value="all">1–8</option>
+          <option value="first">1–4</option>
+          <option value="second">5–8</option>
+        </select>
+      </label>
+      <div class="field"><span data-i18n="step">Step</span>
+        <span class="stepper"><button type="button" id="prev" aria-label="Previous count">◀</button><button type="button" id="next" aria-label="Next count">▶</button></span>
+      </div>
+      <label class="chk"><input type="checkbox" id="mirror"> <span data-i18n="mirror">Mirror</span></label>
+      <label class="chk"><input type="checkbox" id="reduced"> <span data-i18n="reduced">Reduced motion</span></label>
+    </div>
+  </section>
+
+  <section class="trainer js" aria-labelledby="trainer-title">
+    <div>
+      <h2 id="trainer-title" data-i18n="trainerTitle">Find the 1</h2>
+      <p data-i18n="trainerIntro">Tap on every 1 while the band plays. No sound in this band announces the 1: the clave stays silent there, so your ears have to find it from the bell and the congas.</p>
+      <div class="seg" role="group" id="levels" aria-label="Difficulty">
+        <button type="button" id="lv-guided" data-level="guided" aria-pressed="true">Click on the 1</button>
+        <button type="button" id="lv-band" data-level="band" aria-pressed="false">Band only</button>
+        <button type="button" id="lv-nobell" data-level="nobell" aria-pressed="false">No bell</button>
+      </div>
+      <div class="row" style="margin-top:12px">
+        <button type="button" class="btn" id="calibrate">Calibrate</button>
+        <span class="stats" id="cal-out"></span>
+      </div>
+    </div>
+    <div>
+      <button type="button" class="tap" id="tap">Tap on the 1</button>
+      <div class="verdict" id="verdict" aria-live="polite"></div>
+      <div class="target" id="target" aria-hidden="true"></div>
+      <div class="axis" aria-hidden="true"><span>−250 ms</span><span data-i18n="early">early</span><span>0</span><span data-i18n="late">late</span><span>+250 ms</span></div>
+      <div class="stats" id="stats"></div>
+    </div>
+  </section>
+
+  <section class="notes" aria-label="Steps and notes">
+    <div data-lang-block="en" lang="en">
+      <h2>How to read the floor</h2>
+      <p>Filled shoe: the weight is on that foot. Outlined shoe: the free foot. The ring on the floor sits under the hips, and the dotted line drops from the hips to show which foot carries the weight. The leader is celeste and the follower is pink. They face each other, so when the leader breaks forward the follower breaks back, and the couple moves as one.</p>
+      <h2>Where is the 1?</h2>
+      <p>This band plays 2-3 son clave (gold). It strikes 2, 3, 5, the “and” of 6, and 8, and never the 1. The bell’s big strokes (coral) fall on 1, 3, 5 and 7. The congas (mint) slap on 2 and 6, the classic On2 reference, and play two open tones on 4 and 4&amp; and on 8 and 8&amp;, right before 5 and 1. The bass (violet) plays the “and” of 2 and beat 4, so it skips the 1. The bell and the congas mark 1 and 5 the same way. In this band the difference is the clave: silent on 1, sounding on 5.</p>
+      <h2>The steps, count by count</h2>
+      <h3>On1</h3>
+      <p>Steps on 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 1 and 5.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot closes beside the other foot</td><td class="f">Right foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">5</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot closes beside the other foot</td><td class="f">Left foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      </tbody></table></div>
+      <h3>On2 · Torres count</h3>
+      <p>Steps on 1-2-3 and 5-6-7, pause on 4 and 8. Breaks on 2 and 6; counts 1 and 5 are small preparation steps.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Left foot small step back (prep)</td><td class="f">Right foot small step forward (prep)</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">5</td><td class="l">Right foot small step forward (prep)</td><td class="f">Left foot small step back (prep)</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      </tbody></table></div>
+      <h3>On2 · 2-3-4 count</h3>
+      <p>Steps on 2-3-4 and 6-7-8, pause on 1 and 5. Breaks on 2 and 6. This is the count the SalsaCoach app scores. Which way the leader breaks on 2 is disputed; this page shows back, as the app does.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Count</th><th scope="col">Leader</th><th scope="col">Follower</th></tr></thead><tbody>
+      <tr class="hold"><td class="c">1</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">2</td><td class="l">Right foot back · break</td><td class="f">Left foot forward · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Left foot in place, weight change</td><td class="f">Right foot in place, weight change</td></tr>
+      <tr><td class="c">4</td><td class="l">Right foot closes beside the other foot</td><td class="f">Left foot closes beside the other foot</td></tr>
+      <tr class="hold"><td class="c">5</td><td class="l">Hold: no step</td><td class="f">Hold: no step</td></tr>
+      <tr><td class="c">6</td><td class="l">Left foot forward · break</td><td class="f">Right foot back · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Right foot in place, weight change</td><td class="f">Left foot in place, weight change</td></tr>
+      <tr><td class="c">8</td><td class="l">Left foot closes beside the other foot</td><td class="f">Right foot closes beside the other foot</td></tr>
+      </tbody></table></div>
+      <h2>Open questions for an instructor</h2>
+      <ol>
+        <li>Which count should the site call On2: the Torres count, the 2-3-4 count, or both under clear names?</li>
+        <li>In the 2-3-4 count, does the leader break back or forward on 2? Sources disagree. This page shows back, as the SalsaCoach app does.</li>
+        <li>In the Torres count, is the 1 danced on the beat or just before it? This page puts the weight on the beat.</li>
+        <li>When does the foot leave the floor? This page lifts it in the last 40% of the beat, so the weight lands on the count.</li>
+        <li>What happens on the pause: nothing, a tap, or either?</li>
+        <li>Default camera: behind the teacher, or facing a mirror?</li>
+      </ol>
+      <p class="status"><b>Status:</b> prototype, not on mysalsacoach.com. The band is synthesized in your browser from traditional patterns; no recordings are used. Step conventions follow the SalsaCoach timing research notes (sections 2, 3, 6 and 7); no instructor has reviewed them yet. Timing was measured in a desktop browser, not yet on a phone or with Bluetooth headphones.</p>
+    </div>
+    <details data-lang-block="es" lang="es">
+      <summary>Versión en español</summary>
+      <h2>Cómo leer el piso</h2>
+      <p>Zapato relleno: el peso está en ese pie. Zapato con contorno: el pie libre. El anillo en el piso queda debajo de la cadera, y la línea punteada baja desde la cadera para mostrar qué pie carga el peso. El líder es celeste y el seguidor(a) es rosa. Están frente a frente: cuando el líder hace el break hacia adelante, el seguidor(a) lo hace hacia atrás, y la pareja se mueve como una sola.</p>
+      <h2>¿Dónde está el uno?</h2>
+      <p>Esta banda toca clave de son 2-3 (dorado). Suena en 2, 3, 5, el «y» del 6 y el 8, y nunca en el 1. Los golpes fuertes de la campana (coral) caen en 1, 3, 5 y 7. Las congas (menta) dan el golpe seco en 2 y 6, la referencia clásica del On2, y tocan dos tonos abiertos en 4 y 4-y, y en 8 y 8-y, justo antes del 5 y del 1. El bajo (violeta) toca el «y» del 2 y el tiempo 4, así que se salta el 1. La campana y las congas marcan el 1 y el 5 igual. En esta banda la diferencia es la clave: calla en el 1 y suena en el 5.</p>
+      <h2>Los pasos, tiempo por tiempo</h2>
+      <h3>On1</h3>
+      <p>Pasos en 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 1 y 5.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo se junta con el otro pie</td><td class="f">Pie derecho se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">5</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho se junta con el otro pie</td><td class="f">Pie izquierdo se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      </tbody></table></div>
+      <h3>On2 · conteo Torres</h3>
+      <p>Pasos en 1-2-3 y 5-6-7, pausa en 4 y 8. Breaks en 2 y 6; el 1 y el 5 son pasos pequeños de preparación.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr><td class="c">1</td><td class="l">Pie izquierdo paso pequeño atrás (preparación)</td><td class="f">Pie derecho paso pequeño adelante (preparación)</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr class="hold"><td class="c">4</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">5</td><td class="l">Pie derecho paso pequeño adelante (preparación)</td><td class="f">Pie izquierdo paso pequeño atrás (preparación)</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr class="hold"><td class="c">8</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      </tbody></table></div>
+      <h3>On2 · conteo 2-3-4</h3>
+      <p>Pasos en 2-3-4 y 6-7-8, pausa en 1 y 5. Breaks en 2 y 6. Es el conteo que califica la app SalsaCoach. Hacia dónde hace el break el líder en el 2 está en disputa; esta página lo muestra hacia atrás, como la app.</p>
+      <div class="tw"><table><thead><tr><th scope="col">Tiempo</th><th scope="col">Líder</th><th scope="col">Seguidor(a)</th></tr></thead><tbody>
+      <tr class="hold"><td class="c">1</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">2</td><td class="l">Pie derecho atrás · break</td><td class="f">Pie izquierdo adelante · break</td></tr>
+      <tr><td class="c">3</td><td class="l">Pie izquierdo en su lugar, cambio de peso</td><td class="f">Pie derecho en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">4</td><td class="l">Pie derecho se junta con el otro pie</td><td class="f">Pie izquierdo se junta con el otro pie</td></tr>
+      <tr class="hold"><td class="c">5</td><td class="l">Pausa: sin paso</td><td class="f">Pausa: sin paso</td></tr>
+      <tr><td class="c">6</td><td class="l">Pie izquierdo adelante · break</td><td class="f">Pie derecho atrás · break</td></tr>
+      <tr><td class="c">7</td><td class="l">Pie derecho en su lugar, cambio de peso</td><td class="f">Pie izquierdo en su lugar, cambio de peso</td></tr>
+      <tr><td class="c">8</td><td class="l">Pie izquierdo se junta con el otro pie</td><td class="f">Pie derecho se junta con el otro pie</td></tr>
+      </tbody></table></div>
+      <h2>Preguntas abiertas para un instructor</h2>
+      <ol>
+        <li>¿Qué conteo debe llamar On2 el sitio: el conteo Torres, el conteo 2-3-4, o los dos con nombres claros?</li>
+        <li>En el conteo 2-3-4, ¿el líder hace el break hacia atrás o hacia adelante en el 2? Las fuentes no coinciden. Esta página lo muestra hacia atrás, como la app SalsaCoach.</li>
+        <li>En el conteo Torres, ¿el 1 se baila en el tiempo o justo antes? Esta página pone el peso en el tiempo.</li>
+        <li>¿Cuándo se levanta el pie? Esta página lo levanta en el último 40&nbsp;% del tiempo, para que el peso caiga en el conteo.</li>
+        <li>¿Qué pasa en la pausa: nada, un toque, o cualquiera de los dos?</li>
+        <li>Cámara por defecto: ¿detrás del maestro, o frente a un espejo?</li>
+      </ol>
+      <p class="status"><b>Estado:</b> prototipo, no está en mysalsacoach.com. La banda se sintetiza en tu navegador a partir de patrones tradicionales; no se usan grabaciones. Las convenciones de pasos siguen las notas de investigación de SalsaCoach (secciones 2, 3, 6 y 7); ningún instructor las ha revisado todavía. La sincronización se midió en un navegador de escritorio, todavía no en un teléfono ni con audífonos Bluetooth.</p>
+    </details>
+  </section>
+  <p class="sr" id="live" aria-live="polite"></p>
+</div>
+
+<script>
 (function () {
   'use strict';
-  /*__MODEL__*/
+  // SalsaCoach Count Lab: the step and band model. One source of truth:
+// build.mjs imports it to write the static step tables, and inlines it into
+// the page so the animation and the tables can never disagree.
+//
+// Floor frame (metres): x = to the leader's right, y = the leader's forward
+// (toward the follower), z = up. The follower stands facing the leader at
+// y = GEOM.gap. In world coordinates the follower's feet make the same moves
+// as the leader's feet on the same side (her right foot mirrors his left).
+
+const GEOM = { hip: 0.12, brk: 0.32, small: 0.10, gap: 0.95 };
+
+const BK = GEOM.brk, SM = GEOM.small;
+
+// steps[count] = [leader foot, leader-frame y target, kind]
+// kinds: break (change of direction), replace (weight change in place),
+// close (foot returns beside the other), prep (small preparation step)
+const PATTERNS = {
+  on1: {
+    holds: [4, 8],
+    breaks: [1, 5],
+    init: { L: 0, R: 0, w: 'R' },
+    steps: {
+      1: ['L', BK, 'break'], 2: ['R', 0, 'replace'], 3: ['L', 0, 'close'],
+      5: ['R', -BK, 'break'], 6: ['L', 0, 'replace'], 7: ['R', 0, 'close'],
+    },
+    source: '7.3',
+  },
+  on2t: {
+    holds: [4, 8],
+    breaks: [2, 6],
+    init: { L: BK, R: SM, w: 'R' },
+    steps: {
+      1: ['L', -SM, 'prep'], 2: ['R', -BK, 'break'], 3: ['L', -SM, 'replace'],
+      5: ['R', SM, 'prep'], 6: ['L', BK, 'break'], 7: ['R', SM, 'replace'],
+    },
+    source: '7.4',
+  },
+  on2c: {
+    holds: [1, 5],
+    breaks: [2, 6],
+    init: { L: 0, R: 0, w: 'L' },
+    steps: {
+      2: ['R', -BK, 'break'], 3: ['L', 0, 'replace'], 4: ['R', 0, 'close'],
+      6: ['L', BK, 'break'], 7: ['R', 0, 'replace'], 8: ['L', 0, 'close'],
+    },
+    source: '6.13',
+  },
+};
+
+// State after each count: S[0] is the state before count 1 (= after 8).
+function states(p) {
+  const out = [{ ...p.init }];
+  for (let k = 1; k <= 8; k++) {
+    const s = { ...out[k - 1] };
+    const st = p.steps[k];
+    if (st) { s[st[0]] = st[1]; s.w = st[0]; }
+    out.push(s);
+  }
+  return out;
+}
+
+// A pattern must loop: the state after 8 equals the state before 1.
+function loops(p) {
+  const s = states(p), a = s[0], b = s[8];
+  return Math.abs(a.L - b.L) < 1e-9 && Math.abs(a.R - b.R) < 1e-9 && a.w === b.w;
+}
+
+const WORDS = {
+  en: {
+    foot: { L: 'Left foot', R: 'Right foot' },
+    fwd: 'forward', back: 'back', hold: 'Hold: no step',
+    break: 'break', replace: 'in place, weight change', close: 'closes beside the other foot',
+    prepFwd: 'small step forward (prep)', prepBack: 'small step back (prep)',
+  },
+  es: {
+    foot: { L: 'Pie izquierdo', R: 'Pie derecho' },
+    fwd: 'adelante', back: 'atrás', hold: 'Pausa: sin paso',
+    break: 'break', replace: 'en su lugar, cambio de peso', close: 'se junta con el otro pie',
+    prepFwd: 'paso pequeño adelante (preparación)', prepBack: 'paso pequeño atrás (preparación)',
+  },
+};
+
+// Plain-language description of one count for one role.
+function describe(p, count, role, lang) {
+  const w = WORDS[lang] || WORDS.en;
+  const st = p.steps[count];
+  if (!st) return w.hold;
+  const s = states(p);
+  const dy = st[1] - s[count - 1][st[0]];
+  const follower = role === 'follower';
+  const foot = follower ? (st[0] === 'L' ? 'R' : 'L') : st[0];
+  // The follower faces the leader, so his forward is her back.
+  const goesFwd = follower ? dy < 0 : dy > 0;
+  let what;
+  if (st[2] === 'break') what = (goesFwd ? w.fwd : w.back) + ' · ' + w.break;
+  else if (st[2] === 'replace') what = w.replace;
+  else if (st[2] === 'close') what = w.close;
+  else what = goesFwd ? w.prepFwd : w.prepBack;
+  return w.foot[foot] + ' ' + what;
+}
+
+// The band, as 16 eighth-note slots across one 8-count (slot 2k-2 = count k).
+// Traditional salsa patterns, arranged and synthesized for this page:
+// 2-3 son clave strikes 2, 3, 5, 6& and 8 and never the 1.
+const BAND = {
+  bell: { 0: 'm', 2: 'n', 3: 'n', 4: 'm', 6: 'n', 8: 'm', 10: 'n', 11: 'n', 12: 'm', 14: 'n', 15: 'n' },
+  clave: { 2: 'x', 4: 'x', 8: 'x', 11: 'x', 14: 'x' },
+  conga: {
+    0: 'heel', 1: 'tip', 2: 'slap', 3: 'tip', 4: 'heel', 5: 'tip', 6: 'open', 7: 'open',
+    8: 'heel', 9: 'tip', 10: 'slap', 11: 'tip', 12: 'heel', 13: 'tip', 14: 'open', 15: 'open',
+  },
+  // [frequency Hz, length in beats]; anticipated bass on 2& and 4 (and 6&, 8)
+  bass: { 3: [73.42, 0.7], 6: [73.42, 2.3], 11: [110.0, 0.7], 14: [98.0, 2.3] },
+};
+
+const LANES = ['bell', 'clave', 'conga', 'bass'];
+
 
   // ---------- words ----------
   const STR = {
@@ -799,3 +1293,6 @@
   calText();
   document.addEventListener('visibilitychange', () => { if (!document.hidden && S.playing) loop(); });
 })();
+</script>
+</body>
+</html>
