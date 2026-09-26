@@ -1,7 +1,9 @@
 """Settings for the daily data-visual X pipeline (Colorado River Daily + Arizona Grid Daily).
 
 Everything a reviewer might want to check lives here: sources, thresholds, limits, wording rules.
+Evidence labels (VERIFIED / REPORTED / INFERENCE / OPEN) and dates are in AUDIT_P2.md.
 """
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -13,10 +15,27 @@ ACCOUNT_NAME = "Colorado River Daily"
 BIO_EN = "Daily Lake Powell and Lake Mead charts from public USGS and Reclamation data. Automated account run by @(Carlos's handle). Not official."
 BIO_ES = "Gráficas diarias del lago Powell y el lago Mead con datos públicos del USGS y Reclamation. Cuenta automatizada de @(Carlos). No oficial."
 
-# Official sources (all keyless). The pipeline tries them in order.
+# Arizona keeps MST (UTC-7) all year, so the bot's "today" is the Arizona date, whatever the
+# runner's clock says.
+ARIZONA = timezone(timedelta(hours=-7))
+
+
+def today_az() -> date:
+    return datetime.now(ARIZONA).date()
+
+
+# Official sources (keyless). Lake Powell sources are tried in the order of POWELL_SOURCES.
 SOURCES = {
+    # USGS's modern Water Data API. The legacy NWIS services below are "scheduled [to be retired]
+    # late 2026, but uncertain" (VERIFIED: DOI-USGS/dataRetrieval @ad9deab, vignettes/tutorial.Rmd),
+    # so this goes first. OPEN until run on an open network: the query follows USGS's own
+    # dataretrieval-python client. An optional free key (env API_USGS_PAT) raises the rate limit.
+    "usgs_waterdata_powell": {
+        "label": "USGS Water Data API, daily values, site USGS-09379900, parameter 62614 (lake elevation, ft)",
+        "url": "https://api.waterdata.usgs.gov/ogcapi/v0/collections/daily/items?monitoring_location_id=USGS-09379900&parameter_code=62614&time=P400D&skipGeometry=true&limit=50000&f=json",
+    },
     "usgs_powell": {
-        "label": "USGS NWIS site 09379900, parameter 62614 (lake elevation, ft), daily values",
+        "label": "USGS NWIS site 09379900, parameter 62614 (lake elevation, ft), daily values (legacy service)",
         "url": "https://waterservices.usgs.gov/nwis/dv/?format=json&sites=09379900&parameterCd=62614&period=P400D",
     },
     "usbr_powell": {
@@ -33,6 +52,7 @@ SOURCES = {
         "url": "https://www.eia.gov/electricity/gridmonitor/sixMonthFiles/EIA930_BALANCE_2026_Jul_Dec.csv",
     },
 }
+POWELL_SOURCES = ("usgs_waterdata_powell", "usgs_powell", "usbr_powell")
 
 # Lake Powell operating thresholds (feet above sea level). REPORTED: widely published Reclamation
 # figures, also encoded in the third-party analyzer used for the sandbox replay. Re-check on
@@ -42,6 +62,10 @@ POWELL_THRESHOLDS = [
     {"ft": 3490.0, "en": "3,490 ft minimum power pool", "es": "3,490 pies, nivel mínimo para generar energía"},
 ]
 MIN_POWER_POOL_FT = 3490.0
+# The 3,525 ft target comes from the 2019 drought agreements, which run with the 2007 Interim
+# Guidelines through the end of 2026 (REPORTED). After this date the bot refuses to post until a
+# human re-checks the threshold wording and moves the date.
+THRESHOLD_LABELS_VALID_THROUGH = date(2026, 12, 31)
 
 LIMITS = {
     "min_ft": 3300.0,            # below dead pool: a unit or parsing error, not news
@@ -49,10 +73,27 @@ LIMITS = {
     "max_daily_jump_ft": 1.5,    # bigger day-to-day moves need a human look
     "max_age_days": 2,           # the newest value must be from yesterday or the day before
     "min_days_last_30": 27,      # tolerate a few missing days, not a broken feed
+    "min_days_in_week": 6,       # the weekly post needs at least 6 of its 7 days
 }
 
 POST_MAX_CHARS = 280
+ALT_MAX_CHARS = 1000         # POST /2/media/metadata alt_text.text maxLength (VERIFIED openapi.json @3ef050bd)
 ALLOW_URLS_IN_POST = False   # X charges $0.20 per post with a URL vs $0.015 without (VERIFIED docs.x.com pricing)
+
+# Every alt text carries this. USGS labels recent daily values "Provisional", "subject to revision".
+PROVISIONAL_EN = "Recent values are provisional and may be revised."
+PROVISIONAL_ES = "Los valores recientes son provisionales y pueden cambiar."
+
+# Posted log (bot/ledger.py): never the same data date twice for one series, and never a text
+# identical to anything posted within this many days.
+DUPLICATE_TEXT_WINDOW_DAYS = 30
+KINDS = {"daily": "powell-daily", "weekly": "powell-weekly"}
+WEEKDAYS = {"mon": 0, "tue": 1, "wed": 2, "thu": 3, "fri": 4, "sat": 5, "sun": 6}
+WEEKLY_DEFAULT_WEEKDAY = "fri"
+
+# X pay-per-use prices per request (VERIFIED docs.x.com pricing @3ef050bd). Whether the media upload
+# itself is billed is OPEN, so the estimate carries it separately as a worst case.
+PRICE_POST, PRICE_ALT_TEXT, PRICE_MEDIA_UPLOAD_WORST_CASE = 0.015, 0.005, 0.015
 
 MONTHS_EN = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 MONTHS_ES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"]

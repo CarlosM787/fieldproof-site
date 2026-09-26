@@ -1,12 +1,24 @@
-# Template only. It does nothing here: GitHub only runs workflows from .github/workflows/ on the
-# default branch of the repo that holds the bot. Copy it there once Carlos approves a bot repo.
+# Template only. It does nothing here: GitHub runs workflows only from .github/workflows/ on the
+# default branch of the repo that holds the bot. Copy it there once Carlos approves a bot repo
+# (LAUNCH_CHECKLIST_P2.md recommends a private one: this run commits posts before they are approved).
+#
+# Each morning it builds that day's post into runs/<date>/ (dry run) and commits it. Carlos looks at
+# runs/<date>/ on GitHub and approves by adding the post's line to runs/APPROVED_TO_POST;
+# approve.yml.template then posts it. After the per-post weeks: set the repo variable LIVE=true and
+# add a `standing` line (at most 31 days) to runs/APPROVED_TO_POST; this run then posts on its own,
+# still behind the fact-check, the posted log and the approval file.
+# For the weekly river segment instead, add `--cadence weekly --weekday fri` to the run line.
 name: daily-post
 on:
   schedule:
-    - cron: "17 15 * * *"   # 08:17 MST (UTC-7, no DST in Arizona); off the hour, as GitHub recommends
+    - cron: "17 15 * * *"   # 08:17 MST (Arizona has no DST); off the hour, as GitHub recommends
+    - cron: "47 16 * * *"   # 09:47 MST, in case the first run was dropped; the posted log makes a repeat a no-op
   workflow_dispatch: {}
+concurrency:
+  group: x-post            # never two posting runs at once (shared with approve.yml)
+  cancel-in-progress: false
 permissions:
-  contents: write          # to commit the daily log (keeps a public repo "active" past 60 days)
+  contents: write          # commit the queue and the logs
 jobs:
   post:
     runs-on: ubuntu-latest
@@ -16,15 +28,33 @@ jobs:
       - uses: actions/setup-python@v5
         with: { python-version: "3.11" }
       - run: pip install matplotlib==3.11.2
-      - name: Dry run (default) or live when the repo variable LIVE is "true"
+      - name: Queue today's post for approval, or (LIVE=true) post it under a standing approval
         env:
-          X_USER_TOKEN: ${{ secrets.X_USER_TOKEN }}
+          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
+          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
+          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
+          X_REFRESH_TOKEN_OUT: ${{ runner.temp }}/x_refresh_token
+          API_USGS_PAT: ${{ secrets.API_USGS_PAT }}     # optional free USGS key (higher rate limit)
         run: |
-          python -m bot.run_daily --out runs ${{ vars.LIVE == 'true' && '--live' || '' }}
-      - name: Keep the log
+          if [ "${{ vars.LIVE }}" = "true" ]; then
+            python -m bot.run_daily --out runs --live
+          else
+            python -m bot.queue build --out runs --days 1     # writes runs/APPROVAL_QUEUE.md with the approval line
+          fi
+      - name: Store the rotated X refresh token (single-use; losing it means re-authorizing the app)
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}     # fine-grained token: this repo only, Secrets read and write
+          X_REFRESH_TOKEN_OUT: ${{ runner.temp }}/x_refresh_token
+        run: |
+          if [ -s "$X_REFRESH_TOKEN_OUT" ]; then
+            gh secret set X_REFRESH_TOKEN < "$X_REFRESH_TOKEN_OUT"
+            shred -u "$X_REFRESH_TOKEN_OUT"
+          fi
+      - name: Keep the queue and the logs
         if: always()
         run: |
           git config user.name "daily-bot"; git config user.email "actions@users.noreply.github.com"
-          git add runs/*/log.jsonl runs/*/post.json || true
-          git commit -m "log $(date -u +%F)" || true
+          git add runs/ || true
+          git commit -m "run $(TZ=America/Phoenix date +%F)" || true
           git push || true

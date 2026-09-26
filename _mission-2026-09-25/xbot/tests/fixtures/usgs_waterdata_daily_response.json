@@ -1,0 +1,55 @@
+{
+ "_source": "DOI-USGS/dataretrieval-python @75e56ab (2026-09-14), tests/data/waterdata_ogc_fixtures.json, key 'daily': a recorded response of the USGS Water Data API collection 'daily'. Public domain in the U.S. / CC0 1.0 (LICENSE.md of that repo). Site USGS-05427718, discharge; used only to check the response shape.",
+ "response": {
+  "features": [
+   {
+    "geometry": {
+     "coordinates": [
+      -89.35249999999999,
+      43.20888888888889
+     ],
+     "type": "Point"
+    },
+    "id": "00053b44-9ef8-468d-b436-a55022d254e6",
+    "properties": {
+     "approval_status": "Provisional",
+     "last_modified": "2026-07-30T15:43:16.002990+00:00",
+     "monitoring_location_id": "USGS-05427718",
+     "parameter_code": "00060",
+     "qualifier": null,
+     "statistic_id": "00003",
+     "time": "2025-12-26",
+     "time_series_id": "90a0ea0b6d99431e9f3d91da1aa49564",
+     "unit_of_measure": "ft^3/s",
+     "value": "20.2"
+    },
+    "type": "Feature"
+   },
+   {
+    "geometry": {
+     "coordinates": [
+      -89.35249999999999,
+      43.20888888888889
+     ],
+     "type": "Point"
+    },
+    "id": "00de6719-2079-4dfe-a489-85fa6d5c7adc",
+    "properties": {
+     "approval_status": "Provisional",
+     "last_modified": "2026-07-30T15:43:16.002990+00:00",
+     "monitoring_location_id": "USGS-05427718",
+     "parameter_code": "00060",
+     "qualifier": null,
+     "statistic_id": "00003",
+     "time": "2026-03-19",
+     "time_series_id": "90a0ea0b6d99431e9f3d91da1aa49564",
+     "unit_of_measure": "ft^3/s",
+     "value": "27.1"
+    },
+    "type": "Feature"
+   }
+  ],
+  "numberReturned": 2,
+  "type": "FeatureCollection"
+ }
+}

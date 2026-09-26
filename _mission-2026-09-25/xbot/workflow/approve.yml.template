@@ -1,0 +1,54 @@
+# Template only (see daily.yml.template). Posts a queued morning after Carlos approves it: adding
+# the post's line (printed in runs/APPROVAL_QUEUE.md) to runs/APPROVED_TO_POST
+# on github.com triggers this run. The bot's own commits never trigger it: pushes made with
+# GITHUB_TOKEN do not start workflows (VERIFIED, github/docs @18945a3).
+# `bot.queue publish --live` re-checks the files against the approval code, the date (today or
+# yesterday in Arizona) and the posted log before anything is sent.
+name: post-approved
+on:
+  push:
+    branches: [main]
+    paths: ["runs/APPROVED_TO_POST"]
+  workflow_dispatch:
+    inputs:
+      date:
+        description: "Post morning to publish (YYYY-MM-DD). Empty = today in Arizona."
+        required: false
+concurrency:
+  group: x-post
+  cancel-in-progress: false
+permissions:
+  contents: write
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: "3.11" }
+      - run: pip install matplotlib==3.11.2
+      - name: Publish the approved post
+        env:
+          X_CLIENT_ID: ${{ secrets.X_CLIENT_ID }}
+          X_CLIENT_SECRET: ${{ secrets.X_CLIENT_SECRET }}
+          X_REFRESH_TOKEN: ${{ secrets.X_REFRESH_TOKEN }}
+          X_REFRESH_TOKEN_OUT: ${{ runner.temp }}/x_refresh_token
+        run: python -m bot.queue publish --queue runs ${{ inputs.date && format('--date {0}', inputs.date) || '' }} --live
+      - name: Store the rotated X refresh token
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GH_SECRETS_TOKEN }}
+          X_REFRESH_TOKEN_OUT: ${{ runner.temp }}/x_refresh_token
+        run: |
+          if [ -s "$X_REFRESH_TOKEN_OUT" ]; then
+            gh secret set X_REFRESH_TOKEN < "$X_REFRESH_TOKEN_OUT"
+            shred -u "$X_REFRESH_TOKEN_OUT"
+          fi
+      - name: Keep the posted log
+        if: always()
+        run: |
+          git config user.name "daily-bot"; git config user.email "actions@users.noreply.github.com"
+          git add runs/posted_log.jsonl runs/*/log.jsonl || true
+          git commit -m "post $(TZ=America/Phoenix date +%F)" || true
+          git push || true

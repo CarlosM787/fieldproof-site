@@ -1,20 +1,25 @@
-"""Publishing, guarded three ways. Dry run by default.
+"""Publishing, guarded. Dry run by default.
 
-Live posting needs ALL of:
-  1. the --live flag,
-  2. an OAuth 2.0 user-context token in X_USER_TOKEN (Carlos's authorized account),
-  3. a file APPROVED_TO_POST in the run directory containing today's date (a human's daily or
-     standing approval, written by Carlos, never by the bot).
-Endpoints follow docs.x.com as mirrored in xdevplatform/docs @3ef050bd (VERIFIED by the research
-lane); run the first live post by hand and watch it.
+A live post needs ALL of:
+  1. live=True (the --live flag),
+  2. approved=True: the caller found a matching line in APPROVED_TO_POST (bot/approval.py),
+  3. a posted log with no refusal (bot/ledger.py): the caller checks it; publish() writes the
+     `attempt` line just before creating the post and the `posted` line right after,
+  4. a user-context access token (bot/xauth.py), fetched only at this point and never stored here.
+Endpoints and request shapes follow docs.x.com as mirrored in xdevplatform/docs @3ef050bd
+(openapi.json v2.168): POST /2/media/upload (multipart: media, media_category), POST /2/media/metadata
+(id, metadata.alt_text.text, at most 1,000 characters), POST /2/tweets (text, media.media_ids).
+Run the first live post by hand and watch it.
 """
 from __future__ import annotations
 
 import json
 import os
+import urllib.error
 import urllib.request
-from datetime import date
 from pathlib import Path
+
+from . import xauth
 
 API = "https://api.x.com/2"
 
@@ -37,20 +42,33 @@ def _multipart(fields: dict, file_field: str, filename: str, content: bytes, mim
     return b"".join(parts), f"multipart/form-data; boundary={boundary}"
 
 
-def publish(bundle: dict, run_dir: Path, live: bool = False) -> dict:
+def publish(bundle: dict, run_dir: Path, live: bool = False, approved: bool = False, ledger=None,
+            token_provider=xauth.access_token) -> dict:
+    image = Path(run_dir) / bundle["image"]
     if not live:
-        return {"status": "dry-run", "would_post": bundle["text"], "image": bundle["image"]}
-    token = os.environ.get("X_USER_TOKEN")
-    approval = run_dir / "APPROVED_TO_POST"
-    today = date.today().isoformat()
+        return {"status": "dry-run", "would_post": bundle["text"], "image": str(image)}
+    if not approved:
+        return {"status": "blocked", "reason": "no human approval for this post"}
+    token = token_provider()
     if not token:
-        return {"status": "blocked", "reason": "X_USER_TOKEN not set"}
-    if not approval.exists() or today not in approval.read_text():
-        return {"status": "blocked", "reason": f"no human approval for {today} in {approval}"}
-    img = Path(bundle["image"]).read_bytes()
-    body, ctype = _multipart({"media_category": "tweet_image"}, "media", "chart.png", img, "image/png")
+        return {"status": "blocked", "reason": "no X user token (X_REFRESH_TOKEN + X_CLIENT_ID, or X_USER_TOKEN)"}
+    body, ctype = _multipart({"media_category": "tweet_image"}, "media", image.name, image.read_bytes(), "image/png")
     media = _post(f"{API}/media/upload", token, body=body, ctype=ctype)
-    media_id = media.get("data", {}).get("id") or media.get("id") or media.get("media_id_string")
-    _post(f"{API}/media/metadata", token, {"id": media_id, "metadata": {"alt_text": {"text": bundle["alt"][:1000]}}})
-    res = _post(f"{API}/tweets", token, {"text": bundle["text"], "media": {"media_ids": [media_id]}})
-    return {"status": "posted", "id": res.get("data", {}).get("id"), "media_id": media_id}
+    media_id = (media.get("data") or {}).get("id") or media.get("media_id_string")
+    if not media_id:
+        raise RuntimeError(f"media upload returned no id: {media}")
+    _post(f"{API}/media/metadata", token, {"id": media_id, "metadata": {"alt_text": {"text": bundle["alt"]}}})
+    if ledger:
+        ledger.record("attempt", bundle, media_id=media_id)
+    try:
+        res = _post(f"{API}/tweets", token, {"text": bundle["text"], "media": {"media_ids": [media_id]}})
+    except urllib.error.HTTPError as e:
+        if ledger and 400 <= e.code < 500:  # refused outright, so nothing was posted; a timeout or 5xx stays unconfirmed
+            ledger.record("not-posted", bundle, error=f"HTTP {e.code}")
+        raise
+    post_id = (res.get("data") or {}).get("id")
+    if not post_id:
+        raise RuntimeError(f"create-post returned no id (the attempt stays unconfirmed): {res}")
+    if ledger:
+        ledger.record("posted", bundle, post_id=post_id, media_id=media_id)
+    return {"status": "posted", "id": post_id, "media_id": media_id}

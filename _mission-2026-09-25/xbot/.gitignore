@@ -6,3 +6,15 @@ sample/20*/
 sample/*.png
 sample/*.jpg
 sample/SAMPLE_7_DAYS.json
+# approval queues, replays and grid samples stay private: mirror data and unposted renders
+queue*/
+q/
+replay*/
+grid-sample*/
+APPROVED_TO_POST
+posted_log.jsonl
+queue.json
+APPROVAL_QUEUE.md
+index.html
+*.png
+*.jpg
