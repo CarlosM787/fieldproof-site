@@ -6,6 +6,63 @@ brief says a public upload needs Carlos to separately approve the channel and th
 The rendered MP4s, stills and thumbnails are **private**. They are in Carlos's private mission
 report, not in this public repository; `.gitignore` keeps them out.
 
+## Phase Two (v2), 2026-09-26
+
+- **The review of v1:** [`REVIEW_P2.md`](REVIEW_P2.md). Covers every frame and number, loudness, a
+  phone-speaker and headphone simulation, and A/V sync.
+- **How to rebuild, what it costs, the rights ledger:** [`PRODUCTION_P2.md`](PRODUCTION_P2.md).
+  One command per pilot: `./run.sh pilot-a`, `./run.sh pilot-b`, or `py run.py all` on Windows.
+- **Which channel to start:** [`CHANNELS_P2.md`](CHANNELS_P2.md). Carlos chooses before any upload.
+
+| v2 (private) | Pilot A: "Where is the 1?" v2 | Pilot B: Lake Powell v2, 16:9 | Pilot B: Lake Powell v2, Short |
+|---|---|---|---|
+| Format | 1080×1920, 32.0 s, loops | 1920×1080, 70.8 s | 1080×1920, 43.2 s |
+| Built by | `clave-lab/episode_v2.mjs` → `capture.mjs` → `mix_v2.py` → `compose_v2.py` | `desert-systems/lake_powell_v2.py` | the same script |
+| Thumbnail (1280×720) | `thumbnails_v2.py` | `thumbnails_v2.py` | `thumbnails_v2.py` (Shorts show a frame picked in the app: use the hook still) |
+
+The measured loudness, true peak and phone results are in `REVIEW_P2.md`.
+
+### v2 titles and descriptions (drafts for Carlos; nothing is published)
+
+**Pilot A v2 (Short)**
+
+**Title**
+- EN: Where is the 1 in salsa? Half this band never plays it
+- ES: ¿Dónde está el 1 en la salsa? La mitad de esta banda nunca lo toca
+
+**Description**
+- **EN:** Bell, congas, bass and clave, one at a time. Two of the four never play the 1, so how do dancers find it? Listen to the clave: silent on 1, it plays on 5. Then the feet: On1, the weight lands on the 1. Every sound here is made in code, with no recordings; the band's patterns are traditional. mysalsacoach.com
+- **ES:** Campana, congas, bajo y clave, uno por uno. Dos de los cuatro nunca tocan el 1: ¿cómo lo encuentran los bailadores? Escucha la clave: calla en el 1 y suena en el 5. Luego los pies: en On1, el peso cae en el 1. Todo el sonido está hecho con código, sin grabaciones; los patrones de la banda son tradicionales. mysalsacoach.com
+
+**Gate before publishing:** the link line must match what mysalsacoach.com actually offers that day. The Count Lab is not deployed yet. v1's "Free guides in English and Spanish" and "Practice the count at mysalsacoach.com" could not be verified from here, so v2 does not repeat them.
+
+**Pilot B v2, 16:9**
+
+**Title**
+- EN: Three years of Lake Powell in sound: each spring added less
+- ES: Tres años del lago Powell en sonido: cada primavera sumó menos
+
+**Description**
+- **EN:** One note per week of USGS data, Sep 25, 2023 to Sep 24, 2026: higher water, higher note. A chime marks each week the lake rose. The hum is the water still above 3,490 ft, the minimum power pool at Glen Canyon Dam. The spring rises shrank from +29.2 ft (2024) to +4.1 ft (2025) to +2.0 ft (2026), and the lake fell 55.8 ft overall. On Sep 24, 2026 it stood at 3,517.5 ft, 27.5 ft above the minimum power pool. Data: USGS site 09379900, daily lake elevation (provisional). Thresholds: U.S. Bureau of Reclamation. Chart and sound made in code, no recordings. Not advice of any kind.
+- **ES:** Una nota por cada semana de datos del USGS, del 25 de septiembre de 2023 al 24 de septiembre de 2026: más agua, nota más alta. Una campanita marca cada semana en que el lago subió. El zumbido es el agua que queda sobre los 3,490 pies, el nivel mínimo para generar energía en la presa Glen Canyon. Las subidas de primavera bajaron de +29.2 pies (2024) a +4.1 (2025) y a +2.0 (2026), y el lago bajó 55.8 pies en total. El 24 de septiembre de 2026 estaba en 3,517.5 pies, 27.5 pies sobre el nivel mínimo. Datos: USGS, sitio 09379900, elevación diaria del lago (provisional). Umbrales: Buró de Reclamación de EE. UU. Gráfica y sonido hechos con código, sin grabaciones. No es asesoría de ningún tipo.
+
+**Pilot B v2, Short**
+
+**Title**
+- EN: Lake Powell, three years in sound: 27.5 ft left above the minimum power pool
+- ES: El lago Powell, tres años en sonido: quedan 27.5 pies sobre el nivel mínimo de generación
+
+**Description**
+- **EN:** One note per week, Sep 2023 to Sep 2026. Higher water, higher note; a chime for each week the lake rose. Each spring added less: +29.2, +4.1, +2.0 ft. Data: USGS 09379900 (provisional). Thresholds: U.S. Bureau of Reclamation. Made in code, no recordings.
+- **ES:** Una nota por semana, de septiembre de 2023 a septiembre de 2026. Más agua, nota más alta; una campanita por cada semana en que el lago subió. Cada primavera sumó menos: +29.2, +4.1, +2.0 pies. Datos: USGS 09379900 (provisional). Umbrales: Buró de Reclamación de EE. UU. Hecho con código, sin grabaciones.
+
+**Gates before publishing (both Lake Powell versions):**
+- Refresh the data from USGS.
+- Confirm 3,490 ft and 3,525 ft on usbr.gov.
+- Re-run `./run.sh pilot-b`. The number verifier must pass.
+
+## v1 (the first pilots, kept for reference)
+
 | | Pilot A: Clave Lab | Pilot B: Desert Systems, Sonified |
 |---|---|---|
 | Episode | "Where is the 1?" (Short) | "Three years of Lake Powell, turned into sound" |
