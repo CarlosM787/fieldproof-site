@@ -2,3 +2,6 @@ node_modules
 dist/
 evidence/dev/
 evidence/contact-samples.json
+evidence/changes/before/
+evidence/changes/after/
+evidence/changes/after-overlays/

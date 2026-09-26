@@ -77,7 +77,8 @@ export function playSlot(voice, s, t, beatLen, lanes) {
   if (BAND.clave[s] && on('clave')) voice.clave(t);
   const cg = BAND.conga[s]; if (cg && on('conga')) voice.conga(t, cg);
   const bs = BAND.bass[s]; if (bs && on('bass')) voice.bass(t, bs[0], bs[1] * beatLen);
-  if (s === 0 && lanes && lanes.click) voice.click(t, true);
+  if (lanes && lanes.clickAll) { if (s % 2 === 0) voice.click(t, s === 0); } // calibration: every beat
+  else if (s === 0 && lanes && lanes.click) voice.click(t, true);
 }
 
 // A band on the audio clock. `slotOf(tick)` maps a running eighth-note counter to a pattern slot,
@@ -121,10 +122,23 @@ export class Band {
   schedule() {
     const until = this.ctx.currentTime + 0.12;
     while (this.startTime + this.nextTick * this.half() < until) {
-      const t = this.startTime + this.nextTick * this.half();
-      playSlot(this.voices, this.slotOf(this.nextTick), t, 60 / this.bpm, this.lanes);
+      const t = this.startTime + this.nextTick * this.half(), slot = this.slotOf(this.nextTick);
+      playSlot(this.voices, slot, t, 60 / this.bpm, this.lanes);
+      // phase three: the count voice and cues ride the same scheduler and the same clock
+      if (this.onTick) this.onTick(this.nextTick, slot, t);
       this.nextTick++;
     }
+  }
+  // phase three: a persistent output for cues outside the band (step mode, the count voice)
+  cueOut() {
+    this.ensure();
+    if (!this.cue) {
+      this.cue = this.ctx.createGain(); this.cue.gain.value = 0.9;
+      this.cue.connect(this.ctx.destination);
+      this.cueVoices = makeVoices(this.ctx, { click: this.cue, bell: this.cue, clave: this.cue, conga: this.cue, bass: this.cue }, this.noise);
+    }
+    if (this.ctx.state === 'suspended') this.ctx.resume();
+    return this.cue;
   }
   stop() {
     if (!this.playing) return;

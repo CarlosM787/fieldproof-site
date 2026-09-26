@@ -1,0 +1,20 @@
+<!-- SalsaCoach practice banner (EN). Proposed for the mysalsacoach.com homepage; not live.
+     Needs /banner/banner.css and /banner/banner.js (same origin, no inline script, CSP-safe).
+     No 3D here: a poster (LCP-friendly) and a 3.2 s silent loop that loads only when on screen. -->
+<section class="sc-banner" aria-labelledby="sc-banner-h">
+  <div class="sc-copy">
+    <p class="sc-kicker">Practice the basic</p>
+    <h2 id="sc-banner-h">Hear the count.<br>See the step land on it.</h2>
+    <p class="sc-sub">Two dancers step on every count of a band made in your browser. Slow it down, go one step at a time, then speed up.</p>
+    <p class="sc-actions"><a class="sc-cta" href="/practice/">Try the practice</a></p>
+    <p class="sc-note">Generated motion, not motion capture. The 3D dancers load only when you tap Start (under 1&nbsp;MB on a phone, page included).</p>
+  </div>
+  <div class="sc-media">
+    <picture>
+      <source type="image/avif" srcset="/banner/hero-poster.avif">
+      <img class="sc-poster" src="/banner/hero-poster.webp" width="720" height="720" fetchpriority="high" decoding="async" alt="Two dancers in closed hold on a wood floor. A numbered marker shows where the next step lands.">
+    </picture>
+    <video class="sc-loop" muted playsinline loop preload="none" width="720" height="720" aria-hidden="true" tabindex="-1" data-webm="/banner/hero-loop.webm" data-mp4="/banner/hero-loop.mp4"></video>
+    <button type="button" class="sc-pause" hidden aria-pressed="false" data-pause="Pause animation" data-play="Play animation">Pause animation</button>
+  </div>
+</section>

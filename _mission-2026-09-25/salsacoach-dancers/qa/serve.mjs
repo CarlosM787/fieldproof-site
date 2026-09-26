@@ -8,17 +8,18 @@ import { createHash } from 'node:crypto';
 const require = createRequire(process.env.PW_ROOT || '/opt/node22/lib/node_modules/');
 export const { chromium } = require('playwright');
 export const here = new URL('..', import.meta.url).pathname;
-const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.glb': 'model/gltf-binary', '.webp': 'image/webp', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4', '.json': 'application/json' };
+const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.css': 'text/css', '.glb': 'model/gltf-binary', '.webp': 'image/webp', '.avif': 'image/avif', '.jpg': 'image/jpeg', '.png': 'image/png', '.mp4': 'video/mp4', '.webm': 'video/webm', '.json': 'application/json', '.svg': 'image/svg+xml', '.wav': 'audio/wav' };
 export const bytes = { total: 0, byFile: {} };
-export async function serve(root = join(here, 'dist')) {
+export async function serve(root = join(here, 'dist'), headers = {}) {
   const server = createServer((req, res) => {
     const u = decodeURIComponent(req.url.split('?')[0].split('#')[0]);
     const p = join(root, u.replace(/\/$/, '/index.html'));
+    // byte ranges for video (Chromium asks for them); whole-file answers are fine for everything else
     let body = null;
     try { body = readFileSync(p); } catch { /* 404 */ }
     if (!body) { res.writeHead(404); res.end(); return; }
     bytes.total += body.length; bytes.byFile[u] = body.length;
-    res.writeHead(200, { 'content-type': types[extname(p)] || 'application/octet-stream' }); res.end(body);
+    res.writeHead(200, { 'content-type': types[extname(p)] || 'application/octet-stream', ...headers }); res.end(body);
   }).listen(0, '127.0.0.1');
   await new Promise((r) => server.once('listening', r));
   return { server, url: `http://127.0.0.1:${server.address().port}/` };

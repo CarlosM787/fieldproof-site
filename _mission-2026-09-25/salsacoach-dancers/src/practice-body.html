@@ -1,0 +1,40 @@
+<div class="wrap" id="top">
+{{TOP}}
+  <main class="wrap main">
+  <h1 id="prH">Practice the basic in five steps</h1>
+  <section class="practice" id="practice" aria-labelledby="prTitle">
+    <ol class="steps" id="prSteps" aria-label="Practice steps">
+      <li><button type="button"><b>1</b><span>Listen</span><span class="sr"></span></button></li>
+      <li><button type="button"><b>2</b><span>Find the 1</span><span class="sr"></span></button></li>
+      <li><button type="button"><b>3</b><span>Watch slowly</span><span class="sr"></span></button></li>
+      <li><button type="button"><b>4</b><span>Step along</span><span class="sr"></span></button></li>
+      <li><button type="button"><b>5</b><span>Speed up</span><span class="sr"></span></button></li>
+    </ol>
+    <div class="prog"><div class="bar" role="progressbar" aria-labelledby="prProg" aria-valuemin="0" aria-valuemax="5" aria-valuenow="0"><i id="prBar"></i></div><p id="prProg">Step 1 of 5</p></div>
+    <div class="pgrid">
+      <div class="pstage">
+{{STAGE_TOP}}
+      </div>
+    <div class="card" id="prCard">
+        <h2 id="prTitle" tabindex="-1">Listen</h2>
+        <p id="prText">Press Start and listen for two 8-counts.</p>
+        <div class="actions" id="prActions"></div>
+        <div class="tapzone" id="tapZone" hidden>
+          <div class="seg" role="group" id="levels" aria-label="Level / Nivel"><button type="button" data-level="guided" aria-pressed="true">Click on the 1</button><button type="button" data-level="band" aria-pressed="false">Band only</button></div>
+          <button type="button" id="tap" class="tap">Tap on the 1</button>
+          <p class="verdict" id="verdict" aria-live="polite"></p>
+          <div class="target" id="target" aria-hidden="true"><i class="mid"></i></div>
+          <p class="stats" id="tapStats"></p>
+          <p class="cal"><button type="button" id="calibrate">Calibrate</button> <span id="calOut">Not calibrated</span></p>
+        </div>
+        <p class="cue" id="prCue" aria-hidden="true"></p>
+        <p class="fb" id="prFeedback" role="status"></p>
+        <p class="sr" id="prAnnounce" aria-live="polite"></p>
+        <div class="nav"><button type="button" id="prBack">Back</button><button type="button" id="prNext" class="primary">Next step</button></div>
+      </div>
+    </div>
+  </section>
+{{STAGE_REST}}
+{{NOTES}}
+  </main>
+</div>

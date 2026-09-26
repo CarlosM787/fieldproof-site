@@ -1,0 +1,19 @@
+/* SalsaCoach practice banner. Uses the site's tokens when present, with fallbacks. */
+.sc-banner { --sc-bg: var(--surface, #221b2a); --sc-text: var(--text, #f7f1e8); --sc-muted: var(--muted, #ac9fbb); --sc-accent: var(--timing, #57bcec); --sc-warm: var(--gold, #ffc94b); --sc-border: var(--border, #3e3349);
+  display: grid; grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr); align-items: stretch; margin: 32px 0; border: 1px solid var(--sc-border); border-radius: 18px; overflow: hidden; background: linear-gradient(135deg, #2a1f33, var(--sc-bg) 55%, #1b1522); color: var(--sc-text); }
+.sc-banner .sc-copy { padding: clamp(20px, 4vw, 40px); display: grid; gap: 12px; align-content: center; }
+.sc-banner .sc-kicker { margin: 0; font: 700 13px/1.2 var(--font-body, system-ui, sans-serif); letter-spacing: .12em; text-transform: uppercase; color: var(--sc-warm); }
+.sc-banner h2 { margin: 0; font-family: var(--font-display, 'Oswald', 'Arial Narrow', sans-serif); font-weight: 700; font-size: clamp(30px, 5.2vw, 50px); line-height: 1.02; text-transform: uppercase; letter-spacing: .01em; }
+.sc-banner .sc-sub { margin: 0; color: var(--sc-muted); max-width: 44ch; font-size: 16px; line-height: 1.55; }
+.sc-banner .sc-actions { margin: 4px 0 0; }
+.sc-banner .sc-cta { display: inline-flex; align-items: center; min-height: 48px; padding: 0 22px; border-radius: 999px; background: var(--sc-accent); color: #081620; font-weight: 800; text-decoration: none; }
+.sc-banner .sc-cta:hover { filter: brightness(1.08); }
+.sc-banner .sc-cta:focus-visible, .sc-banner .sc-pause:focus-visible { outline: 3px solid var(--sc-warm); outline-offset: 3px; }
+.sc-banner .sc-note { margin: 0; font-size: 13px; color: var(--sc-muted); }
+.sc-banner .sc-media { position: relative; aspect-ratio: 1 / 1; background: #120f22; }
+.sc-banner .sc-media img, .sc-banner .sc-media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.sc-banner .sc-media video { opacity: 0; transition: opacity .4s; }
+.sc-banner .sc-media video.on { opacity: 1; }
+.sc-banner .sc-pause { position: absolute; right: 10px; bottom: 10px; min-height: 36px; padding: 0 12px; border-radius: 999px; border: 1px solid rgba(255, 255, 255, .35); background: rgba(10, 8, 18, .72); color: #fff; font: 600 13px/1 var(--font-body, system-ui, sans-serif); cursor: pointer; }
+@media (max-width: 720px) { .sc-banner { grid-template-columns: minmax(0, 1fr); } }
+@media (prefers-reduced-motion: reduce) { .sc-banner .sc-media video { transition: none; } }

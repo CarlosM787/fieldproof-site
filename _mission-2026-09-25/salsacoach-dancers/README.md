@@ -1,58 +1,50 @@
-# SalsaCoach Dancers (private prototype)
+# SalsaCoach Dancers (private prototype, phase three)
 
-Two life-size dancers in closed hold dance the salsa basic to the Count Lab's synthesized band, stepping exactly on the count.
+Two life-size dancers in closed hold dance the salsa basic to the Count Lab's synthesized band. They step exactly on the count, and a five-step practice teaches the basic from listening to full speed.
 
-- Branch only: `claude/carlos-master-mission-10mcvm`.
 - Not deployed anywhere, and not wired into the SalsaCoach app or website.
-- See `HANDOFF.md` for the owners' version: measurements, integration points, performance budget, rights, instructor questions, and the filmed-route plan.
+- **Not a release approval.** Nothing ships until Carlos and a salsa instructor rule; see `HUMAN_TEST_CARD.md`.
+- For owners: `HANDOFF.md`. What changed: `CHANGES.md`. Measurements: `QA_RESULTS.md`. Routes compared: `COMPARISON.md`.
 
 ## How it works
 
-1. `../salsacoach-count-lab/src/model.js` is the single step table, the same one the Count Lab uses.
-2. `src/choreo.js` turns the table into life-size targets for both dancers. It keeps the Count Lab's timing:
-   - a planted foot stays down until 0.6 of the beat;
-   - the step travels with a smoothstep and lands on the count;
-   - the weight changes on landing.
+1. **The step table.** `../salsacoach-count-lab/src/model.js` is the single step table, shared with the Count Lab.
+2. **The count engine, `src/choreo.js`, is unchanged since phase two.** QA checks that its code is byte-identical (sha256).
+   - A planted foot stays down until 0.6 of the beat.
+   - The step travels with a smoothstep and lands on the count.
+   - The weight changes on the landing.
 
-   It adds heel peel on the ball of the foot, back steps that land on the ball, a free back foot rolling onto its ball, hips over the standing leg, and the hands in closed hold.
-3. `src/rig.js` poses the Rocketbox (3ds Max Biped) skeletons with analytic two-bone IK in avatar space:
-   - legs and arms are solved analytically;
-   - the pelvis gets roll and turn, and the chest counter-rotates;
-   - the head looks toward the partner;
-   - the toes stay flat while the ball is down;
-   - the fingers curl.
-4. `src/audio.js` is the Count Lab band and scheduler. The dancers are drawn from the heard audio time (`getOutputTimestamp`), never from the animation clock.
-5. `src/stage.js` and `src/dancer.js` hold the renderer, lights, a wood floor drawn in code, the camera views, and the floor marks:
-   - the weighted footprint glows;
-   - an outline shows where a foot in the air will land;
-   - a ring pulses on each landing.
-6. `src/main.js` holds the controls:
-   - play, tempo 60–220;
-   - On1 or an On2 preview;
-   - loop 1–8, 1–4 or 5–8;
-   - both dancers, leader or follower;
-   - four camera views, drag to orbit, mirror;
-   - EN/ES, reduced motion;
-   - step through the counts.
-
-   It also has the deterministic `#render` / `#qa` hooks.
+   Phase three adds generated motion on top of it: a hip settle after the weight lands, an ankle roll, and relaxed hands. None of it moves a planted ball of the foot.
+3. **`src/rig.js`:** analytic two-bone IK on the Rocketbox skeletons.
+   - New: an ankle roll that pivots on the ball, and a toe-off that keeps the toe tip on the floor until the ball rises.
+   - Also new: eyes that find the partner's eyes, and relaxed shoulders.
+4. **`src/stage.js`:** the floor, lights and cameras, plus new soft contact shadows under each shoe.
+5. **`src/overlays.js`:** count numbers at the landing spots and the centre-of-weight dot. `src/rhythm.js` holds the quick-quick-slow words.
+6. **`src/voice.js`:** the count voice, a small formant synthesizer written for this page. There is no recording and no third-party voice. It is scheduled so each word's vowel lands on the beat.
+7. **`src/practice.js`:** Listen → Find the 1 → Watch slowly → Step along → Speed up. `src/judge.js` is the Count Lab tap judge; QA shows identical verdicts on 10,000 taps.
+8. **`src/main.js`:** the controls and the audio-clock loop.
+   - New: overlays, half speed, step by step (the → key, Space, or a tap on the dancers), the count voice, lazy 3D, and the `#render` / `#qa` hooks.
+9. **`src/banner/`:** the homepage banner for mysalsacoach.com, CSP-safe with no inline script.
 
 ## Build and test
 
 ```sh
-npm i three@0.170.0 esbuild@0.24.0                 # or symlink an existing node_modules
-node build.mjs                                     # dist/index.html (demo) + dist/review.html (demo + review sections)
-FONTCACHE=... AXE=.../axe.min.js node qa/qa.mjs    # 33 checks -> evidence/qa-results.json
-node qa/proof.mjs && python3 tools/contact_proof.py .   # evidence/contact-proof.png
-node qa/phone-video.mjs; node qa/clips.mjs         # frames + band audio for the videos (encoded with ffmpeg)
-node tools/prep-avatars.mjs in.glb out.glb        # re-prepare an avatar (glTF-Transform + meshopt)
+npm i three@0.170.0 esbuild@0.24.0                  # or symlink an existing node_modules
+MEDIA=../media node build.mjs                       # dist/: index, phone, desktop, practice, review(+artifact), site/
+FONTCACHE=... AXE=.../axe.min.js node qa/qa.mjs     # 33 phase-two checks + phase-three checks -> evidence/qa-results.json
+A=<phase-two dist> B=dist OUT=evidence/ab-timing.json node qa/ab.mjs   # same-machine A/B timing
+CAM=1.2,0.1,4.1,0,0.9,0.21 OUT=../media/frames-hero node qa/hero.mjs  # banner loop frames (encode with ffmpeg)
+node tools/poster.mjs ../media/frames-hero/f0000.png ../media      # poster WebP + AVIF, media.json
+OUT=../media/frames-demo node qa/demo.mjs          # practice-flow demo frames + audio.wav (encode with ffmpeg)
+DIST=<phase-two dist> OUT=evidence/changes/before node qa/compare.mjs; OUT=evidence/changes/after node qa/compare.mjs
+python3 tools/pairs.py evidence/changes            # before/after pairs
 ```
 
-Playwright's Chromium runs WebGL in software here (SwiftShader), so the frame rates in this folder are not phone numbers.
+Playwright's Chromium runs WebGL in software here (SwiftShader), so every frame time in this folder is a relative number, not a phone number.
 
 ## Status labels
 
-- **On1:** matches the Count Lab step table. Timing is measured on the posed skeletons; see `evidence/`.
-- **On2 (Torres count and 2-3-4 count):** preview only, until an instructor reviews them.
-- **The body:** hips, arms and heads are a considered approximation, not motion capture.
-- **Videos:** the rendered videos are private and are not in git. Only code, the avatar assets (MIT, with notice), the QA script, the QA results and the charts are committed.
+- **On1** matches the Count Lab step table; its timing is measured on the posed skeletons.
+- **On2 (Torres count and 2-3-4 count):** preview until an instructor reviews it.
+- **The body is generated motion**, not motion capture. The count voice is a robot placeholder.
+- **Media** (videos, frames) is private and not in git; it lives in `../media/`.

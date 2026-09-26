@@ -75,6 +75,16 @@ export class Rig {
       this.j[k] = new Joint(bone, pj);
     }
     for (const k of ORDER) { const J = this.j[k]; J.fk(); J.q0.copy(J.q); J.p0.copy(J.p); }
+    // eyes (optional; every Rocketbox head has them): children of the head, aimed at the partner
+    this.eyes = [];
+    for (const s of ['L', 'R']) {
+      const bone = bones[`Bip01_${s}Eye`];
+      if (bone && bone.parent === this.j.head.bone) {
+        const E = new Joint(bone, this.j.head);
+        E.fk(); E.q0.copy(E.q); E.p0.copy(E.p);
+        this.eyes.push(E);
+      }
+    }
     // fingers: curl about their local Z (the Biped flexion axis)
     this.fingers = [];
     scene.traverse((o) => { const m = /^Bip01_([LR])_Finger(\d)(\d?)$/.exec(o.name); if (m) this.fingers.push({ bone: o, r0: o.quaternion.clone(), side: m[1], digit: +m[2], seg: m[3] ? +m[3] : 0 }); });
@@ -86,7 +96,10 @@ export class Rig {
     this.dims = {
       pelvis: J.root.p0.y, shoulder: (J.Lupper.p0.y + J.Rupper.p0.y) / 2, head: J.head.p0.y,
       footX: J.Lfoot.p0.x,
+      eye: this.eyesY(bones),
     };
+    // toe length past the ball joint (shoe included), used for the toe-off; no Toe0Nub in these rigs
+    this.toeLen = 0.055;
     // rest-pose bend directions (avatar space): the child joint's offset from the chain line
     this.bend0 = {};
     for (const s of ['L', 'R']) {
@@ -94,6 +107,14 @@ export class Rig {
       this.bend0[s + 'arm'] = this.restBend(J[s + 'upper'], J[s + 'fore'], J[s + 'hand']);
     }
     this.err = { leg: 0, arm: 0 };
+  }
+
+  // rest height of the eyes (avatar space), from the eye bones if present, else a head-joint estimate
+  eyesY(bones) {
+    const e = bones.Bip01_LEye;
+    if (!e) return this.j.head.p0.y + 0.09;
+    const J = new Joint(e, this.j.head); J.fk();
+    return J.p.y;
   }
 
   restBend(a, b, c) {
@@ -149,16 +170,32 @@ export class Rig {
     J.spine2.setQ(_q1.copy(Rc).multiply(J.spine2.q0));
     J.neck.r.copy(J.neck.r0); J.neck.fk();
     // head: turn the rest face direction toward the look target (clamped), in avatar space
-    const hp = V().copy(J.head.p0).applyQuaternion(_q1.identity()); void hp;
     J.head.r.copy(J.head.r0); J.head.fk();
+    let headYaw = 0, headPitch = 0;
     if (T.look) {
       const dir = V().subVectors(T.look, J.head.p).normalize();
       const yaw = clamp(Math.atan2(dir.x, dir.z), -0.35, 0.35), pitch = clamp(-Math.asin(clamp(dir.y, -1, 1)), -0.3, 0.25);
       const chestYaw = T.chest.yaw;
-      const Rh = new Quaternion().setFromEuler(new Euler(pitch * 0.8, yaw * 0.8 - chestYaw * 0.2, 0, 'YXZ'));
+      headYaw = yaw * 0.8 - chestYaw * 0.2; headPitch = pitch * 0.8;
+      // set in avatar space, so the head stays level while the pelvis and chest roll under it
+      const Rh = new Quaternion().setFromEuler(new Euler(headPitch, headYaw, 0, 'YXZ'));
       J.head.setQ(_q1.copy(Rh).multiply(J.head.q0));
     }
-    for (const s of ['L', 'R']) { J[s + 'clav'].r.copy(J[s + 'clav'].r0); J[s + 'clav'].fk(); }
+    // eyes: the rest of the way to the partner's eyes, within a small range of the head's turn
+    for (const E of this.eyes) {
+      E.fk();
+      if (!T.look) { E.r.copy(E.r0); E.fk(); continue; }
+      const dir = V().subVectors(T.eyeLook || T.look, E.p).normalize();
+      const yaw = headYaw + clamp(Math.atan2(dir.x, dir.z) - headYaw, -0.3, 0.3);
+      const pitch = headPitch + clamp(-Math.asin(clamp(dir.y, -1, 1)) - headPitch, -0.2, 0.2);
+      E.setQ(_q1.setFromEuler(new Euler(pitch, yaw, 0, 'YXZ')).multiply(E.q0));
+    }
+    // clavicles: shoulders a little down and relaxed (rotation about the avatar's forward axis)
+    for (const s of ['L', 'R']) {
+      const C = J[s + 'clav'];
+      C.r.copy(C.r0); C.fk();
+      if (T.shoulderDrop) C.setQ(_q1.setFromAxisAngle(Z, (s === 'L' ? -1 : 1) * T.shoulderDrop).multiply(C.q));
+    }
     // --- arms ---
     let armErr = 0;
     for (const s of ['L', 'R']) {
@@ -184,9 +221,12 @@ export class Rig {
       let ankle, Rf;
       const ball = F.ball; // avatar-space target of the Toe0 joint (ball of the foot)
       const rel0 = V().subVectors(ft.p0, to.p0);
+      // ankle roll about the foot's long axis through the ball (+ = sole turns inward, both feet)
+      const rollAng = (F.roll || 0) * (s === 'L' ? -1 : 1);
+      const Rroll = new Quaternion().setFromAxisAngle(fwd, rollAng);
       // raise the heel further if the leg cannot otherwise reach (the ball stays planted)
       for (let it = 0; it < 12; it++) {
-        Rf = new Quaternion().setFromAxisAngle(lat, pitch);
+        Rf = new Quaternion().setFromAxisAngle(lat, pitch).multiply(Rroll);
         ankle = V().copy(rel0).applyQuaternion(Rf).add(ball);
         if (ankle.distanceTo(th.p) <= (this.len.thigh + this.len.calf) * 0.999 || pitch > 1.0) break;
         pitch += 0.05;
@@ -195,8 +235,11 @@ export class Rig {
       const poleDir = V().copy(T.kneePole[s]);
       legErr = Math.max(legErr, this.solve2(th, ca, ft, ankle, poleDir, this.bend0[s + 'leg']));
       ft.setQ(_q1.copy(Rf).multiply(ft.q0));
-      // toes stay flat on the floor while the ball is down; they follow the foot in the air
-      if (F.lift < 0.004) to.setQ(to.q0); else { to.r.copy(to.r0); to.fk(); }
+      // toe-off: the toes bend at the ball so their tip stays on the floor until the ball has risen
+      // far enough, then they follow the foot. Flat on the floor while the ball is down (as before).
+      const toePitch = Math.min(pitch, Math.asin(Math.min(1, Math.max(0, F.lift) / this.toeLen)));
+      const share = pitch > 1e-6 ? toePitch / pitch : 0;
+      to.setQ(_q1.setFromAxisAngle(lat, toePitch).multiply(_q2.setFromAxisAngle(fwd, rollAng * share)).multiply(to.q0));
     }
     this.err.leg = legErr; this.err.arm = armErr;
     // --- fingers: a relaxed curl, a little more in a held hand ---
@@ -220,6 +263,15 @@ export class Rig {
       o[s + 'ballRest'] = J[s + 'toe'].p0.clone();
     }
     o.pelvis = J.root.p.clone(); o.head = J.head.p.clone();
+    // toe tip: the toe joint plus the toe's current forward direction times the toe length
+    for (const s of ['L', 'R']) {
+      const to = J[s + 'toe'], ft = J[s + 'foot'];
+      const f0 = V().subVectors(to.p0, ft.p0); f0.y = 0; f0.normalize();
+      const rel = _q1.copy(to.q).multiply(_q2.copy(to.q0).invert());
+      o[s + 'toeTip'] = f0.applyQuaternion(rel).multiplyScalar(this.toeLen).add(to.p);
+      o[s + 'toeTipRest'] = V().copy(to.p0);
+    }
+    if (this.eyes.length) o.eye = this.eyes[0].p.clone();
     return o;
   }
 }

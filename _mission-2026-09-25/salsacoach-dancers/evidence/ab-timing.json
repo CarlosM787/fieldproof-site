@@ -1,0 +1,179 @@
+{
+  "when": "2026-09-26T14:09:54.010Z",
+  "method": "Same headless Chromium 141 (SwiftShader, software WebGL), same machine, interleaved A/B twice. poseMs: bench(1000) = both dancers posed, CPU only (median of 3). frameMs: pose + render + gl.finish() per frame (60 frames). loadBytes: every file the local server sent for index.html#qa (fonts excluded, as in phase two).",
+  "summary": {
+    "phase2 desktop": {
+      "poseMs": 0.054,
+      "poseP95Ms": 0.106,
+      "frameMs": 1.1,
+      "frameP90Ms": 2.3,
+      "drawCalls": 24,
+      "triangles": 21614,
+      "loadBytes": 2180779,
+      "heapMB": 8.5,
+      "tier": "full",
+      "dpr": 1
+    },
+    "phase2 phone": {
+      "poseMs": 0.082,
+      "poseP95Ms": 0.158,
+      "frameMs": 1.9,
+      "frameP90Ms": 3.1,
+      "drawCalls": 24,
+      "triangles": 21614,
+      "loadBytes": 1139195,
+      "heapMB": 11,
+      "tier": "lite",
+      "dpr": 1.5
+    },
+    "phase3 desktop": {
+      "poseMs": 0.104,
+      "poseP95Ms": 0.174,
+      "frameMs": 1.3,
+      "frameP90Ms": 3,
+      "drawCalls": 38,
+      "triangles": 21950,
+      "loadBytes": 2216478,
+      "heapMB": 10.8,
+      "tier": "full",
+      "dpr": 1
+    },
+    "phase3 phone": {
+      "poseMs": 0.088,
+      "poseP95Ms": 0.118,
+      "frameMs": 1.4,
+      "frameP90Ms": 2.5,
+      "drawCalls": 38,
+      "triangles": 21950,
+      "loadBytes": 1174894,
+      "heapMB": 9.8,
+      "tier": "lite",
+      "dpr": 1.5
+    }
+  },
+  "ratios": {
+    "poseDesktop": 1.93,
+    "posePhone": 1.07,
+    "frameDesktop": 1.18,
+    "framePhone": 0.74,
+    "loadPhone": 1.03
+  },
+  "raw": {
+    "A": {
+      "desktop": [
+        {
+          "poseMedian": 0.054,
+          "poseP95": 0.106,
+          "frameMedian": 1.1000000014901161,
+          "frameP90": 2.2999999970197678,
+          "calls": 24,
+          "triangles": 21614,
+          "textures": 16,
+          "dpr": 1,
+          "lite": false,
+          "heapMB": 8.5,
+          "loadBytes": 2180779
+        },
+        {
+          "poseMedian": 0.048,
+          "poseP95": 0.066,
+          "frameMedian": 1.1000000014901161,
+          "frameP90": 2,
+          "calls": 24,
+          "triangles": 21614,
+          "textures": 16,
+          "dpr": 1,
+          "lite": false,
+          "heapMB": 8.1,
+          "loadBytes": 2180779
+        }
+      ],
+      "phone": [
+        {
+          "poseMedian": 0.082,
+          "poseP95": 0.158,
+          "frameMedian": 1.8999999985098839,
+          "frameP90": 3.100000001490116,
+          "calls": 24,
+          "triangles": 21614,
+          "textures": 12,
+          "dpr": 1.5,
+          "lite": true,
+          "heapMB": 9.9,
+          "loadBytes": 1139195
+        },
+        {
+          "poseMedian": 0.046,
+          "poseP95": 0.104,
+          "frameMedian": 1.0999999977648258,
+          "frameP90": 2,
+          "calls": 24,
+          "triangles": 21614,
+          "textures": 12,
+          "dpr": 1.5,
+          "lite": true,
+          "heapMB": 11,
+          "loadBytes": 1139195
+        }
+      ]
+    },
+    "B": {
+      "desktop": [
+        {
+          "poseMedian": 0.06,
+          "poseP95": 0.104,
+          "frameMedian": 1.300000000745058,
+          "frameP90": 3,
+          "calls": 38,
+          "triangles": 21950,
+          "textures": 25,
+          "dpr": 1,
+          "lite": false,
+          "heapMB": 8.1,
+          "loadBytes": 2216478
+        },
+        {
+          "poseMedian": 0.104,
+          "poseP95": 0.174,
+          "frameMedian": 1.300000000745058,
+          "frameP90": 2.300000000745058,
+          "calls": 38,
+          "triangles": 21950,
+          "textures": 25,
+          "dpr": 1,
+          "lite": false,
+          "heapMB": 10.8,
+          "loadBytes": 2216478
+        }
+      ],
+      "phone": [
+        {
+          "poseMedian": 0.058,
+          "poseP95": 0.086,
+          "frameMedian": 1.300000000745058,
+          "frameP90": 2.399999998509884,
+          "calls": 38,
+          "triangles": 21950,
+          "textures": 21,
+          "dpr": 1.5,
+          "lite": true,
+          "heapMB": 8.8,
+          "loadBytes": 1174894
+        },
+        {
+          "poseMedian": 0.088,
+          "poseP95": 0.118,
+          "frameMedian": 1.3999999985098839,
+          "frameP90": 2.5,
+          "calls": 38,
+          "triangles": 21950,
+          "textures": 21,
+          "dpr": 1.5,
+          "lite": true,
+          "heapMB": 9.8,
+          "loadBytes": 1174894
+        }
+      ]
+    }
+  }
+}

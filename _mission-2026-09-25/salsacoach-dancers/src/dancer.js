@@ -10,6 +10,8 @@ export const LOOKS = {
   leader: { glb: 'assets/leader.glb', tex: 'm014' },
   follower: { glb: 'assets/follower.glb', tex: 'f022' },
 };
+// pages in another folder (the staged Spanish route) point at the shared assets with data-assets
+const base = () => (typeof document !== 'undefined' && document.body && document.body.dataset.assets) || '';
 
 export class Dancer {
   constructor(role, gltf, maps, color) {
@@ -86,17 +88,23 @@ export class Dancer {
     }
   }
 
-  // t: dancerTargets() for this role; hands: holdTargets()[role]; look: world point to face
-  apply(t, hands, look, style) {
+  // t: dancerTargets() for this role; hands: holdTargets()[role]; look: world point to face;
+  // eyeLook: world point for the eyes (the partner's eyes)
+  apply(t, hands, look, style, eyeLook) {
     const R = this.rig, J = R.j;
     const b = this.toAvatar(t.body.x, 0, t.body.z);
     const side = t.body.side; // +1 = weight over own right leg
+    const settle = t.body.settle === undefined ? 1 : t.body.settle;
     const drop = style.drop + 0.08 * t.body.sep * t.body.sep + t.body.dip;
+    // generated hip action: the base roll and turn over the standing leg, plus a little more as the
+    // hip settles after the weight arrives; the chest turns the other way (counter-rotation)
+    const hipRoll = style.hipRoll + style.settleRoll * settle, hipYaw = style.hipYaw + style.settleYaw * settle;
     const T = {
-      body: { x: b.x, z: b.z, drop, roll: -side * style.hipRoll, yaw: -side * style.hipYaw, pitch: style.pelvisTilt },
-      chest: { pitch: style.lean, yaw: side * style.chestCounter, roll: side * style.hipRoll * 0.35 },
-      feet: {}, kneePole: {}, hands: {}, grip: style.grip,
+      body: { x: b.x, z: b.z, drop, roll: -side * hipRoll, yaw: -side * hipYaw, pitch: style.pelvisTilt },
+      chest: { pitch: style.lean, yaw: side * (style.chestCounter + style.settleCounter * settle), roll: side * hipRoll * 0.35 },
+      feet: {}, kneePole: {}, hands: {}, grip: style.grip, shoulderDrop: style.shoulderDrop,
       look: look ? this.toAvatar(look.x, look.y, look.z) : null,
+      eyeLook: eyeLook ? this.toAvatar(eyeLook.x, eyeLook.y, eyeLook.z) : null,
     };
     for (const f of ['L', 'R']) {
       const F = t.feet[f];
@@ -104,9 +112,12 @@ export class Dancer {
       const toe0 = J[f + 'toe'].p0, ank0 = J[f + 'foot'].p0;
       T.feet[f] = {
         ball: new Vector3(toe0.x + (a.x - ank0.x), toe0.y + F.lift, toe0.z + (a.z - ank0.z)),
-        pitch: F.pitch, lift: F.lift,
+        pitch: F.pitch, lift: F.lift, roll: F.roll || 0,
       };
-      T.kneePole[f] = R.bend0[f + 'leg'];
+      // the free leg's knee points a little in, towards the standing leg (avatar +X = own left)
+      const pole = R.bend0[f + 'leg'].clone();
+      if (!F.weighted) pole.x += (f === 'L' ? -1 : 1) * style.kneeIn;
+      T.kneePole[f] = pole.normalize();
     }
     for (const s of ['L', 'R']) {
       const h = hands && hands[s];
@@ -115,6 +126,19 @@ export class Dancer {
     }
     R.pose(T);
     this.lastT = T;
+  }
+
+  // Floor contact for the contact shadows and the weight indicator, in world space (no allocation):
+  // out = { L: { ball, ankle }, R: { ball, ankle }, pelvis } with Vector3s; ballUp / ankleUp in metres
+  contact(out) {
+    const J = this.rig.j;
+    for (const s of ['L', 'R']) {
+      const to = J[s + 'toe'], ft = J[s + 'foot'], o = out[s];
+      this.toWorld(to.p, o.ball); this.toWorld(ft.p, o.ankle);
+      o.ballUp = to.p.y - to.p0.y; o.ankleUp = ft.p.y - ft.p0.y;
+    }
+    this.toWorld(J.root.p, out.pelvis);
+    return out;
   }
 
   // world-space joint positions for QA and overlays
@@ -128,12 +152,15 @@ export class Dancer {
 export const STYLE = {
   leader: {
     drop: 0.012, hipRoll: 0.07, hipYaw: 0.08, pelvisTilt: 0, lean: 0.07, chestCounter: 0.035,
+    // phase three, generated and subtle: hip settle, counter-rotation, free knee, relaxed shoulders
+    settleRoll: 0.02, settleYaw: 0.02, settleCounter: 0.025, kneeIn: 0.22, shoulderDrop: 0.05,
     // elbow directions in world space for closed hold (the leader faces +Z; his left is +X)
     elbow: { L: [0.35, -1, -0.15], R: [-1, -0.55, -0.1] },
     grip: { L: true, R: false },
   },
   follower: {
     drop: 0.014, hipRoll: 0.085, hipYaw: 0.09, pelvisTilt: 0, lean: 0.1, chestCounter: 0.04,
+    settleRoll: 0.025, settleYaw: 0.025, settleCounter: 0.03, kneeIn: 0.26, shoulderDrop: 0.05,
     // she faces -Z; her right is +X
     elbow: { R: [0.35, -1, 0.15], L: [-0.6, -1, 0.25] },
     grip: { L: false, R: true },
@@ -143,7 +170,7 @@ export const STYLE = {
 export async function loadDancer(role, loader, texLoader, tier, color, anisotropy) {
   const look = LOOKS[role];
   const size = tier === 'lite' ? 512 : 1024;
-  const url = (part, kind, s) => `assets/${look.tex}_${part}_${kind}_${s}.webp`;
+  const url = (part, kind, s) => `${base()}assets/${look.tex}_${part}_${kind}_${s}.webp`;
   const load = (u, srgb) => texLoader.loadAsync(u).then((t) => {
     t.flipY = false; // glTF UV convention
     if (srgb) t.colorSpace = SRGBColorSpace;
@@ -155,7 +182,7 @@ export async function loadDancer(role, loader, texLoader, tier, color, anisotrop
   const embedded = window.__GLB && window.__GLB[role];
   const glb = embedded
     ? loader.parseAsync(Uint8Array.from(atob(embedded), (c) => c.charCodeAt(0)).buffer, '')
-    : loader.loadAsync(look.glb);
+    : loader.loadAsync(base() + look.glb);
   const jobs = {
     gltf: glb,
     bodyC: load(url('body', 'color', size), true),

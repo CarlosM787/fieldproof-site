@@ -9,6 +9,53 @@ import {
 } from 'three';
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js';
 
+// Soft contact shadows under each shoe and each dancer: they ground the feet where the shadow map is
+// too coarse. A shoe's shadow is darkest when the foot is flat and carries the weight, shrinks towards
+// the ball as the heel rises, and fades as the ball leaves the floor.
+export class ContactShadows {
+  constructor(scene) {
+    const c = document.createElement('canvas');
+    c.width = c.height = 64;
+    const g = c.getContext('2d'), grad = g.createRadialGradient(32, 32, 0, 32, 32, 32);
+    grad.addColorStop(0, 'rgba(255,255,255,1)'); grad.addColorStop(0.45, 'rgba(255,255,255,0.72)'); grad.addColorStop(1, 'rgba(255,255,255,0)');
+    g.fillStyle = grad; g.fillRect(0, 0, 64, 64);
+    const tex = new CanvasTexture(c);
+    const geo = new PlaneGeometry(1, 1);
+    geo.rotateX(-Math.PI / 2);
+    this.items = {};
+    const make = (op) => {
+      const m = new Mesh(geo, new MeshBasicMaterial({ map: tex, color: 0x000000, transparent: true, opacity: op, depthWrite: false }));
+      m.renderOrder = 1; m.position.y = 0.002; scene.add(m); return m;
+    };
+    for (const role of ['leader', 'follower']) {
+      this.items[role] = { L: make(0.5), R: make(0.5), body: make(0.22) };
+      this.items[role].body.scale.set(0.46, 1, 0.36);
+    }
+    this.tmp = { L: { ball: new Vector3(), ankle: new Vector3() }, R: { ball: new Vector3(), ankle: new Vector3() }, pelvis: new Vector3() };
+  }
+  update(role, dancer, targets, visible) {
+    const it = this.items[role];
+    for (const k of ['L', 'R', 'body']) it[k].visible = visible;
+    if (!visible) return;
+    const c = dancer.contact(this.tmp);
+    for (const s of ['L', 'R']) {
+      const m = it[s], f = c[s], F = targets.feet[s];
+      const dx = f.ball.x - f.ankle.x, dz = f.ball.z - f.ankle.z, len = Math.hypot(dx, dz) || 1e-6;
+      const ux = dx / len, uz = dz / len;
+      const heel = Math.min(1, Math.max(0, f.ankleUp / 0.06)); // 0 flat .. 1 heel well up
+      const air = Math.min(1, Math.max(0, f.ballUp / 0.03)); // 0 ball down .. 1 ball well up
+      // footprint from the heel (0.07 m behind the ankle) to the toe tip (0.06 m past the ball)
+      const back = -0.07 + heel * 0.12, front = len + 0.06;
+      const mid = (back + front) / 2, L = Math.max(0.08, front - back) * (1 + air * 0.5);
+      m.position.x = f.ankle.x + ux * mid; m.position.z = f.ankle.z + uz * mid;
+      m.rotation.y = Math.atan2(ux, uz);
+      m.scale.set(0.12 * (1 + air * 0.5), 1, L * 1.05);
+      m.material.opacity = (F && F.weighted ? 0.62 : 0.48) * (1 - air * 0.85) * (1 - heel * 0.25);
+    }
+    it.body.position.x = c.pelvis.x; it.body.position.z = c.pelvis.z;
+  }
+}
+
 export function makeRenderer(canvas, opts) {
   const r = new WebGLRenderer({ canvas, antialias: true, powerPreference: 'high-performance', preserveDrawingBuffer: !!opts.keep });
   r.outputColorSpace = SRGBColorSpace;

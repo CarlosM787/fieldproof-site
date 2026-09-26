@@ -5,6 +5,7 @@
 import { writeFileSync, readFileSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { serve, launch, fonts, here, bytes } from './serve.mjs';
+import { phaseThree } from './qa3.mjs';
 import { STATES, REAL } from '../src/choreo.js';
 
 const ev = join(here, 'evidence');
@@ -14,7 +15,7 @@ const check = (name, ok, detail) => { results.push({ name, ok: !!ok, detail }); 
 const { server, url } = await serve();
 const browser = await launch();
 
-async function open(opts, hash = '#qa', js = true) {
+async function open(opts, hash = '#qa', js = true, pageName = 'index.html') {
   const ctx = await browser.newContext({ ...opts, javaScriptEnabled: js });
   await fonts(ctx);
   const page = await ctx.newPage();
@@ -23,7 +24,7 @@ async function open(opts, hash = '#qa', js = true) {
   page.on('console', (m) => { if (m.type() === 'error' && !/Failed to load resource/.test(m.text())) errors.push(m.text()); });
   bytes.total = 0; bytes.byFile = {};
   const t0 = Date.now();
-  await page.goto(url + 'index.html' + hash, { waitUntil: 'load' });
+  await page.goto(url + pageName + hash, { waitUntil: 'load' });
   let ready = null;
   if (js) ready = await page.evaluate(() => window.__dance ? window.__dance.ready : null);
   return { ctx, page, errors, ready, wallMs: Date.now() - t0 };
@@ -173,6 +174,9 @@ for (const [name, opts] of [['desktop', { viewport: { width: 1280, height: 800 }
   await ctx.close();
 }
 
-writeFileSync(join(ev, 'qa-results.json'), JSON.stringify({ when: new Date().toISOString(), passed: results.filter((r) => r.ok).length, total: results.length, results, data }, null, 2) + '\n');
+// ---------- 5. phase three: the new features (qa/qa3.mjs) ----------
+if (!process.env.ONLY_PHASE2) await phaseThree({ browser, url, check, data, open, overflow, ev, here, serveDir: serve, fonts, bytes });
+
+writeFileSync(join(ev, 'qa-results.json'), JSON.stringify({ when: new Date().toISOString(), passed: results.filter((r) => r.ok).length, total: results.length, phase2: { passed: results.slice(0, 33).filter((r) => r.ok).length, total: 33 }, results, data }, null, 2) + '\n');
 console.log(`\n${results.filter((r) => r.ok).length}/${results.length} passed`);
 await browser.close(); server.close();

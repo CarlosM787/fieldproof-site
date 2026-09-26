@@ -19,6 +19,14 @@ export const REAL = {
   frontShare: 0.78, // share of the stride the pelvis travels onto the new foot
   peel: 0.22, // heel lift (rad) as a foot leaves the floor
   ballLand: 0.16, // back steps touch down on the ball, then the heel lowers
+  // Phase three: generated motion layered on top of the timing above. None of it moves a planted
+  // ball of the foot or changes when a foot lifts or lands.
+  settle: 0.012, // extra pelvis shift out over the standing leg once the weight has arrived (m)
+  settleIn: 0.4, // beats for that settle to ease in after the weight arrives
+  settleFrom: 0.35, // share of the settle already there at the moment of landing
+  roll: 0.05, // ankle roll (rad): a free foot resting on its ball rolls a little onto the big-toe side
+  swingRoll: 0.035, // ankle roll (rad) mid-swing; gone again by the landing, so the foot lands level
+  handLag: 0.05, // beats the joined hands trail the bodies (relaxed arms; at most about 3.5 cm)
 };
 
 export const STATES = {};
@@ -33,6 +41,8 @@ export const windowOff = (loop) => (loop === 'second' ? 4 : 0);
 export const windowLen = (loop) => (loop === 'all' ? 8 : 4);
 export const posFrom = (b, loop) => windowOff(loop) + mod(b, windowLen(loop));
 export const slotOf = (tick, loop) => (loop === 'all' ? mod(tick, 16) : windowOff(loop) * 2 + mod(tick, 8));
+// the position d beats earlier, wrapped inside the current loop window (phase three: hand lag)
+export const lagPos = (p, d, loop) => windowOff(loop) + mod(p - windowOff(loop) - d, windowLen(loop));
 
 // The Count Lab's poseAt, parameterised instead of reading page state. Returns the two leader-frame
 // states the body is between (A -> B), the eased travel fraction u, and look-ahead (N: where the
@@ -122,10 +132,26 @@ export function dancerTargets(role, bs) {
         pitch = Math.max(pitch, Math.min(0.5, Math.max(0, (behind - 0.06) * 1.8)));
       }
     }
-    feet[f] = { x, z, lift, pitch, planted: !moving, weighted, target: moving ? { x: b[0], z: b[1] } : null };
+    // subtle ankle roll about the foot's long axis through the ball (+ = sole turns inward): a little
+    // inversion mid-swing that is gone by the landing; a free foot on its ball rolls onto the big toe
+    let roll = 0;
+    if (moving) roll = REAL.swingRoll * Math.sin(Math.PI * u);
+    else if (!bs.reduced && !weighted && pitch > 0.02) roll = -REAL.roll * Math.min(1, pitch / REAL.peel);
+    feet[f] = { x, z, lift, pitch, roll, planted: !moving, weighted, target: moving ? { x: b[0], z: b[1] } : null };
   }
   const sideA = ownFoot(role, A.w) === 'R' ? 1 : -1, sideB = ownFoot(role, B.w) === 'R' ? 1 : -1;
   body.side = lerp(sideA, sideB, u);
+  // hip settle (a Cuban-motion hint, generated): the weight lands on the count, then the pelvis
+  // sinks out over the standing leg during the planted part of the beat. It releases while the
+  // weight travels to the other foot and never happens on a hold or with reduced motion.
+  let settle = 1;
+  if (!bs.reduced && !bs.ghost) {
+    if (bs.travel && A.w !== B.w) settle = lerp(1, REAL.settleFrom, u);
+    else if (!bs.travel && arrived) settle = REAL.settleFrom + (1 - REAL.settleFrom) * ease(clamp01(frac / REAL.settleIn));
+  }
+  body.settle = settle;
+  // world X of the settle: towards the weighted foot (leader-frame L = world +X for both dancers)
+  body.x += lerp(A.w === 'L' ? 1 : -1, B.w === 'L' ? 1 : -1, u) * REAL.settle * settle;
   // weight arriving: a small give in the knees right after a step lands (none on holds)
   body.dip = !bs.travel && !bs.ghost && arrived && !bs.reduced ? 0.009 * Math.sin(Math.PI * clamp01(frac / 0.4)) : 0;
   body.sep = Math.abs(feet.L.z - feet.R.z);
@@ -135,8 +161,10 @@ export function dancerTargets(role, bs) {
 // Where the hands go in closed hold, from both pelvis positions (world) and the dancers' heights.
 // Leader's left holds follower's right, out to his left at about her shoulder height; his right hand
 // sits on her left shoulder blade; her left hand rests on his right shoulder.
-export function holdTargets(lead, foll, dims) {
-  const midZ = (lead.z + foll.z) / 2;
+// lagLead / lagFoll (optional): the bodies a moment earlier. The joined hands follow those, so they
+// trail the couple a little like relaxed arms; the hands that rest on a partner stay attached.
+export function holdTargets(lead, foll, dims, lagLead, lagFoll) {
+  const midZ = ((lagLead || lead).z + (lagFoll || foll).z) / 2;
   const handY = dims.follower.shoulder - 0.05;
   return {
     leader: {

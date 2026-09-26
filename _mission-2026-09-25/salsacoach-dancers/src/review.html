@@ -1,90 +1,65 @@
   <section class="review" id="review" aria-labelledby="rv-h">
-    <p class="kicker">For Carlos · private review</p>
-    <h2 id="rv-h">Three ways to show real dancers</h2>
-    <p class="muted">The Count Lab's schematic stays the accurate reference. The 3D dancers above are the working route. The filmed route is planned, not shot; the player below uses a stand-in rendered from the 3D model to show exactly which controls a video can and cannot offer.</p>
-    <div class="trio">
-      <figure><img src="media/compare-schematic.jpg" alt="Count Lab schematic: two stick-figure dancers with footprints on a blue grid" loading="lazy" width="640" height="360"><figcaption><b>Schematic</b> · Count Lab</figcaption></figure>
-      <figure><img src="media/compare-3d.jpg" alt="The two 3D dancers in closed hold on a wood floor, count 1" loading="lazy" width="640" height="360"><figcaption><b>3D dancers</b> · this page</figcaption></figure>
-      <figure><img src="media/compare-video.jpg" alt="A frame from the filmed-route stand-in with a count overlay" loading="lazy" width="640" height="360"><figcaption><b>Filmed dancers</b> · stand-in frame</figcaption></figure>
+    <p class="kicker">For Carlos · private review · phase three</p>
+    <h2 id="rv-h">What changed since phase two</h2>
+    <p class="muted">The count engine is unchanged: its code is byte-identical to phase two, and every phase-two check still runs. On top of it: generated body motion, teaching overlays, half-speed and step-by-step modes, a count voice, and the five-step practice above. <b>Generated motion, not motion capture. Not reviewed by an instructor. Not tested on a real phone.</b></p>
+    <div class="pairs">
+      <figure><img src="media/change-feet.jpg" alt="Before and after: the feet from the side as a foot leaves the floor. After: a soft contact shadow under each shoe and the toes bending at the ball." loading="lazy" width="960" height="270"><figcaption><b>Foot plant.</b> Contact shadows; toes stay on the floor until the ball lifts (0 mm below the floor, measured); a small ankle roll, never on the weighted foot.</figcaption></figure>
+      <figure><img src="media/change-overlays.jpg" alt="Before and after from behind the leader. After: numbered markers at the landing spots, a centre-of-weight dot and the quick-quick-slow caption." loading="lazy" width="960" height="270"><figcaption><b>Teaching overlays</b> (each can be switched off): the count number where each foot lands, the centre of weight, and quick-quick-slow words.</figcaption></figure>
+      <figure><img src="media/change-body.jpg" alt="Before and after of the torso and hold from the side." loading="lazy" width="960" height="270"><figcaption><b>Body.</b> The hip settles over the standing leg after the weight lands (1.2 cm), the chest turns a little against it, shoulders drop, the joined hands trail slightly, and the eyes find the partner's eyes.</figcaption></figure>
     </div>
-    <div class="board" tabindex="0" aria-label="Route comparison table">
+  </section>
+
+  <section class="review" id="demo" aria-labelledby="dm-h">
+    <h2 id="dm-h">The practice flow, rendered</h2>
+    <div class="evgrid">
+      <figure class="phonevid"><video controls playsinline preload="none" poster="media/practice-demo.jpg" width="390" height="780" src="media/practice-demo.mp4"></video><figcaption>Rendered from the practice page frame by frame with the synthesized band and the robot count voice. The two taps in "Find the 1" are synthetic and scored by the real judge. Not a screen recording of a person.</figcaption></figure>
+      <div class="evtext">
+        <ol class="flow">
+          <li><b>Listen.</b> Two 8-counts with a click on every 1. The dancers load in the background (the 3D loads only after this tap).</li>
+          <li><b>Find the 1.</b> The counts are hidden; tap on every 1. The Count Lab judge: ±110 ms is "On the 1", and it says so when you tap the 5. Three in a row finish the step.</li>
+          <li><b>Watch slowly.</b> Half speed with every overlay; "Step by step" goes one count per tap or key press.</li>
+          <li><b>Step along.</b> Full speed, the count voice on every count (softer on the pause), the big number flashing, and the step for your role in words.</li>
+          <li><b>Speed up.</b> ±10 BPM or presets from 110 to 190. The last tempo is the only thing the page stores.</li>
+        </ol>
+        <ul class="facts" id="facts">{{FACTS}}</ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="review" id="banner" aria-labelledby="bn-h">
+    <h2 id="bn-h">Homepage banner option</h2>
+    <p class="muted">For mysalsacoach.com, not live. No 3D on the homepage: a poster and a 3.2-second silent loop rendered from the real scene. The button goes to the practice route, where the 3D loads only after the visitor taps Start.</p>
+    <div class="hero">
+      <div class="hero-copy">
+        <p class="hero-kicker">Practice the basic</p>
+        <p class="hero-h">Hear the count.<br>See the step land on it.</p>
+        <p class="hero-es" lang="es">Escucha el conteo. Mira el paso caer en él.</p>
+        <p class="hero-sub">Two dancers step on every count of a band made in your browser. Slow it down, go one step at a time, then speed up.</p>
+        <div class="hero-cta"><a class="btn" href="#top">Try the practice</a></div>
+      </div>
+      <div class="hero-media"><img src="media/hero-poster.webp" alt="Two dancers in closed hold; a numbered marker under each landed foot shows count 1" width="720" height="720" loading="lazy"><video id="heroV" muted playsinline loop preload="none" width="720" height="720" aria-hidden="true" data-webm="media/hero-loop.webm" data-mp4="media/hero-loop.mp4"></video></div>
+    </div>
+    <div class="board" tabindex="0" aria-label="Banner weights and lab results">
       <table class="cmp">
-        <thead><tr><th scope="col"></th><th scope="col">Schematic</th><th scope="col">3D dancers</th><th scope="col">Filmed dancers</th></tr></thead>
-        <tbody>
-          <tr><th scope="row">Lands on the count</th><td>Yes, by construction</td><td>Yes: measured 0 ms late and at most 4 ms early at 150 BPM</td><td>Only as well as the dancers hit it; needs checking frame by frame</td></tr>
-          <tr><th scope="row">Tempo</th><td>Any</td><td>Any, 60–220 BPM</td><td>About ±25% around each filmed tempo</td></tr>
-          <tr><th scope="row">Camera</th><td>Any angle</td><td>Any angle; drag to orbit</td><td>Only the angles filmed (plan: 3)</td></tr>
-          <tr><th scope="row">Mirror</th><td>Yes</td><td>Yes</td><td>Yes (CSS flip)</td></tr>
-          <tr><th scope="row">Leader or follower alone</th><td>Yes</td><td>Yes (other dancer ghosted)</td><td>Only with separate solo takes</td></tr>
-          <tr><th scope="row">On1 / On2 switch</th><td>Yes</td><td>Yes (On2 marked preview)</td><td>A separate take per convention</td></tr>
-          <tr><th scope="row">Loop 1–4 / 5–8</th><td>Yes</td><td>Yes</td><td>Yes (time ranges)</td></tr>
-          <tr><th scope="row">Looks like real people</th><td>No</td><td>Real bodies and clothes; motion is generated, not captured</td><td>Yes</td></tr>
-          <tr><th scope="row">Phone download</th><td>21 KB</td><td>1.1 MB once (2.2 MB desktop)</td><td>About 0.5 MB per second of 720p video</td></tr>
-          <tr><th scope="row">Cost to finish</th><td>Done</td><td>Instructor review, phone testing</td><td>Dancers, studio half-day, releases, editing</td></tr>
-          <tr><th scope="row">Rights</th><td>All original</td><td>MIT avatars (notice shipped)</td><td>Model releases and music rights</td></tr>
-        </tbody>
+        <thead><tr><th scope="col">Banner</th><th scope="col">Measured</th></tr></thead>
+        <tbody id="bannerRows">{{BANNER_ROWS}}</tbody>
       </table>
     </div>
   </section>
 
-  <section class="review" id="filmed" aria-labelledby="fv-h">
-    <h2 id="fv-h">Filmed route: what a video player can do</h2>
-    <p class="muted"><b>Stand-in:</b> this clip is rendered from the 3D model to stand in for real footage. Nobody has been filmed. The controls behave the way they would with real takes.</p>
-    <div class="player">
-      <div class="vwrap"><video id="sv" playsinline preload="none" poster="media/standin-leader.jpg" width="640" height="360" loop></video><div class="vcount" id="svCount" aria-hidden="true">1</div><div class="vlabel">Stand-in · rendered, not filmed</div></div>
-      <div class="vctl">
-        <button type="button" class="play small" id="svPlay" aria-pressed="false">Play stand-in</button>
-        <div class="ctl"><span class="lbl">Speed</span><div class="seg" role="group" aria-label="Speed"><button type="button" data-rate="0.75" aria-pressed="false">0.75×</button><button type="button" data-rate="1" aria-pressed="true">1×</button><button type="button" data-rate="1.25" aria-pressed="false">1.25×</button><button type="button" data-rate="0.5" aria-pressed="false">0.5×</button></div></div>
-        <div class="ctl"><span class="lbl">Angle (filmed takes only)</span><div class="seg" role="group" aria-label="Angle"><button type="button" data-angle="leader" aria-pressed="true">Behind leader</button><button type="button" data-angle="side" aria-pressed="false">Side</button></div></div>
-        <label class="chk"><input type="checkbox" id="svMirror"> Mirror</label>
-        <p class="vnote" id="svNote" aria-live="polite">150 BPM take. Speeds between 0.75× and 1.25× keep the music's pitch and still look natural.</p>
-        <ul class="cant">
-          <li><b>Leader or follower alone:</b> needs separate solo takes.</li>
-          <li><b>On2:</b> needs its own takes; a video cannot re-time a dancer's feet.</li>
-          <li><b>Any other angle:</b> only the angles that were filmed.</li>
-        </ul>
-      </div>
+  <section class="review" id="routes" aria-labelledby="rt-h">
+    <h2 id="rt-h">Four ways to show the basic</h2>
+    <div class="board" tabindex="0" aria-label="Route comparison">
+      <table class="cmp">
+        <thead><tr><th scope="col"></th><th scope="col">Filmed dancers</th><th scope="col">3D dancers (this)</th><th scope="col">SVG feet (footwork teacher)</th><th scope="col">Hybrid</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Teaches</th><td>Real styling, frame, connection</td><td>Timing, weight, angles, any tempo, one count at a time</td><td>Timing and weight of the feet, exactly</td><td>SVG or 3D for timing; one filmed clip per style for the body</td></tr>
+          <tr><th scope="row">Cannot teach</th><td>Other tempos (beyond about ±25%), other angles, one role alone without extra takes</td><td>Real styling or musicality; the body is generated</td><td>Hips, frame, partner, 3D angles</td><td>Needs both to be kept in step</td></tr>
+          <tr><th scope="row">Weight</th><td>About 0.5 MB per second of 720p</td><td>0.19 MB page (gzip) plus 0.47 MB 3D on a phone, only when asked</td><td>About 13 KB (reported)</td><td>13 KB plus one short clip</td></tr>
+          <tr><th scope="row">Rights</th><td>Model releases, music, location</td><td>Rocketbox MIT; band and voice are our code</td><td>All original</td><td>Releases for the clip only</td></tr>
+          <tr><th scope="row">Sync with the band</th><td>As good as the dancers' timing</td><td>Drawn from the heard audio clock</td><td>Drawn from the audio clock (5–8 ms, reported)</td><td>Timing layer on the clock</td></tr>
+        </tbody>
+      </table>
     </div>
-    <details class="plan">
-      <summary>Capture plan for real footage (half a day, not booked)</summary>
-      <ul>
-        <li>Two real dancers (ideally the SalsaCoach instructor and a partner), paid, with signed model releases covering web, app and advertising. Never use other people's footage.</li>
-        <li>Three phones on tripods recording at the same time (behind the leader, behind the follower, side), 4K 60 fps, fixed exposure. Tape marks on the floor for home and break positions; a clap slate at the start of each take.</li>
-        <li>The synthesized band played at a fixed tempo, so every take shares a beat grid and the count overlay is exact.</li>
-        <li>27 takes: 3 conventions × 3 tempos (90, 150, 190 BPM) × 3 role variants (couple, leader alone, follower alone), about 30 seconds each, plus spares.</li>
-        <li>A hybrid worth pricing: markerless motion capture of the instructor, retargeted onto these avatars. It keeps every 3D control and adds real styling, but needs a paid tool and Carlos's decision.</li>
-      </ul>
-    </details>
-  </section>
-
-  <section class="review" id="banner" aria-labelledby="bn-h">
-    <h2 id="bn-h">Homepage banner concept</h2>
-    <p class="muted">A concept for mysalsacoach.com, not live. The banner uses a 3-second muted loop and a poster, with no 3D, so the homepage stays light. The live 3D loads only on the practice page.</p>
-    <div class="hero">
-      <div class="hero-copy">
-        <p class="hero-kicker">SalsaCoach</p>
-        <p class="hero-h">Hear the count.<br>See it land.</p>
-        <p class="hero-es" lang="es">Escucha el conteo. Míralo caer.</p>
-        <p class="hero-sub">Two dancers step on every count of the band, at practice speed or full speed. Follow the footprints until your feet do it without you.</p>
-        <div class="hero-cta"><a class="btn" href="#top">Practice the basic</a><a class="btn ghost" href="#review">How the count works</a></div>
-      </div>
-      <div class="hero-media"><video id="heroV" muted playsinline loop preload="none" poster="media/hero-poster.jpg" width="720" height="720" aria-label="Two dancers stepping on the count, looping"></video></div>
-    </div>
-    <ul class="why">
-      <li><b>The weight lands on the count.</b> A foot leaves the floor late in the beat and lands exactly on it, so the eye learns where the beat is.</li>
-      <li><b>The glow shows the weight.</b> The footprint under the standing foot lights up, so the question "which foot now?" answers itself.</li>
-      <li><b>Partners mirror.</b> When the leader breaks forward, the follower breaks back, and the couple moves as one.</li>
-      <li><b>Light on phones.</b> The poster is about 30 KB. The 3-second loop is about 225 KB, and it loads only when the banner is on screen, never with data saver or reduced motion on.</li>
-    </ul>
-  </section>
-
-  <section class="review" id="evidence" aria-labelledby="ev-h">
-    <h2 id="ev-h">Evidence</h2>
-    <div class="evgrid">
-      <figure class="phonevid"><video controls playsinline preload="none" poster="media/phone-demo.jpg" width="358" height="700" src="media/phone-demo.mp4"></video><figcaption>Phone-size render of this page with the synthesized band: three 8-counts from behind the leader, from the side, and from behind the follower.</figcaption></figure>
-      <div class="evtext">
-        <figure><img src="media/contact-proof.png" alt="Chart: ball-of-foot height for four feet and the hips' side shift over two On1 8-counts; every foot leaves after 0.6 of a beat and lands on a count" loading="lazy" width="1320" height="836"><figcaption>Measured on the posed skeletons, 200 samples per beat.</figcaption></figure>
-        <ul class="facts" id="facts">{{FACTS}}</ul>
-      </div>
-    </div>
+    <p class="muted">Full comparison and the recommendation: <code>COMPARISON.md</code>. Before anything ships: <code>HUMAN_TEST_CARD.md</code> (Carlos's S25 ear test, the real-phone test, and one merged list of instructor questions). These private dancers are not a release approval.</p>
   </section>

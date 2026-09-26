@@ -1,5 +1,25 @@
 # SalsaCoach Dancers: handoff for the app and website owners
 
+## Phase three (2026-09-26): what is new, and what it still is not
+
+Status: a private prototype in the mission's phase-three lane. It is not on mysalsacoach.com or in the app, and no repository owned by another chat was edited. Each surface's owner decides whether and how it ships. **Nothing ships until Carlos and a salsa instructor rule** (`HUMAN_TEST_CARD.md`).
+
+- **What changed:** `CHANGES.md`, with before/after images.
+  - The count engine code is byte-identical to phase two, and all 33 phase-two checks still run.
+  - Added: generated body motion (hip settle, counter-rotation, relaxed hold, eye focus), a clean foot plant (toe-off, ankle roll, contact shadows), teaching overlays (count numbers at landing spots, centre-of-weight dot, quick-quick-slow), half speed, step by step, and a robot count voice written for this page.
+- **Practice flow** (`dist/practice.html`, staged as `dist/site/practice/`): Listen → Find the 1 (the Count Lab judge) → Watch slowly → Step along → Speed up. The 3D loads only when the visitor taps Start. The only thing stored is the last tempo.
+- **Homepage banner** (`src/banner/`, `dist/site/banner/`): a poster and a 3.2 s silent loop rendered from the real scene. No 3D on the homepage. The CTA goes to `/practice/` (EN) or `/es/practica/` (ES).
+- **CSP finding** (website owner): the avatars are meshopt-compressed, and the decoder is WebAssembly. The live policy (`script-src 'self' …`) refuses it.
+  - Add `'wasm-unsafe-eval'` to `script-src` for `/practice/*` only. Nothing else is needed (QA check against the exact `_headers` line).
+  - The banner itself needs no change: no inline script, same-origin media.
+- **Measurements and results:** `QA_RESULTS.md`. The routes compared, with a recommendation: `COMPARISON.md`.
+- **Still owed:** instructor rulings; Carlos's S25 ear test; a real-phone test (Bluetooth included); a human judgment of the robot voice; and a recorded voice before release.
+
+---
+
+# Phase two (2026-09-26), kept for the record
+
+
 Status (2026-09-26): private prototype on the mission branch only. It is not on mysalsacoach.com or in the app, and this session did not edit either repository. Whoever owns each surface decides whether and how it ships.
 
 ## What it is

@@ -1,7 +1,11 @@
 {
-  "when": "2026-09-26T07:21:19.321Z",
-  "passed": 33,
-  "total": 33,
+  "when": "2026-09-26T14:41:01.182Z",
+  "passed": 73,
+  "total": 73,
+  "phase2": {
+    "passed": 33,
+    "total": 33
+  },
   "results": [
     {
       "name": "desktop: dancers load without script errors",
@@ -149,8 +153,8 @@
       "name": "pose solve (both dancers, CPU) under 2 ms median on this machine",
       "ok": true,
       "detail": {
-        "median": 0.044,
-        "p95": 0.15,
+        "median": 0.09,
+        "p95": 0.286,
         "unit": "ms per frame, both dancers"
       }
     },
@@ -196,12 +200,447 @@
       "ok": true,
       "detail": {
         "counts": 15,
-        "lagMsMedian": 67.46353968216745,
-        "lagMsMax": 191.4015396823532,
-        "frameMsMedian": 123.1000000005588,
+        "lagMsMedian": 90.74800000148909,
+        "lagMsMax": 255.00099999776492,
+        "frameMsMedian": 141.10000000149012,
         "outputLatency": 0.032,
         "baseLatency": 0.01,
         "note": "headless Chromium with software WebGL; frame interval is not a phone measurement"
+      }
+    },
+    {
+      "name": "count engine unchanged: beatState and its timing helpers are byte-identical to phase two (sha256 over 21 parts)",
+      "ok": true,
+      "detail": "8f1df7be36200e16cff89ab84c4be17c954b59c228046876205c0b10afd99b38"
+    },
+    {
+      "name": "Find the 1: the tap judge gives the Count Lab verdict on 10,000 random taps (code taken from count-lab/src/app.js)",
+      "ok": true,
+      "detail": {
+        "identical": 10000,
+        "of": 10000
+      }
+    },
+    {
+      "name": "foot plant: toe tips never go below the floor (all patterns, both dancers, 50 samples per beat)",
+      "ok": true,
+      "detail": {
+        "on1": "0 mm",
+        "on2t": "0 mm",
+        "on2c": "0 mm"
+      }
+    },
+    {
+      "name": "foot plant: toes stay flat on the floor while the ball is down (toe-off only after the ball lifts)",
+      "ok": true,
+      "detail": {
+        "on1": "0 mm",
+        "on2t": "0 mm",
+        "on2c": "0 mm"
+      }
+    },
+    {
+      "name": "ankle roll is subtle (at most 3°) and never on the weighted foot",
+      "ok": true,
+      "detail": {
+        "on1": [
+          2.86,
+          0
+        ],
+        "on2t": [
+          2.86,
+          0
+        ],
+        "on2c": [
+          2.86,
+          0
+        ]
+      }
+    },
+    {
+      "name": "hip settle: hips stay over the weighted foot through the whole planted part of every count",
+      "ok": true,
+      "detail": {
+        "on1": 0,
+        "on2t": 0,
+        "on2c": 0
+      }
+    },
+    {
+      "name": "weight indicator: the centre-of-weight dot sits on the weighted side through every planted phase",
+      "ok": true,
+      "detail": {
+        "on1": 0,
+        "on2t": 0,
+        "on2c": 0
+      }
+    },
+    {
+      "name": "count numbers: from lift-off the landing spot shows the count it lands on; after landing the foot shows its count",
+      "ok": true,
+      "detail": {
+        "on1": 0,
+        "on2t": 0,
+        "on2c": 0
+      }
+    },
+    {
+      "name": "contact shadow: darkest under the weighted flat foot, faint under a foot in the air",
+      "ok": true,
+      "detail": {
+        "weightedFlat": 0.62,
+        "inAir": 0.144
+      }
+    },
+    {
+      "name": "teaching overlays toggle: count numbers, weight dot, quick-quick-slow and footprints switch off and back on",
+      "ok": true,
+      "detail": {
+        "on": {
+          "badge": true,
+          "dot": true,
+          "rhythm": true
+        },
+        "off": {
+          "badge": false,
+          "dot": false,
+          "rhythm": false
+        },
+        "offShot": 51947,
+        "again": {
+          "badge": true,
+          "dot": true,
+          "rhythm": true
+        }
+      }
+    },
+    {
+      "name": "quick-quick-slow captions follow the step table (On1 QQSH QQSH; 2-3-4 count HQQS HQQS)",
+      "ok": true,
+      "detail": {
+        "on1": "QQSHQQSH",
+        "on2t": "QQSHQQSH",
+        "on2c": "HQQSHQQS"
+      }
+    },
+    {
+      "name": "slow motion ½×: the band plays at half tempo (150 -> 75 BPM) and each drawn pose is the heard position within 0.002 beat (steps land on the count)",
+      "ok": true,
+      "detail": {
+        "bandBpm": 75,
+        "counts": 7,
+        "posErrBeats": 0.0001625000009326527,
+        "lagMsMax": 790.8530000014888,
+        "withinOwnFrame": true,
+        "frameMsMedian": 474.19999999925494
+      }
+    },
+    {
+      "name": "slow motion ½×: each new count is drawn on the first frame after it is heard",
+      "ok": true,
+      "detail": {
+        "bandBpm": 75,
+        "counts": 7,
+        "posErrBeats": 0.0001625000009326527,
+        "lagMsMax": 790.8530000014888,
+        "withinOwnFrame": true,
+        "frameMsMedian": 474.19999999925494
+      }
+    },
+    {
+      "name": "step by step: one press advances exactly one count, animated forward and finishing when its cue is heard",
+      "ok": true,
+      "detail": {
+        "from": 1,
+        "to": 2,
+        "final": 2,
+        "frames": 3,
+        "monotonic": true,
+        "doneHeardMinusLand": 242.1,
+        "beat": 0.4
+      }
+    },
+    {
+      "name": "step by step: the → key and a tap on the dancers each advance one count",
+      "ok": true,
+      "detail": {
+        "p0": 2,
+        "p1": 3,
+        "p2": 4
+      }
+    },
+    {
+      "name": "reduced motion: step by step snaps to the next count, no travelling badge, no count flash",
+      "ok": true,
+      "detail": {
+        "before": 4,
+        "after": 5,
+        "anim": null,
+        "nextBadge": false,
+        "flash": "none"
+      }
+    },
+    {
+      "name": "phase-three page loads with no script errors (desktop)",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "count voice: every word (EN and ES, 100/150/200 BPM) reaches full level within 60 ms of its beat (offline render; a person must still judge the sound)",
+      "ok": true,
+      "detail": {
+        "worstMs": 41
+      }
+    },
+    {
+      "name": "practice page: no 3D is downloaded until the viewer presses Start; then the dancers load",
+      "ok": true,
+      "detail": {
+        "requestsBefore": 0,
+        "requestsAfterStart": 8,
+        "firstLoadBytes": 719019,
+        "errors": []
+      }
+    },
+    {
+      "name": "practice flow: five steps, progress shows \"Step 1 of 5\" then \"Step 2 of 5\", aria-current moves, focus goes to the step title",
+      "ok": true,
+      "detail": {
+        "prog": {
+          "n": 5,
+          "current": 0,
+          "text": "Step 1 of 5",
+          "value": "0"
+        },
+        "prog2": {
+          "current": 1,
+          "text": "Step 2 of 5",
+          "focus": "prTitle",
+          "tap": true,
+          "peek": true
+        }
+      }
+    },
+    {
+      "name": "practice flow, Find the 1: the counts are hidden (listen by ear) and the tap pad is shown",
+      "ok": true,
+      "detail": {
+        "current": 1,
+        "text": "Step 2 of 5",
+        "focus": "prTitle",
+        "tap": true,
+        "peek": true
+      }
+    },
+    {
+      "name": "practice flow, Find the 1: taps on the 1 score \"On the 1\" (Count Lab judge), a tap on the 5 scores \"That was the 5\", three in a row complete the step",
+      "ok": true,
+      "detail": {
+        "verdicts": [
+          "good",
+          "good",
+          "good",
+          "five",
+          "late"
+        ],
+        "ms": [
+          0,
+          0,
+          0,
+          0,
+          150
+        ],
+        "done": [
+          false,
+          true,
+          false,
+          false,
+          false
+        ]
+      }
+    },
+    {
+      "name": "practice flow, Watch slowly: half speed, overlays on; Step along: count voice on at full speed",
+      "ok": true,
+      "detail": {
+        "watch": {
+          "slow": true,
+          "ov": {
+            "count": true,
+            "weight": true,
+            "rhythm": true,
+            "prints": true
+          },
+          "effBpm": 75
+        },
+        "along": {
+          "voice": true,
+          "slow": false,
+          "bpm": 110
+        }
+      }
+    },
+    {
+      "name": "practice flow, Speed up: tempo buttons work and the last tempo is the only thing stored (localStorage)",
+      "ok": true,
+      "detail": {
+        "bpm": 170,
+        "keys": [
+          "salsacoach.dancers.tempo"
+        ]
+      }
+    },
+    {
+      "name": "practice flow: the last tempo comes back after a reload (Speed up step)",
+      "ok": true,
+      "detail": 170
+    },
+    {
+      "name": "EN/ES: every page string and every practice string exists in both languages",
+      "ok": true,
+      "detail": {
+        "page": [
+          55,
+          55
+        ],
+        "practice": [
+          58,
+          58
+        ]
+      }
+    },
+    {
+      "name": "practice page loads with no script errors",
+      "ok": true,
+      "detail": []
+    },
+    {
+      "name": "storage blocked: the practice page still works (every storage call is wrapped in try/catch)",
+      "ok": true,
+      "detail": {
+        "bpm": 130,
+        "errors": []
+      }
+    },
+    {
+      "name": "keyboard: Space on the tap pad starts the band and then taps; Enter on \"Next step\" moves on",
+      "ok": true,
+      "detail": {
+        "playing": true,
+        "verdict": "Late · +253 ms",
+        "step": 2
+      }
+    },
+    {
+      "name": "practice page desktop EN: no horizontal scroll, lang=\"en\", axe finds no violations",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "lang": "en",
+        "axe": []
+      }
+    },
+    {
+      "name": "practice page desktop ES: no horizontal scroll, lang=\"es\", axe finds no violations",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "lang": "es",
+        "axe": []
+      }
+    },
+    {
+      "name": "practice page phone EN: no horizontal scroll, lang=\"en\", axe finds no violations",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "lang": "en",
+        "axe": []
+      }
+    },
+    {
+      "name": "practice page phone ES: no horizontal scroll, lang=\"es\", axe finds no violations",
+      "ok": true,
+      "detail": {
+        "overflow": 0,
+        "lang": "es",
+        "axe": []
+      }
+    },
+    {
+      "name": "phone first load at most 1.2 MB (explore page, phone tier, same method as phase two)",
+      "ok": true,
+      "detail": 1174906
+    },
+    {
+      "name": "pose solve well under 1 ms (median under 0.25 ms, p95 under 0.5 ms, both dancers)",
+      "ok": true,
+      "detail": {
+        "median": 0.09,
+        "p95": 0.286,
+        "unit": "ms per frame, both dancers"
+      }
+    },
+    {
+      "name": "hero poster at most 60 KB (WebP and AVIF)",
+      "ok": true,
+      "detail": {
+        "webp": 22574,
+        "avif": 14035
+      }
+    },
+    {
+      "name": "hero loop: silent, 3–4 s, at most 300 KB as WebM and as MP4",
+      "ok": true,
+      "detail": {
+        "webm": 222439,
+        "mp4": 228425,
+        "seconds": 3.2,
+        "audio": 0
+      }
+    },
+    {
+      "name": "banner EN: CTA \"Try the practice\" goes to /practice/; no 3D, no WebGL, no avatar download on the homepage",
+      "ok": true,
+      "detail": {
+        "cta": "/practice/",
+        "ctaText": "Try the practice",
+        "webgl": false,
+        "overflow": 0,
+        "requests": 5,
+        "heavy": []
+      }
+    },
+    {
+      "name": "banner ES: CTA \"Prueba la práctica\" goes to /es/practica/; no 3D, no WebGL, no avatar download on the homepage",
+      "ok": true,
+      "detail": {
+        "cta": "/es/practica/",
+        "ctaText": "Prueba la práctica",
+        "webgl": false,
+        "overflow": 0,
+        "requests": 5,
+        "heavy": []
+      }
+    },
+    {
+      "name": "staged route under the live site's CSP: the dancers need 'wasm-unsafe-eval' (meshopt decoder) and nothing else; with it, no violations",
+      "ok": true,
+      "detail": {
+        "live": {
+          "loaded": false,
+          "violations": [
+            "script-src wasm-eval"
+          ],
+          "errors": [
+            "CompileError: WebAssembly.instantiate(): Refused to compile or instantiate WebAssembly module because 'unsafe-eval' is not an allowed source of script in the fo"
+          ]
+        },
+        "live+wasm": {
+          "loaded": true,
+          "violations": [],
+          "errors": []
+        }
       }
     }
   ],
@@ -267,46 +706,577 @@
       ]
     },
     "poseCpuMs": {
-      "median": 0.044,
-      "p95": 0.15,
+      "median": 0.09,
+      "p95": 0.286,
       "unit": "ms per frame, both dancers"
     },
     "load_desktop": {
       "ready": true,
-      "wallMs": 7890,
-      "dancersLoadMs": 656,
-      "bytes": 2180677,
+      "wallMs": 5330,
+      "dancersLoadMs": 3010,
+      "bytes": 2216490,
       "files": 13,
-      "heapMB": 5.5,
-      "drawCalls": 24,
-      "triangles": 21614,
-      "textures": 16,
+      "heapMB": 8.8,
+      "drawCalls": 40,
+      "triangles": 21954,
+      "textures": 25,
       "tier": "full (1024 px + normal maps)",
       "dpr": 1
     },
     "axe_desktop": [],
     "load_phone": {
       "ready": true,
-      "wallMs": 4244,
-      "dancersLoadMs": 2695,
-      "bytes": 1139093,
+      "wallMs": 5918,
+      "dancersLoadMs": 806,
+      "bytes": 1174906,
       "files": 9,
-      "heapMB": 8.2,
-      "drawCalls": 24,
-      "triangles": 21614,
-      "textures": 12,
+      "heapMB": 8.8,
+      "drawCalls": 40,
+      "triangles": 21954,
+      "textures": 21,
       "tier": "lite (512 px, no normal maps)",
       "dpr": 1.5
     },
     "axe_phone": [],
     "audioSync": {
       "counts": 15,
-      "lagMsMedian": 67.46353968216745,
-      "lagMsMax": 191.4015396823532,
-      "frameMsMedian": 123.1000000005588,
+      "lagMsMedian": 90.74800000148909,
+      "lagMsMax": 255.00099999776492,
+      "frameMsMedian": 141.10000000149012,
       "outputLatency": 0.032,
       "baseLatency": 0.01,
       "note": "headless Chromium with software WebGL; frame interval is not a phone measurement"
+    },
+    "engine": {
+      "ok": true,
+      "n": 21,
+      "hash": "8f1df7be36200e16cff89ab84c4be17c954b59c228046876205c0b10afd99b38"
+    },
+    "judge": {
+      "extracted": true,
+      "taps": 10000,
+      "identical": 10000,
+      "first": null
+    },
+    "realism": {
+      "on1": {
+        "tipBelowMm": 0,
+        "tipLiftWhileDownMm": 0,
+        "rollMaxDeg": 2.86,
+        "rollWeightedDeg": 0,
+        "hipMiss": 0,
+        "dotMiss": 0,
+        "badgeMiss": [],
+        "badgeMissN": 0,
+        "settle": [
+          0.35,
+          1
+        ]
+      },
+      "on2t": {
+        "tipBelowMm": 0,
+        "tipLiftWhileDownMm": 0,
+        "rollMaxDeg": 2.86,
+        "rollWeightedDeg": 0,
+        "hipMiss": 0,
+        "dotMiss": 0,
+        "badgeMiss": [],
+        "badgeMissN": 0,
+        "settle": [
+          0.35,
+          1
+        ]
+      },
+      "on2c": {
+        "tipBelowMm": 0,
+        "tipLiftWhileDownMm": 0,
+        "rollMaxDeg": 2.86,
+        "rollWeightedDeg": 0,
+        "hipMiss": 0,
+        "dotMiss": 0,
+        "badgeMiss": [],
+        "badgeMissN": 0,
+        "settle": [
+          0.35,
+          1
+        ]
+      }
+    },
+    "shadows": {
+      "planted": {
+        "leader": {
+          "L": 0.62,
+          "R": 0.423,
+          "v": true
+        },
+        "follower": {
+          "L": 0.48,
+          "R": 0.62,
+          "v": true
+        }
+      },
+      "lifting": {
+        "leader": {
+          "L": 0.144,
+          "R": 0.62,
+          "v": true
+        },
+        "follower": {
+          "L": 0.62,
+          "R": 0.138,
+          "v": true
+        }
+      }
+    },
+    "overlayToggle": {
+      "on": {
+        "badge": true,
+        "dot": true,
+        "rhythm": true
+      },
+      "off": {
+        "badge": false,
+        "dot": false,
+        "rhythm": false
+      },
+      "offShot": 51947,
+      "again": {
+        "badge": true,
+        "dot": true,
+        "rhythm": true
+      }
+    },
+    "rhythmWords": {
+      "on1": "QQSHQQSH",
+      "on2t": "QQSHQQSH",
+      "on2c": "HQQSHQQS"
+    },
+    "slowMotion": {
+      "bandBpm": 75,
+      "counts": 7,
+      "posErrBeats": 0.0001625000009326527,
+      "lagMsMax": 790.8530000014888,
+      "withinOwnFrame": true,
+      "frameMsMedian": 474.19999999925494
+    },
+    "stepMode": {
+      "from": 1,
+      "to": 2,
+      "final": 2,
+      "frames": 3,
+      "monotonic": true,
+      "doneHeardMinusLand": 242.1,
+      "beat": 0.4
+    },
+    "stepKeys": {
+      "p0": 2,
+      "p1": 3,
+      "p2": 4
+    },
+    "reducedNew": {
+      "before": 4,
+      "after": 5,
+      "anim": null,
+      "nextBadge": false,
+      "flash": "none"
+    },
+    "voiceOnsetsMs": {
+      "en100": [
+        -7,
+        11,
+        -35,
+        23,
+        17,
+        11,
+        13,
+        -5
+      ],
+      "en150": [
+        -11,
+        9,
+        -29,
+        19,
+        19,
+        11,
+        11,
+        -1
+      ],
+      "en200": [
+        -7,
+        11,
+        -17,
+        15,
+        15,
+        7,
+        11,
+        1
+      ],
+      "es100": [
+        -3,
+        9,
+        3,
+        -15,
+        3,
+        7,
+        -41,
+        -5
+      ],
+      "es150": [
+        -1,
+        5,
+        1,
+        -17,
+        3,
+        7,
+        -31,
+        -1
+      ],
+      "es200": [
+        1,
+        7,
+        -1,
+        -9,
+        3,
+        5,
+        -21,
+        1
+      ]
+    },
+    "practiceLazy": {
+      "requestsBefore": 0,
+      "requestsAfterStart": 8,
+      "firstLoadBytes": 719019,
+      "errors": []
+    },
+    "practiceProgress": {
+      "prog": {
+        "n": 5,
+        "current": 0,
+        "text": "Step 1 of 5",
+        "value": "0"
+      },
+      "prog2": {
+        "current": 1,
+        "text": "Step 2 of 5",
+        "focus": "prTitle",
+        "tap": true,
+        "peek": true
+      }
+    },
+    "practiceFlow": {
+      "verdicts": [
+        "good",
+        "good",
+        "good",
+        "five",
+        "late"
+      ],
+      "ms": [
+        0,
+        0,
+        0,
+        0,
+        150
+      ],
+      "after": {
+        "step": 1,
+        "id": "find",
+        "done": [
+          false,
+          true,
+          false,
+          false,
+          false
+        ],
+        "heard": 0,
+        "watched": 0,
+        "stepped": 0,
+        "taps": [
+          {
+            "v": "good",
+            "ms": 8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": -8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": 0
+          },
+          {
+            "v": "five",
+            "ms": -1.7763568394002505e-12
+          },
+          {
+            "v": "late",
+            "ms": 149.99999999999503
+          }
+        ],
+        "streak": 0,
+        "offset": 0,
+        "level": "guided",
+        "bpm": 120,
+        "slow": false,
+        "voice": false,
+        "stepMode": false,
+        "noPeek": true
+      },
+      "guidedClick": true,
+      "watch": {
+        "step": 2,
+        "id": "watch",
+        "done": [
+          false,
+          true,
+          false,
+          false,
+          false
+        ],
+        "heard": 0,
+        "watched": 0,
+        "stepped": 0,
+        "taps": [
+          {
+            "v": "good",
+            "ms": 8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": -8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": 0
+          },
+          {
+            "v": "five",
+            "ms": -1.7763568394002505e-12
+          },
+          {
+            "v": "late",
+            "ms": 149.99999999999503
+          }
+        ],
+        "streak": 0,
+        "offset": 0,
+        "level": "guided",
+        "bpm": 150,
+        "slow": true,
+        "voice": false,
+        "stepMode": false,
+        "noPeek": false
+      },
+      "watchState": {
+        "lang": "en",
+        "pattern": "on1",
+        "loop": "all",
+        "role": "leader",
+        "view": "leader",
+        "mirror": false,
+        "bpm": 150,
+        "reduced": false,
+        "playing": false,
+        "pos": 0,
+        "slow": true,
+        "stepMode": false,
+        "voice": false,
+        "ov": {
+          "count": true,
+          "weight": true,
+          "rhythm": true,
+          "prints": true
+        },
+        "noPeek": false,
+        "stepAnim": null,
+        "effBpm": 75,
+        "has3d": true
+      },
+      "along": {
+        "step": 3,
+        "id": "along",
+        "done": [
+          false,
+          true,
+          false,
+          false,
+          false
+        ],
+        "heard": 0,
+        "watched": 0,
+        "stepped": 0,
+        "taps": [
+          {
+            "v": "good",
+            "ms": 8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": -8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": 0
+          },
+          {
+            "v": "five",
+            "ms": -1.7763568394002505e-12
+          },
+          {
+            "v": "late",
+            "ms": 149.99999999999503
+          }
+        ],
+        "streak": 0,
+        "offset": 0,
+        "level": "guided",
+        "bpm": 110,
+        "slow": false,
+        "voice": true,
+        "stepMode": false,
+        "noPeek": false
+      },
+      "alongState": {
+        "voice": true,
+        "slow": false,
+        "bpm": 110
+      },
+      "speed": {
+        "step": 4,
+        "id": "speed",
+        "done": [
+          false,
+          true,
+          false,
+          false,
+          false
+        ],
+        "heard": 0,
+        "watched": 0,
+        "stepped": 0,
+        "taps": [
+          {
+            "v": "good",
+            "ms": 8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": -8.881784197001252e-13
+          },
+          {
+            "v": "good",
+            "ms": 0
+          },
+          {
+            "v": "five",
+            "ms": -1.7763568394002505e-12
+          },
+          {
+            "v": "late",
+            "ms": 149.99999999999503
+          }
+        ],
+        "streak": 0,
+        "offset": 0,
+        "level": "guided",
+        "bpm": 130,
+        "slow": false,
+        "voice": true,
+        "stepMode": false,
+        "noPeek": false
+      },
+      "speedBpm": 170,
+      "storage": [
+        "salsacoach.dancers.tempo"
+      ],
+      "stored": "170"
+    },
+    "keyboard": {
+      "playing": true,
+      "verdict": "Late · +253 ms",
+      "step": 2
+    },
+    "practice_desktop_en": {
+      "overflow": 0,
+      "lang": "en",
+      "axe": []
+    },
+    "practice_desktop_es": {
+      "overflow": 0,
+      "lang": "es",
+      "axe": []
+    },
+    "practice_phone_en": {
+      "overflow": 0,
+      "lang": "en",
+      "axe": []
+    },
+    "practice_phone_es": {
+      "overflow": 0,
+      "lang": "es",
+      "axe": []
+    },
+    "banner": {
+      "bytes": {
+        "posterWebp": 22574,
+        "posterAvif": 14035,
+        "loopWebm": 222439,
+        "loopMp4": 228425,
+        "html": 1602,
+        "css": 2542,
+        "js": 1454,
+        "gzip": {
+          "html": 811,
+          "css": 1044,
+          "js": 701
+        }
+      },
+      "meta": {
+        "seconds": 3.2,
+        "audioStreams": 0,
+        "size": "720x720",
+        "fps": 30,
+        "loop": "one On1 8-count at 150 BPM; frame 96 = frame 0, so it loops without a seam",
+        "bytes": {
+          "hero-poster.webp": 22574,
+          "hero-poster.avif": 14035,
+          "hero-loop.webm": 222439,
+          "hero-loop.mp4": 228425
+        },
+        "source": "rendered from the real scene through the #render hooks (qa/hero.mjs), camera yaw 1.2 rad"
+      }
+    },
+    "bannerPage_en": {
+      "cta": "/practice/",
+      "ctaText": "Try the practice",
+      "webgl": false,
+      "overflow": 0,
+      "requests": 5,
+      "heavy": []
+    },
+    "bannerPage_es": {
+      "cta": "/es/practica/",
+      "ctaText": "Prueba la práctica",
+      "webgl": false,
+      "overflow": 0,
+      "requests": 5,
+      "heavy": []
+    },
+    "csp": {
+      "live": {
+        "loaded": false,
+        "violations": [
+          "script-src wasm-eval"
+        ],
+        "errors": [
+          "CompileError: WebAssembly.instantiate(): Refused to compile or instantiate WebAssembly module because 'unsafe-eval' is not an allowed source of script in the fo"
+        ]
+      },
+      "live+wasm": {
+        "loaded": true,
+        "violations": [],
+        "errors": []
+      }
     }
   }
 }
