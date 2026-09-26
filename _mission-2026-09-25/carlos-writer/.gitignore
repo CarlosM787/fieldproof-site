@@ -1,0 +1,7 @@
+# Writer lane: keep scratch, private material and media out of git.
+_work/
+private/
+media/
+scripts/selftest-out/
+tests/results/*.log
+tests/results/*.tap

@@ -1,0 +1,28 @@
+.wrap { max-width: 760px; margin: 0 auto; padding: 24px 16px 64px; }
+.top { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 8px; }
+.top img { margin-top: 2px; border-radius: 8px; }
+fieldset.choices { border: none; padding: 0; margin: 0 0 8px; display: grid; gap: 8px; }
+.choice { display: flex; gap: 10px; align-items: flex-start; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.choice input { margin-top: 4px; }
+.tag { font-size: 11px; font-weight: 600; padding: 1px 6px; border-radius: 999px; vertical-align: 1px; }
+.tag.ok { background: var(--ins-bg); color: var(--ins-ink); }
+.tag.warn { background: var(--warn-bg); color: var(--warn-ink); }
+.row { display: grid; grid-template-columns: 170px 1fr; gap: 8px 16px; align-items: start; margin: 10px 0; }
+.row > label, .row > .lab { padding-top: 6px; color: var(--muted); }
+.seg { display: flex; gap: 14px; flex-wrap: wrap; padding-top: 6px; }
+.check { display: flex; gap: 8px; align-items: center; padding-top: 6px; }
+.scale { display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.btns { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 8px; }
+.filebtn input { display: none; }
+details { margin-top: 8px; }
+summary { cursor: pointer; color: var(--muted); }
+.keys { border-collapse: collapse; width: 100%; margin-bottom: 8px; }
+.keys td { padding: 6px 0; border-bottom: 1px solid var(--line); }
+.keys td:last-child { text-align: right; font: 13px ui-monospace, Consolas, monospace; }
+.keys .unset { color: var(--accent); }
+.prose ul { margin: 0; padding-left: 20px; }
+.saved { position: fixed; right: 16px; bottom: 12px; margin: 0; padding: 6px 10px; border-radius: 8px; background: var(--panel); border: 1px solid var(--line); color: var(--muted); opacity: 0; transition: opacity 0.2s; }
+.saved.show { opacity: 1; }
+#api-card.off { opacity: 0.85; }
+@media (max-width: 560px) { .row { grid-template-columns: 1fr; } .row > label, .row > .lab { padding-top: 0; } }

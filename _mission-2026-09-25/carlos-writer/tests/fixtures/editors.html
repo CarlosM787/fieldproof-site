@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Carlos Writer test page</title>
+<style>
+  body { font: 16px/1.5 Georgia, serif; margin: 24px; max-width: 900px; }
+  textarea, input { font: 15px/1.4 Arial, sans-serif; width: 640px; display: block; margin: 4px 0 14px; }
+  textarea { height: 64px; }
+  [contenteditable] { border: 1px solid #999; padding: 8px; width: 624px; margin: 4px 0 14px; font: 15px/1.4 Arial, sans-serif; }
+  label { font: bold 13px Arial, sans-serif; color: #555; }
+</style>
+</head>
+<body>
+<h1>Editors</h1>
+<label for="ta">Textarea</label>
+<textarea id="ta">I recieve teh mail every morning becuase i like paper.</textarea>
+<label for="inp">Text input</label>
+<input id="inp" type="text" value="Thier plan was definately good.">
+<label>Contenteditable</label>
+<div id="ce" contenteditable="true">We shipped alot of things untill Tuesday, and it was wierd.</div>
+<label for="pw">Password</label>
+<input id="pw" type="password" value="not-a-real-password-123">
+<label for="otp">One-time code</label>
+<input id="otp" type="text" autocomplete="one-time-code" value="482913">
+<label for="email">Email field</label>
+<input id="email" type="email" value="carlos@moraleslabs.com">
+<label for="ta-en">English to Spanish</label>
+<textarea id="ta-en">I ran 29.39 miles in Tucson on June 24, starting at 3:40 a.m. The details are at https://carlosmoralesjr.com/about/ and SalsaCoach is still in review.</textarea>
+<label for="ta-es">Spanish to English</label>
+<textarea id="ta-es">Corrí 29.39 millas en Tucson el 24 de junio, empezando a las 3:40 a.m. Escríbeme a carlos@moraleslabs.com si tienes preguntas sobre TalkEstimate.</textarea>
+<label for="ta-drop">Number check</label>
+<textarea id="ta-drop">zz-drop-number The run took 5 hours and I finished.</textarea>
+<label for="ta-hype">Hype</label>
+<textarea id="ta-hype">In today's fast-paced world, I am thrilled to announce that we have successfully utilized our innovative platform to deliver 4 products.</textarea>
+<label for="ta-casual">Casual</label>
+<textarea id="ta-casual">Hello team, I am writing to confirm that I cannot attend. Regards</textarea>
+<label for="ta-pro">Professional</label>
+<textarea id="ta-pro">Hey, I'm gonna send it tomorrow, thx</textarea>
+<label for="ta-multi">Multi-line</label>
+<textarea id="ta-multi">First line has teh typo.
+Second line is fine.</textarea>
+<label>Multi-paragraph contenteditable</label>
+<div id="ce-multi" contenteditable="true"><p>First paragraph with teh typo.</p><p>Second paragraph, untill now.</p></div>
+<p id="para">This paragraph is not editable. It has teh typo.</p>
+<p>Framework mirror: <span id="mirror"></span> (input events seen: <span id="events">0</span>)</p>
+<script>
+  // Simulates a framework that keeps state from input events (React-style).
+  let n = 0;
+  document.getElementById('ta').addEventListener('input', (e) => {
+    n++;
+    document.getElementById('mirror').textContent = e.target.value;
+    document.getElementById('events').textContent = String(n);
+  });
+</script>
+</body>
+</html>

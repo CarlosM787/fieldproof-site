@@ -1,0 +1,60 @@
+{
+  "manifest_version": 3,
+  "name": "Carlos Writer",
+  "version": "0.1.0",
+  "description": "Proofread and rewrite selected text with a model on your own computer. Nothing goes to the internet unless you turn on the optional API.",
+  "minimum_chrome_version": "120",
+  "permissions": [
+    "contextMenus",
+    "storage",
+    "activeTab",
+    "scripting",
+    "declarativeNetRequestWithHostAccess"
+  ],
+  "host_permissions": [
+    "http://localhost:11434/*",
+    "http://127.0.0.1:11434/*"
+  ],
+  "optional_host_permissions": [
+    "https://api.anthropic.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Carlos Writer",
+    "default_popup": "popup/popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "32": "icons/icon32.png",
+      "48": "icons/icon48.png"
+    }
+  },
+  "options_ui": {
+    "page": "options/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "cw-menu": {
+      "suggested_key": { "default": "Alt+Shift+M" },
+      "description": "Show the Carlos Writer menu for the selected text"
+    },
+    "cw-proofread": {
+      "suggested_key": { "default": "Alt+Shift+R" },
+      "description": "Proofread the selected text (fix errors only)"
+    },
+    "cw-carlos": {
+      "suggested_key": { "default": "Alt+Shift+V" },
+      "description": "Rewrite the selected text to sound like Carlos"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "32": "icons/icon32.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'; connect-src http://localhost:11434 http://127.0.0.1:11434 https://api.anthropic.com"
+  }
+}

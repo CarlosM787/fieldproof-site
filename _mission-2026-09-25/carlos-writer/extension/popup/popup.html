@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Carlos Writer</title>
+  <link rel="stylesheet" href="../ui.css">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <main>
+    <header>
+      <b>Carlos Writer</b>
+      <a href="#" id="settings">Settings</a>
+    </header>
+    <p class="muted small" id="where">Sends the text to: …</p>
+    <label for="input" class="sr">Text to edit</label>
+    <textarea id="input" rows="6" placeholder="Paste text here (for Google Docs, desktop apps, anything)."></textarea>
+    <div class="acts" id="acts"></div>
+    <p id="status" class="muted small" role="status" aria-live="polite"></p>
+    <section id="out" hidden>
+      <div class="label"><span>Original</span><span id="count"></span></div>
+      <div class="box" id="orig"></div>
+      <div class="label"><span>Suggestion</span></div>
+      <div class="box" id="sugg"></div>
+      <p class="warnbox small" id="warn" hidden></p>
+      <div class="btns">
+        <button type="button" class="primary" id="copy">Copy suggestion</button>
+        <button type="button" id="clear">Clear</button>
+      </div>
+    </section>
+  </main>
+  <script src="../lib/prompts.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

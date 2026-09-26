@@ -1,0 +1,31 @@
+{
+  "when": "2026-09-26T09:53:00.510Z",
+  "note": "plain Chromium, no extension",
+  "hosts": [
+    "accounts.google.com:443",
+    "android.clients.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "http://clients2.google.com/time/1/current",
+    "redirector.gvt1.com:443",
+    "www.google.com:443"
+  ],
+  "hits": [
+    "http://clients2.google.com/time/1/current?cup2key=9:uVhlpOJp-3lSWTOzqVv3Hx4EM65A1FcNSJNzxr4e71k&cup2hreq=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "redirector.gvt1.com:443",
+    "www.google.com:443",
+    "accounts.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "accounts.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "android.clients.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "accounts.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "www.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "content-autofill.googleapis.com:443",
+    "accounts.google.com:443",
+    "content-autofill.googleapis.com:443",
+    "content-autofill.googleapis.com:443"
+  ]
+}

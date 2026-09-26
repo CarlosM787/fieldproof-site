@@ -1,0 +1,353 @@
+{
+  "when": "2026-09-26T10:12:23.834Z",
+  "browser": "141.0.7390.37",
+  "passed": 29,
+  "failed": 0,
+  "results": [
+    {
+      "name": "manifest: minimal permissions, localhost-only host access, API optional, CSP connect-src",
+      "ok": true,
+      "ms": 16
+    },
+    {
+      "name": "defaults: local Ollama, API off, neutral guide",
+      "ok": true,
+      "ms": 5
+    },
+    {
+      "name": "textarea: proofread shows a word diff, Replace updates the text, Ctrl+Z restores it",
+      "ok": true,
+      "ms": 2028
+    },
+    {
+      "name": "text input: Replace and undo",
+      "ok": true,
+      "ms": 1368
+    },
+    {
+      "name": "contenteditable: partial selection, Replace keeps the rest, undo restores",
+      "ok": true,
+      "ms": 1353
+    },
+    {
+      "name": "Copy puts the suggestion on the clipboard and leaves the text alone",
+      "ok": true,
+      "ms": 91
+    },
+    {
+      "name": "Cancel closes the panel and leaves the text unchanged",
+      "ok": true,
+      "ms": 94
+    },
+    {
+      "name": "Escape also cancels",
+      "ok": true,
+      "ms": 51
+    },
+    {
+      "name": "password field is refused and nothing is sent",
+      "ok": true,
+      "ms": 564
+    },
+    {
+      "name": "one-time-code field is refused",
+      "ok": true,
+      "ms": 54
+    },
+    {
+      "name": "English → Spanish keeps names, numbers and the link",
+      "ok": true,
+      "ms": 309
+    },
+    {
+      "name": "Spanish → English keeps names, numbers and the email",
+      "ok": true,
+      "ms": 1395
+    },
+    {
+      "name": "a dropped number is flagged before you replace",
+      "ok": true,
+      "ms": 277
+    },
+    {
+      "name": "menu command: chooser shows 6 actions, a number key runs one",
+      "ok": true,
+      "ms": 279
+    },
+    {
+      "name": "prompt sent to the model: style guide injected, think off, fixed context",
+      "ok": true,
+      "ms": 170
+    },
+    {
+      "name": "read-only page text: Replace is disabled, Copy works",
+      "ok": true,
+      "ms": 75
+    },
+    {
+      "name": "multi-line textarea keeps line breaks",
+      "ok": true,
+      "ms": 1324
+    },
+    {
+      "name": "multi-paragraph contenteditable: replaced, undo restores",
+      "ok": true,
+      "ms": 1344
+    },
+    {
+      "name": "empty selection explains what to do and sends nothing",
+      "ok": true,
+      "ms": 45
+    },
+    {
+      "name": "email-type field (no selection API) is refused politely",
+      "ok": true,
+      "ms": 32
+    },
+    {
+      "name": "the page cannot press Replace for you (untrusted clicks ignored)",
+      "ok": true,
+      "ms": 465
+    },
+    {
+      "name": "errors: model not installed → \"ollama pull\"; Ollama down → clear message",
+      "ok": true,
+      "ms": 379
+    },
+    {
+      "name": "API selected without the browser permission: refused, nothing leaves the machine",
+      "ok": true,
+      "ms": 51
+    },
+    {
+      "name": "content scripts cannot read extension storage (API key stays in trusted contexts)",
+      "ok": true,
+      "ms": 10
+    },
+    {
+      "name": "strict-CSP page: panel renders styled and works",
+      "ok": true,
+      "ms": 449
+    },
+    {
+      "name": "same-origin iframe: the frame with the selection gets the panel",
+      "ok": true,
+      "ms": 279
+    },
+    {
+      "name": "network: the extension talks only to 127.0.0.1:11434; nothing else is reachable",
+      "ok": true,
+      "ms": 424
+    },
+    {
+      "name": "settings page: check connection, import guide (cannot change provider/endpoint), key stays hidden",
+      "ok": true,
+      "ms": 974
+    },
+    {
+      "name": "toolbar popup (paste box for Google Docs and other apps): proofread and copy",
+      "ok": true,
+      "ms": 366
+    }
+  ],
+  "timings": [
+    {
+      "action": "proofread",
+      "panelMs": 51,
+      "resultMs": 74
+    },
+    {
+      "action": "proofread",
+      "panelMs": 16,
+      "resultMs": 30
+    },
+    {
+      "action": "proofread",
+      "panelMs": 17,
+      "resultMs": 39
+    },
+    {
+      "action": "casual",
+      "panelMs": 19,
+      "resultMs": 40
+    },
+    {
+      "action": "professional",
+      "panelMs": 24,
+      "resultMs": 46
+    },
+    {
+      "action": "professional",
+      "panelMs": 16,
+      "resultMs": 31
+    },
+    {
+      "action": "en2es",
+      "panelMs": 17,
+      "resultMs": 41
+    },
+    {
+      "action": "es2en",
+      "panelMs": 19,
+      "resultMs": 118
+    },
+    {
+      "action": "proofread",
+      "panelMs": 14,
+      "resultMs": 32
+    },
+    {
+      "action": "carlos",
+      "panelMs": 13,
+      "resultMs": 28
+    },
+    {
+      "action": "proofread",
+      "panelMs": 11,
+      "resultMs": 108
+    },
+    {
+      "action": "proofread",
+      "panelMs": 17,
+      "resultMs": 27
+    },
+    {
+      "action": "proofread",
+      "panelMs": 19,
+      "resultMs": 40
+    },
+    {
+      "action": "proofread",
+      "panelMs": 14,
+      "resultMs": 27
+    },
+    {
+      "action": "proofread",
+      "panelMs": 14,
+      "resultMs": 30
+    },
+    {
+      "action": "proofread",
+      "panelMs": 31,
+      "resultMs": 50
+    }
+  ],
+  "trapHits": [
+    {
+      "t": 1790417528660,
+      "kind": "http",
+      "method": "GET",
+      "url": "http://clients2.google.com/time/1/current?cup2key=9:98vP0E79TXxxCNCQiX7utpbT5qGTVqS5VUTTNh1zXyw&cup2hreq=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "t": 1790417528677,
+      "kind": "connect",
+      "url": "redirector.gvt1.com:443"
+    },
+    {
+      "t": 1790417528708,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417528708,
+      "kind": "connect",
+      "url": "www.google.com:443"
+    },
+    {
+      "t": 1790417529546,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417529619,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417530576,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417531447,
+      "kind": "connect",
+      "url": "android.clients.google.com:443"
+    },
+    {
+      "t": 1790417532288,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417532306,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417533557,
+      "kind": "connect",
+      "url": "www.google.com:443"
+    },
+    {
+      "t": 1790417535042,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417539518,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417541415,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417541906,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417542165,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    }
+  ],
+  "trapHitsNotExplainedByBrowserServices": [],
+  "serviceWorkerFetchLog": [
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:11434/api/chat",
+    "http://127.0.0.1:8765/fixtures/editors.html?csp-probe=1",
+    "https://example.com/",
+    "http://127.0.0.1:11434/api/version",
+    "http://127.0.0.1:11434/api/version",
+    "http://127.0.0.1:11434/api/tags",
+    "http://127.0.0.1:11434/api/chat"
+  ],
+  "hostsSeen": [
+    "ncjnbbghpcljeochnoimjlmaepkafkem",
+    "127.0.0.1:11434",
+    "127.0.0.1:8765"
+  ],
+  "serviceWorkerRequestsSeenByPlaywright": 0
+}

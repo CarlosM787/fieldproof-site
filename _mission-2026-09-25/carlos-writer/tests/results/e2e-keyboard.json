@@ -1,0 +1,101 @@
+{
+  "when": "2026-09-26T10:12:30.936Z",
+  "mode": "headed Chromium under Xvfb, XTEST keystrokes",
+  "passed": 7,
+  "failed": 0,
+  "results": [
+    {
+      "name": "shortcuts are assigned: Alt+Shift+M menu, Alt+Shift+R proofread, Alt+Shift+V Carlos",
+      "ok": true,
+      "ms": 10
+    },
+    {
+      "name": "without a shortcut or click, the extension cannot touch this site (no broad host access)",
+      "ok": true,
+      "ms": 5
+    },
+    {
+      "name": "real keystroke Alt+Shift+R: panel, Replace, then a real Ctrl+Z undoes it",
+      "ok": true,
+      "ms": 2465
+    },
+    {
+      "name": "real keystroke Alt+Shift+M then \"3\": menu runs \"More casual\"; Cancel leaves the text",
+      "ok": true,
+      "ms": 909
+    },
+    {
+      "name": "real keystroke Alt+Shift+V: \"Sound like Carlos\"",
+      "ok": true,
+      "ms": 854
+    },
+    {
+      "name": "real keystroke on a password field: refused, nothing sent",
+      "ok": true,
+      "ms": 800
+    },
+    {
+      "name": "no request left the machine during the keyboard run",
+      "ok": true,
+      "ms": 2
+    }
+  ],
+  "trapHits": [
+    {
+      "t": 1790417544856,
+      "kind": "http",
+      "method": "GET",
+      "url": "http://clients2.google.com/time/1/current?cup2key=9:pRu9ab4HnlDVE4BGhHOuHbQ3KnNL5BzspuGBLRapPQo&cup2hreq=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "t": 1790417544870,
+      "kind": "connect",
+      "url": "redirector.gvt1.com:443"
+    },
+    {
+      "t": 1790417544904,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417544904,
+      "kind": "connect",
+      "url": "www.google.com:443"
+    },
+    {
+      "t": 1790417545885,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417545899,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417546802,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417547820,
+      "kind": "connect",
+      "url": "android.clients.google.com:443"
+    },
+    {
+      "t": 1790417548359,
+      "kind": "connect",
+      "url": "content-autofill.googleapis.com:443"
+    },
+    {
+      "t": 1790417548864,
+      "kind": "connect",
+      "url": "accounts.google.com:443"
+    },
+    {
+      "t": 1790417549763,
+      "kind": "connect",
+      "url": "www.google.com:443"
+    }
+  ]
+}
