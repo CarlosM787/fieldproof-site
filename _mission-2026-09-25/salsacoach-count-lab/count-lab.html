@@ -676,11 +676,13 @@ const LANES = ['bell', 'clave', 'conga', 'bass'];
   const posFrom = (b) => windowOff() + mod(b, windowLen());
   const slotOf = (tick) => (S.loop === 'all' ? mod(tick, 16) : windowOff() * 2 + mod(tick, 8));
 
-  function playSlot(voice, s, t, len) {
-    const bell = BAND.bell[s]; if (bell) voice.bell(t, bell === 'm');
-    if (BAND.clave[s]) voice.clave(t);
-    const cg = BAND.conga[s]; if (cg) voice.conga(t, cg);
-    const bs = BAND.bass[s]; if (bs) voice.bass(t, bs[0], bs[1] * len);
+  function playSlot(voice, s, t, len, only) {
+    const on = (k) => !only || only[k];
+    const bell = BAND.bell[s]; if (bell && on('bell')) voice.bell(t, bell === 'm');
+    if (BAND.clave[s] && on('clave')) voice.clave(t);
+    const cg = BAND.conga[s]; if (cg && on('conga')) voice.conga(t, cg);
+    const bs = BAND.bass[s]; if (bs && on('bass')) voice.bass(t, bs[0], bs[1] * len);
+    if (only) { if (s === 0 && only.click) voice.click(t, true); return; }
     if (s % 2 === 0 && trainer.cal) voice.click(t, s === 0);
     else if (s === 0) voice.click(t, true);
   }
@@ -1238,15 +1240,23 @@ const LANES = ['bell', 'clave', 'conga', 'bass'];
   if (location.hash === '#render') {
     window.__render = {
       set(o) { Object.assign(S, o.state || {}); Object.assign(cam, o.cam || {}); Object.assign(camGoal, o.cam || {}); if (o.lang) applyLang(o.lang); badge(); refreshGrid(); },
+      cam(yaw, pitch) { cam.yaw = camGoal.yaw = yaw; cam.pitch = camGoal.pitch = pitch; },
+      canvas(bg) {
+        const o = document.createElement('canvas'); o.width = cv.width; o.height = cv.height;
+        const c = o.getContext('2d'), gr = c.createRadialGradient(o.width / 2, o.height, 0, o.width / 2, o.height, o.height * 1.2);
+        gr.addColorStop(0, '#14203d'); gr.addColorStop(0.6, bg || '#0d1427'); c.fillStyle = gr; c.fillRect(0, 0, o.width, o.height);
+        c.drawImage(cv, 0, 0); return o.toDataURL('image/jpeg', 0.92);
+      },
       frame(p) { S.playing = false; S.pos = p; currentShown = p; draw(S.reduced ? Math.floor(p) : p); lastCount = -1; lastSlot = -1; markNow(p); for (const c of slotCols.flat()) c.classList.remove('now'); const sl = Math.floor(p * 2) % 16; slotCols[sl].forEach((c) => c.classList.add('now')); return true; },
-      async audio(beats, bpm, sr) {
+      async audio(beats, bpm, sr, sections) {
         const rate = sr || 44100, secs = beats * 60 / bpm + 1.2;
         const off = new OfflineAudioContext(2, Math.ceil(secs * rate), rate);
         const comp = off.createDynamicsCompressor(); comp.threshold.value = -16; comp.ratio.value = 3; comp.attack.value = 0.003; comp.release.value = 0.15; comp.connect(off.destination);
         const busO = off.createGain(); busO.gain.value = 0.85; busO.connect(comp);
-        const lanes = {}; for (const k of ['bell', 'clave', 'conga', 'bass', 'click']) { const gg = off.createGain(); gg.gain.value = k === 'click' ? 0 : (S.mute[k] ? 0 : LANE_LEVEL[k]); gg.connect(busO); lanes[k] = gg; }
+        const lanes = {}; for (const k of ['bell', 'clave', 'conga', 'bass', 'click']) { const gg = off.createGain(); gg.gain.value = sections ? LANE_LEVEL[k] : (k === 'click' ? 0 : (S.mute[k] ? 0 : LANE_LEVEL[k])); gg.connect(busO); lanes[k] = gg; }
         const v = makeVoices(off, lanes, makeNoise(off)), hb = 30 / bpm;
-        for (let i = 0; i < beats * 2; i++) playSlot(v, i % 16, 0.1 + i * hb, 60 / bpm);
+        // sections[m] = { bell, clave, conga, bass, click } for measure m (8 counts = 16 slots)
+        for (let i = 0; i < beats * 2; i++) playSlot(v, i % 16, 0.1 + i * hb, 60 / bpm, sections ? (sections[Math.floor(i / 16)] || sections[sections.length - 1]) : undefined);
         const buf = await off.startRendering();
         const ch = [buf.getChannelData(0), buf.getChannelData(1)], n = buf.length, out = new DataView(new ArrayBuffer(44 + n * 4));
         const w = (o, s) => { for (let i = 0; i < s.length; i++) out.setUint8(o + i, s.charCodeAt(i)); };

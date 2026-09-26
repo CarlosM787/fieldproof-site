@@ -1,0 +1,8 @@
+# Rendered pilots are private (see README): never commit media from this folder
+*.mp4
+*.wav
+*.jpg
+*.png
+floor/
+out/
+__pycache__/
