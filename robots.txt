@@ -1,6 +1,9 @@
 # TalkEstimate — https://talkestimate.com
-# Marketing site. Everything here is public and meant to be indexed.
+# Marketing site. Everything here is public and meant to be indexed, except /p/:
+# customer approval links. That page also carries noindex, and access to any
+# estimate is controlled by the private token in each link, not by this file.
 User-agent: *
 Allow: /
+Disallow: /p/
 
 Sitemap: https://talkestimate.com/sitemap.xml

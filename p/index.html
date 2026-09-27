@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- TalkEstimate customer approval page (TE-P1-H). Source of truth:
+     C:\dev\fieldproof\web\p\index.html — published at https://talkestimate.com/p/
+     The link carries a secret token: no analytics, no third-party scripts,
+     no referrer, never indexed. -->
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<title>Estimate · TalkEstimate</title>
+<style id="doc-css"></style>
+<style>
+  body { background: #fff; }
+  .approve-box { max-width: 640px; margin: 0 auto; padding: 0 22px 48px; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+  .approve-btn { display: block; width: 100%; padding: 18px; border: 0; border-radius: 12px; background: #15803D; color: #fff; font-size: 17px; font-weight: 800; cursor: pointer; }
+  .approve-btn:disabled { opacity: .6; }
+  .approved-banner { background: #DCFCE7; color: #15803D; border-radius: 12px; padding: 16px; text-align: center; font-weight: 800; }
+  .field { margin: 10px 0; }
+  .field input, .field textarea { width: 100%; box-sizing: border-box; padding: 12px; border: 2px solid #D0D5DD; border-radius: 10px; font-size: 16px; font-family: inherit; }
+  .hint { color: #475467; font-size: 13px; text-align: center; margin-top: 10px; }
+  .msg { max-width: 640px; margin: 0 auto; padding: 80px 22px; text-align: center; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: #101828; }
+  .msg p { color: #475467; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+  <div id="loading" class="msg"><p>Loading… / Cargando…</p></div>
+  <div id="missing" class="msg" hidden>
+    <h2>This link isn’t available</h2>
+    <p>It may be incomplete or out of date. Please ask your contractor to send a fresh one.</p>
+    <h2 style="margin-top:32px">Este link no está disponible</h2>
+    <p>Puede estar incompleto o vencido. Pídele a tu contratista que te mande uno nuevo.</p>
+  </div>
+  <div id="doc"></div>
+  <div class="approve-box" id="actions" hidden>
+    <div id="approved" class="approved-banner" hidden></div>
+    <div id="ask" hidden>
+      <button class="approve-btn" id="open" type="button"></button>
+      <div class="hint" id="confirm-hint"></div>
+    </div>
+    <div id="confirm" hidden>
+      <div class="field"><input id="cname" maxlength="80" autocomplete="name"></div>
+      <div class="field"><textarea id="cnote" rows="3" maxlength="400"></textarea></div>
+      <button class="approve-btn" id="go" type="button"></button>
+      <div class="hint" id="accept"></div>
+    </div>
+    <div id="approved-at" class="hint"></div>
+    <div id="fail" class="hint" role="alert" hidden></div>
+  </div>
+<script>
+(function () {
+  'use strict';
+  // Fixed endpoint. Never read an API address from the URL (that would let a
+  // crafted link inject someone else's HTML into this page).
+  var API = 'https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/get-public-proposal';
+  var $ = function (id) { return document.getElementById(id); };
+  var token = new URLSearchParams(location.search).get('token') || '';
+  var data = null;
+
+  function show(id, on) { $(id).hidden = !on; }
+  function missing() { show('loading', false); show('actions', false); $('doc').innerHTML = ''; show('missing', true); }
+  function approvedAt(iso) {
+    if (!iso || !data) return;
+    var d = new Date(iso);
+    if (isNaN(d.getTime())) return;
+    $('approved-at').textContent = data.labels.approvedOn + ' ' +
+      d.toLocaleString(data.language === 'es' ? 'es-MX' : 'en-US', { dateStyle: 'long', timeStyle: 'short' });
+  }
+  function render() {
+    var L = data.labels;
+    document.documentElement.lang = data.language;
+    document.title = L.title + ' ' + L.from + ' ' + (data.proposal.business_name || '');
+    $('doc-css').textContent = data.css;
+    // Rendered and escaped server-side by the same shared core as the PDF.
+    $('doc').innerHTML = data.bodyHtml;
+    show('loading', false); show('actions', true);
+    if (data.status === 'approved') {
+      $('approved').textContent = L.approvedBanner;
+      show('approved', true);
+      approvedAt(data.approvedAt);
+      return;
+    }
+    $('open').textContent = L.approveLabel;
+    $('confirm-hint').textContent = L.confirmHint;
+    $('cname').placeholder = L.namePlaceholder;
+    $('cnote').placeholder = L.notePlaceholder;
+    $('go').textContent = L.yesApproveFor + ' ' + data.totalText;
+    $('accept').textContent = L.accept;
+    show('ask', true);
+  }
+  function approve() {
+    var btn = $('go');
+    btn.disabled = true;
+    show('fail', false);
+    fetch(data.approveUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ proposalToken: token, customerName: $('cname').value, customerNote: $('cnote').value })
+    }).then(function (res) {
+      return res.json().catch(function () { return {}; }).then(function (body) {
+        if (!res.ok || body.status !== 'approved') throw new Error('failed');
+        show('confirm', false);
+        $('approved').textContent = data.labels.doneBanner;
+        show('approved', true);
+        approvedAt(body.approvedAt);
+      });
+    }).catch(function () {
+      btn.disabled = false;
+      $('fail').textContent = data.labels.failHint;
+      show('fail', true);
+    });
+  }
+  $('open').addEventListener('click', function () { show('ask', false); show('confirm', true); });
+  $('go').addEventListener('click', approve);
+
+  if (!/^[0-9a-f]{48}$/.test(token)) { missing(); return; }
+  fetch(API + '?format=json&token=' + encodeURIComponent(token), { cache: 'no-store' })
+    .then(function (res) { if (!res.ok) throw new Error('missing'); return res.json(); })
+    .then(function (json) {
+      if (!json || !json.proposal || !json.labels || !/^https:\/\//.test(json.approveUrl || '')) throw new Error('bad');
+      data = json;
+      render();
+    })
+    .catch(missing);
+})();
+</script>
+</body>
+</html>
