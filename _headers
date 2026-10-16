@@ -8,6 +8,7 @@
 
 # Customer approval links: never indexed, never cached by shared caches.
 /p/*
+  ! Referrer-Policy
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
   Referrer-Policy: no-referrer
