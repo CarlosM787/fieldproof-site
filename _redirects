@@ -1,0 +1,8 @@
+# Cloudflare Workers Static Assets: serve folder index pages and extensionless aliases
+# exactly like GitHub Pages did (status 200 = rewrite, the URL in the browser stays the same).
+/          /index.html     200
+/p/        /p/index.html   200
+/p         /p/             301
+/privacy   /privacy.html   200
+/terms     /terms.html     200
+/es        /es.html        200
