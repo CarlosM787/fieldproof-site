@@ -21,7 +21,7 @@
 <body>
   <div class="wrap">
     <h1>TalkEstimate Privacy Policy</h1>
-    <p class="updated">Last updated: July 12, 2026</p>
+    <p class="updated">Last updated: October 16, 2026</p>
 
     <p>TalkEstimate is a mobile estimating tool for contractors. This policy
     explains what information the app handles and why. Short version: your
@@ -38,22 +38,44 @@
       <li><b>Voice recordings:</b> jobsite walkthroughs you choose to record.</li>
       <li><b>Photos:</b> jobsite photos you choose to attach.</li>
       <li><b>Estimates:</b> the line items, prices, and proposals you create.</li>
+      <li><b>Early-access form (this website):</b> the email address and trade
+      you enter, plus how you reached the site (campaign tags, the referring
+      site and the first page you visited), so we can contact you about
+      access.</li>
     </ul>
 
     <h2>How it's used</h2>
     <ul>
-      <li>Recordings are transcribed and organized into work items so your
-      estimate can be built. Audio is processed by OpenAI for transcription
-      and scope extraction only. <b>AI never sets your prices.</b></li>
+      <li>TalkEstimate only uses what you record by tapping the microphone,
+      the notes you type, and the photos you add. Each recording is sent to
+      OpenAI (Whisper) to turn your speech into text.</li>
+      <li>That text, your trade, and the names and units of your price-list
+      items are sent to OpenAI (GPT-4o mini) to list the work. The amounts,
+      rates and markup saved in your price list are never sent. Anything you
+      say or type (including a price, a name, an address or a phone number)
+      is part of that text. Photos are not sent to AI. <b>AI never sets your
+      prices.</b></li>
       <li>Estimates and proposals are stored so you and your customers can
-      view them. Customer proposal links are protected by long random codes.</li>
+      view them. Customer proposal links are protected by long random codes.
+      The customer page at talkestimate.com/p/ runs no analytics and asks
+      search engines not to index it.</li>
       <li>Login emails are delivered through our email provider (Resend).</li>
     </ul>
 
     <h2>Where data lives</h2>
     <p>Data is stored with Supabase (database, file storage, authentication)
-    using encrypted connections. Each contractor's data is isolated — one
-    account can never read another account's information.</p>
+    in the United States, using encrypted connections. Each contractor's data is isolated — one
+    account can never read another account's information. This website is
+    hosted by Cloudflare.</p>
+
+    <h2>How long it's kept</h2>
+    <p>Your recordings, notes, photos and estimates stay in your account
+    until they are deleted. Nothing is deleted automatically. Each recording
+    is removed from your phone once it uploads.</p>
+
+    <h2>Recording other people</h2>
+    <p>Record your own notes, and ask before you record a customer. In some
+    states, like California, everyone in the conversation must agree.</p>
 
     <h2>What we don't do</h2>
     <ul>
@@ -73,12 +95,19 @@
     browser's tracking protection or an analytics blocker will stop it.</p>
 
     <h2>Data deletion</h2>
-    <p>Email us and we will delete your account and all associated data
-    (estimates, recordings, photos, customer records) within 30 days.</p>
+    <p>There is no delete button in the app yet. Email
+    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a> to ask
+    us to delete a recording or your whole account, and we will delete it
+    (estimates, recordings, photos, customer records) from TalkEstimate's
+    database and file storage within 30 days. What OpenAI already received
+    is covered by OpenAI's policy, and our hosting provider may keep backup
+    copies for a period it sets.</p>
 
     <h2>Contact</h2>
-    <p>Questions or deletion requests:
-    <a href="mailto:support@talkestimate.com">support@talkestimate.com</a></p>
+    <p>Questions:
+    <a href="mailto:support@talkestimate.com">support@talkestimate.com</a><br />
+    Deletion requests:
+    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a></p>
   </div>
   <script src="/analytics.js" defer></script>
 </body>
