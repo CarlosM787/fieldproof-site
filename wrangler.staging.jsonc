@@ -1,0 +1,8 @@
+// Test address only (noindex). Production config: wrangler.jsonc
+{
+  "name": "talkestimate-site-staging",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./.cf-staging", "not_found_handling": "404-page", "html_handling": "none" },
+  "workers_dev": true,
+  "preview_urls": false
+}

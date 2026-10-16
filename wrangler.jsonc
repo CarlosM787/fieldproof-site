@@ -1,0 +1,12 @@
+// PRODUCTION: talkestimate.com on Cloudflare Workers Static Assets (no Worker code runs).
+// html_handling "none" + _redirects keeps every GitHub Pages URL identical
+// (/privacy.html stays /privacy.html; / and /p/ are served by 200 rewrites).
+// Deploy: node scripts/cf-assets.mjs prod && npx wrangler@4 deploy   Rollback: npx wrangler@4 rollback
+{
+  "name": "talkestimate-site",
+  "compatibility_date": "2026-10-01",
+  "assets": { "directory": "./.cf-dist", "not_found_handling": "404-page", "html_handling": "none" },
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "talkestimate.com", "custom_domain": true }]
+}

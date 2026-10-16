@@ -1,0 +1,14 @@
+# Cloudflare Workers Static Assets response headers (GitHub Pages sent none of these).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: SAMEORIGIN
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Strict-Transport-Security: max-age=15552000
+
+# Customer approval links: never indexed, never cached by shared caches.
+/p/*
+  ! Referrer-Policy
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+  Referrer-Policy: no-referrer
