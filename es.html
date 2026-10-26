@@ -513,12 +513,18 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        var data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'failed');
+        // A non-JSON answer (a gateway or rate-limit page) must not show the browser's raw parse error, and only a
+        // clean {ok:true} counts as received.
+        var data = null;
+        try { data = await res.json(); } catch (parseErr) { data = null; }
+        if (!res.ok) throw new Error((data && data.error) || 'failed');
+        if (!data || data.ok !== true) throw new Error('failed');
         msg.className = 'wl-msg ok';
         msg.textContent = '✓ ¡Listo! Te escribimos personalmente para configurarte.';
         form.reset();
-        track('form_submit_success', { form_name: 'waitlist' });
+        // El servidor responde igual ({ok:true}) a un lead nuevo, a un duplicado y a un bot: este evento significa
+        // "el servidor recibió el envío", NO "lead nuevo". Los leads reales se cuentan en el servidor.
+        track('waitlist_submit', { form_name: 'waitlist' });
       } catch (err) {
         msg.className = 'wl-msg err';
         msg.textContent = 'Algo salió mal — inténtalo otra vez, o escríbenos a support@talkestimate.com';

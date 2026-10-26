@@ -4,7 +4,9 @@
  * privacy.html, terms.html). Two jobs:
  *
  *   1. Measurement  — page views + a small set of named events (CTA clicks,
- *      form start / success / error, language change). Google Analytics 4.
+ *      form start / submit / error, language change). Google Analytics 4.
+ *      `waitlist_submit` = the server RECEIVED a submission. It is not a lead count: the
+ *      server answers the same way for a new lead, a duplicate and a bot, on purpose.
  *   2. Attribution  — remembers how a visitor first arrived (utm_* + referrer
  *      + landing page), first-party only, so a later signup can be credited
  *      to the campaign that produced it. Passed to the waitlist form.

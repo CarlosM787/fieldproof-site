@@ -541,12 +541,19 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)
         });
-        var data = await res.json();
-        if (!res.ok) throw new Error(data.error || 'failed');
+        // A non-JSON answer (a gateway or rate-limit page) must not show the browser's raw parse error, and only a
+        // clean {ok:true} counts as received.
+        var data = null;
+        try { data = await res.json(); } catch (parseErr) { data = null; }
+        if (!res.ok) throw new Error((data && data.error) || 'failed');
+        if (!data || data.ok !== true) throw new Error('failed');
         msg.className = 'wl-msg ok';
         msg.textContent = "✓ You're in. We'll email you personally to get you set up.";
         form.reset();
-        track('form_submit_success', { form_name: 'waitlist' });   // fires ONLY after the server confirms
+        // The server answers the same {ok:true} for a new lead, a duplicate and a bot-trap hit (so nobody can
+        // learn who is on the list). So this event means "the server received the submission", NOT "a new lead".
+        // Real leads are counted server-side (join-waitlist outcome logs / the leads table), never here.
+        track('waitlist_submit', { form_name: 'waitlist' });
       } catch (err) {
         msg.className = 'wl-msg err';
         msg.textContent = (err && err.message && err.message !== 'failed')
