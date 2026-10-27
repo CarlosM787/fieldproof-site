@@ -160,6 +160,7 @@
     .wl-msg { font-weight: 700; margin-top: 10px; text-align: center; }
     .wl-msg.ok { color: var(--green); } .wl-msg.err { color: #B91C1C; }
     .hp { position: absolute; left: -9999px; opacity: 0; height: 0; overflow: hidden; }
+    #wl-ts:empty { display: none; } /* the human-check container takes no room (not even a grid gap) until it is used */
     .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
     .wl-consent { color: var(--muted); font-size: 13px; margin-top: 10px; text-align: center; line-height: 1.5; }
     .wl-consent a { color: var(--blue); font-weight: 700; }
@@ -437,6 +438,7 @@
           <option>Otro</option>
         </select>
         <input class="hp" type="text" id="wl-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <div id="wl-ts"></div>
         <button type="submit" id="wl-btn">Quiero Acceso Anticipado</button>
         <div class="wl-msg" id="wl-msg" role="status" aria-live="polite"></div>
         <p class="wl-consent">Al unirte, aceptas nuestra <a href="privacy.html">Política de Privacidad</a>. Sin spam — te escribimos personalmente para configurarte.</p>
@@ -489,24 +491,82 @@
     var msg = document.getElementById('wl-msg');
     var started = false;
 
+    // Optional human check (Cloudflare Turnstile). DORMANT: with the site key empty nothing is loaded, nothing extra is
+    // sent and the form behaves exactly as before. To switch it on, paste the widget's PUBLIC site key here; the server
+    // only starts refusing anyone when it is separately told to (it logs first, see docs/FORM-OPERATIONS.md).
+    var TURNSTILE_SITE_KEY = '';
+    var tsToken = null, tsWidget = null, tsLoad = null;
+    // The server's two "slow down / prove you're human" answers, in this page's language.
+    var ES_STOPPED = {
+      rate_limited: 'Demasiados intentos desde esta conexión. Espera unos minutos e inténtalo de nuevo, o escríbenos a support@talkestimate.com',
+      verification_failed: 'No pudimos verificar esta solicitud. Recarga la página e inténtalo de nuevo, o escríbenos a support@talkestimate.com'
+    };
+
     function track(evt, params) { if (window.teTrack) window.teTrack(evt, params); }
     function attribution() { try { return window.teAttribution ? window.teAttribution() : {}; } catch (e) { return {}; } }
+    // The visitor's own analytics ids (only when analytics is running), so the SERVER can attach its confirmed "lead"
+    // event to this visit. Nothing here is personal data; with analytics off this is just {}.
+    function gaIds() { try { return window.teGaIds ? window.teGaIds() : Promise.resolve({}); } catch (e) { return Promise.resolve({}); } }
 
+    function loadCheck() {
+      if (!TURNSTILE_SITE_KEY) return Promise.resolve(false);
+      if (tsLoad) return tsLoad;
+      tsLoad = new Promise(function (resolve) {
+        var s = document.createElement('script');
+        s.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit';
+        s.async = true;
+        s.onload = function () {
+          try {
+            tsWidget = window.turnstile.render('#wl-ts', {
+              sitekey: TURNSTILE_SITE_KEY, action: 'waitlist', appearance: 'interaction-only', language: document.documentElement.lang || 'auto',
+              callback: function (t) { tsToken = t; },
+              'expired-callback': function () { tsToken = null; },
+              'error-callback': function () { tsToken = null; }
+            });
+            resolve(true);
+          } catch (e) { resolve(false); }
+        };
+        s.onerror = function () { resolve(false); };
+        document.head.appendChild(s);
+      });
+      return tsLoad;
+    }
+    function waitForToken(ms) {
+      return new Promise(function (resolve) {
+        var t0 = Date.now();
+        (function poll() { if (tsToken || Date.now() - t0 > ms) return resolve(tsToken); setTimeout(poll, 100); })();
+      });
+    }
+    // A token works once. After every attempt, good or bad, ask for a fresh one.
+    function resetCheck() {
+      tsToken = null;
+      try { if (tsWidget !== null && window.turnstile) window.turnstile.reset(tsWidget); } catch (e) { /* ignore */ }
+    }
+
+    // form_start — una vez, en la primera interacción real.
     form.addEventListener('focusin', function () {
       if (started) return; started = true;
       track('form_start', { form_name: 'waitlist' });
+      loadCheck();
     });
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
-      btn.disabled = true;
+      btn.disabled = true;                 // block double-submit
       msg.className = 'wl-msg';
       msg.textContent = '';
+      // The invisible check has had since the first click to finish; if it cannot load (a blocker, offline) we go on
+      // without it and the server decides.
+      var token = null;
+      if (TURNSTILE_SITE_KEY && await loadCheck()) token = await waitForToken(8000);
+      // Non-PII campaign metadata rides along; the backend stores what it knows
+      // and harmlessly ignores the rest until the attribution columns ship.
       var payload = Object.assign({
         email: document.getElementById('wl-email').value,
         trade: (document.getElementById('wl-trade').value || 'sin oficio') + ' · español',
         company: document.getElementById('wl-company').value
-      }, attribution());
+      }, attribution(), await gaIds());
+      if (token) payload.turnstile_token = token;
       try {
         var res = await fetch('https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist', {
           method: 'POST',
@@ -517,19 +577,22 @@
         // clean {ok:true} counts as received.
         var data = null;
         try { data = await res.json(); } catch (parseErr) { data = null; }
-        if (!res.ok) throw new Error((data && data.error) || 'failed');
+        if (!res.ok) throw new Error((data && ES_STOPPED[data.code]) ? data.code : 'failed');
         if (!data || data.ok !== true) throw new Error('failed');
         msg.className = 'wl-msg ok';
         msg.textContent = '✓ ¡Listo! Te escribimos personalmente para configurarte.';
         form.reset();
-        // El servidor responde igual ({ok:true}) a un lead nuevo, a un duplicado y a un bot: este evento significa
-        // "el servidor recibió el envío", NO "lead nuevo". Los leads reales se cuentan en el servidor.
-        track('waitlist_submit', { form_name: 'waitlist' });
+        // No "success" event is sent from the browser. The server answers the same {ok:true} for a new lead, a
+        // duplicate and a bot-trap hit (so nobody can learn who is on the list), so the page cannot know a lead
+        // happened. The one real lead event comes from the server itself, for accepted new leads only.
       } catch (err) {
         msg.className = 'wl-msg err';
-        msg.textContent = 'Algo salió mal — inténtalo otra vez, o escríbenos a support@talkestimate.com';
+        msg.textContent = (err && ES_STOPPED[err.message])
+          ? ES_STOPPED[err.message]
+          : 'Algo salió mal — inténtalo otra vez, o escríbenos a support@talkestimate.com';
         track('form_submit_error', { form_name: 'waitlist' });
       } finally {
+        resetCheck();
         btn.disabled = false;
       }
     });

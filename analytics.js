@@ -5,8 +5,9 @@
  *
  *   1. Measurement  — page views + a small set of named events (CTA clicks,
  *      form start / submit / error, language change). Google Analytics 4.
- *      `waitlist_submit` = the server RECEIVED a submission. It is not a lead count: the
- *      server answers the same way for a new lead, a duplicate and a bot, on purpose.
+ *      The browser sends NO "signup success" event: the server answers the same way for a new lead, a
+ *      duplicate and a bot, on purpose, so the page cannot know a lead happened. The one real lead event
+ *      (`generate_lead`) is sent by the server itself, only for an accepted new lead (see teGaIds below).
  *   2. Attribution  — remembers how a visitor first arrived (utm_* + referrer
  *      + landing page), first-party only, so a later signup can be credited
  *      to the campaign that produced it. Passed to the waitlist form.
@@ -112,6 +113,24 @@
       allow_ad_personalization_signals: false
     });
   }
+
+  // Public: the visitor's own GA4 ids ({ga_client_id, ga_session_id}) for the waitlist form. The SERVER sends the one
+  // real "lead" event (only for an accepted new lead) and ties it to this visit with these ids. Empty {} whenever
+  // analytics is not running here (off, blocked, not the production host), and then the server sends nothing.
+  window.teGaIds = function () {
+    return new Promise(function (resolve) {
+      if (!ENABLED) { resolve({}); return; }
+      var out = {}, pending = 2, done = false;
+      function finish() { if (done) return; done = true; resolve(out); }
+      var timer = setTimeout(finish, 600);
+      function got(key, v) {
+        if (v !== undefined && v !== null && v !== '') out[key] = String(v);
+        if (--pending === 0) { clearTimeout(timer); finish(); }
+      }
+      try { gtag('get', GA_MEASUREMENT_ID, 'client_id', function (v) { got('ga_client_id', v); }); } catch (e) { got('ga_client_id'); }
+      try { gtag('get', GA_MEASUREMENT_ID, 'session_id', function (v) { got('ga_session_id', v); }); } catch (e) { got('ga_session_id'); }
+    });
+  };
 
   // ── EVENT HELPER ───────────────────────────────────────────────────────────
   // Call from anywhere: teTrack('cta_click', { cta_name: 'get_app' }).
