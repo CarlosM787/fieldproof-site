@@ -220,8 +220,8 @@ a.card:hover { border-color: var(--blue); }
 /* Anything scrolled or focused into view clears the sticky nav. */
 .tool-b .result, .tool-b .field, .tool-b .dimrow, .tool-b .step-label { scroll-margin-top: 80px; }
 /* 44px touch targets on the Release B pages (Release A's chips are 40px and its toggle 34px; left as approved). */
-.tool-b .chips button { min-height: 44px; }
-.tool-b .lang-toggle a.lt { padding: 12px 10px; min-width: 44px; text-align: center; }
+.chips button { min-height: 44px; } /* every tool page (was Release B only) */
+.lang-toggle a.lt { padding: 12px 10px; min-width: 44px; text-align: center; } /* 44px touch target on every page */
 @media (min-width: 901px) { .result.fit { max-height: calc(100vh - 100px); overflow-y: auto; overscroll-behavior: contain; } }
 
 footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; margin-top: 24px; }
@@ -245,10 +245,14 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
   .calc { display: block; }
   .panel, .result { box-shadow: none; border: 1px solid #999; position: static; margin-bottom: 8pt; padding: 8pt 12pt; background: #fff; }
   .result { break-inside: avoid; }
+  /* Markup page: inputs and worksheet side by side, so it stays one page even with overhead open. */
+  .tool-page:not(.tool-b) .calc { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10pt; align-items: start; }
+  .tool-page:not(.tool-b) details.more > p.hint { display: none; }
+  .tool-page:not(.tool-b) .result .r-price { font-size: 24pt; }
   .panel > .step-label:first-child, .panel > fieldset, #pct-hint, .field .hint, .fine + .fine { display: none !important; }
   .step-label { margin: 6pt 0 2pt; }
   .step-label b { display: none; }
-  .field input, .field select { box-shadow: none !important; outline: none !important; }
+  .field input, .field select { box-shadow: none !important; outline: none !important; caret-color: transparent; }
   .field { margin-top: 3pt; gap: 1pt; }
   .result .r-price { font-size: 30pt; }
   .bar { margin: 8pt 0 4pt; }
