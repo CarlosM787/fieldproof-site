@@ -1,0 +1,24 @@
+/* TalkEstimate brand layer (2026-10): one display face, the safety-yellow accent, the same blue.
+   Loaded by every page after its own styles. Barlow (SIL OFL 1.1, assets/fonts/OFL-Barlow.txt), self-hosted. */
+@font-face { font-family: "Barlow"; src: url("/assets/fonts/barlow-latin-800-normal.woff2") format("woff2"); font-weight: 800; font-style: normal; font-display: swap; }
+@font-face { font-family: "Barlow"; src: url("/assets/fonts/barlow-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-style: normal; font-display: swap; }
+
+:root {
+  --display: "Barlow", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  --safety: #F5B800;      /* the total: one accent per view */
+  --safety-text: #FFC52E; /* yellow text on ink */
+}
+
+/* Headings, the wordmark and the big numbers carry the brand; body text stays the fast system stack. */
+h1, h2, h3, .logo, .price-num, .rule-big, .r-price, .pb-v, .demo-total, .num, .card h3, .cta-band h2 {
+  font-family: var(--display);
+}
+h1 { letter-spacing: -0.6px; }
+h2 { letter-spacing: -0.3px; }
+.logo { font-weight: 800; letter-spacing: -0.3px; }
+
+/* The ink pills ("POWERED BY AI. PRICED BY YOU.", tool kickers): safety yellow instead of the old green. */
+.eyebrow, .page-head .kicker { color: var(--safety-text); font-family: var(--display); letter-spacing: 1.6px; }
+
+/* Figures line up like a worksheet. */
+.r-price, .price-num, .pb-v, .demo-total, .sheet .ln .v, .mini .ln, table.conv td { font-variant-numeric: tabular-nums; }
