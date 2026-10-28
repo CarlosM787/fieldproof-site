@@ -152,6 +152,20 @@
     .price-was { color: var(--muted); margin-top: 4px; }
     .price-list { text-align: left; margin: 22px auto 0; max-width: 320px; color: var(--ink); font-size: 15px; line-height: 2; padding: 0; }
     .price-list li { list-style: none; } .price-list li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    /* Plans (Free / Starter / Pro) */
+    .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px auto 0; max-width: 980px; text-align: left; }
+    @media (max-width: 860px) { .plans { grid-template-columns: 1fr; max-width: 460px; } }
+    .plan { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 10px rgba(16,24,40,.05); }
+    .plan.pick { border: 2px solid var(--blue); box-shadow: 0 12px 32px rgba(29,78,216,.12); }
+    .plan .p-name { font-weight: 800; font-size: 20px; }
+    .plan .p-when { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+    .plan .p-when.soon { color: var(--amber); }
+    .plan .p-price { font-size: 44px; font-weight: 800; line-height: 1.05; margin-top: 4px; }
+    .plan .p-price small { font-size: 16px; color: var(--muted); font-weight: 600; }
+    .plan ul { list-style: none; padding: 0; margin: 10px 0 0; font-size: 15px; line-height: 1.5; }
+    .plan li { padding: 5px 0 5px 22px; position: relative; color: var(--ink); }
+    .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 800; }
+    .plans-note { color: var(--muted); font-size: 14px; max-width: 760px; margin: 18px auto 0; }
     .wl-form { display: grid; gap: 10px; margin-top: 22px; text-align: left; }
     .wl-form input, .wl-form select { padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 16px; font-family: inherit; width: 100%; box-sizing: border-box; }
     .wl-form button { padding: 16px; border: 0; border-radius: 12px; background: var(--blue); color: #fff; font-size: 17px; font-weight: 800; cursor: pointer; }
@@ -415,20 +429,44 @@
 <section id="pricing" class="alt">
   <div class="wrap center">
     <h2>Precio simple</h2>
-    <p class="lead">Un solo plan. Todo incluido. Cancela cuando quieras.</p>
+    <p class="lead">Lo que costará TalkEstimate cuando abra. Empieza gratis, sin tarjeta. Todos los planes guardan tus precios y tus registros.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="p-when">Al abrir</div>
+        <div class="p-name">Gratis</div>
+        <div class="p-price">$0<small> para siempre</small></div>
+        <ul>
+          <li>Todos los estimados que quieras, escritos o agregados por ti</li>
+          <li>Tu propia lista de precios</li>
+          <li>Links de aprobación, PDFs, órdenes de cambio y facturas</li>
+          <li>Ayuda con IA para unos cuantos trabajos al mes</li>
+        </ul>
+      </div>
+      <div class="plan pick">
+        <div class="p-when">Al abrir</div>
+        <div class="p-name">Starter</div>
+        <div class="p-price">$19.99<small>/mes</small></div>
+        <ul>
+          <li>Todo lo de Gratis</li>
+          <li>Habla el trabajo: la IA organiza muchos más trabajos al mes</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="p-when soon">Después del lanzamiento</div>
+        <div class="p-name">Pro</div>
+        <div class="p-price">$49.99<small>/mes</small></div>
+        <ul>
+          <li>Todo lo de Starter</li>
+          <li>La mayor cantidad de trabajos organizados con IA al mes</li>
+          <li>Una revisión avanzada con IA que te señala trabajo que se te pasó. Nunca toca tus precios.</li>
+          <li>Repite un trabajo anterior con un toque</li>
+        </ul>
+      </div>
+    </div>
+    <p class="plans-note">Cuando abra: 14 días con todo encendido, sin tarjeta. Después te quedas en Gratis a menos que escojas un plan, y nunca se te cobra sin suscribirte. Sin precio por usuario. Tus estimados y registros son tuyos en todos los planes, aunque dejes de pagar.</p>
     <div class="price-card">
       <div class="price-tag">ACCESO ANTICIPADO</div>
-      <div class="price-num">$29<small>/mes</small></div>
-      <div class="price-was"><b>Cuando abra, empiezas con una prueba gratis de 14 días — sin tarjeta.</b> Si te suscribes durante la prueba, el cobro se hace cuando termina. Después, $29/mes. Cancela cuando quieras, y tus registros se quedan visibles de todos modos.</div>
-      <ul class="price-list">
-        <li>Estimados ilimitados — sin límites mensuales</li>
-        <li>Recorridos por voz en español o inglés</li>
-        <li>Tu lista de precios personal</li>
-        <li>Links de aprobación + PDFs</li>
-        <li>Órdenes de cambio, aprobadas antes del trabajo</li>
-        <li>Chequeo de costos olvidados</li>
-      </ul>
-      <p style="margin-top:18px;color:var(--muted);font-size:14px">Sin precio por usuario. Sin funciones "premium" encerradas.<br>Todo incluido, por un solo precio. Siempre.</p>
+      <p style="margin-top:8px;color:var(--muted)">Todavía sin lanzar. Únete a la lista y te configuramos personalmente cuando abra.</p>
       <form class="wl-form" id="wl">
         <label for="wl-email" class="sr-only">Tu correo electrónico</label>
         <input type="email" id="wl-email" name="email" placeholder="tu@correo.com" autocomplete="email" inputmode="email" required />
@@ -470,7 +508,7 @@
 <section class="alt">
   <div class="wrap center">
     <h2>Gana los trabajos que estás perdiendo por contestar tarde.</h2>
-    <p class="lead">Prueba gratis de 14 días, luego $29/mes — sin tarjeta. Te configuramos personalmente, en tu idioma. Cancela cuando quieras; tus registros son tuyos.</p>
+    <p class="lead">Empieza gratis, sin tarjeta. Starter a $19.99/mes cuando abra; Pro después del lanzamiento. Te configuramos personalmente, en tu idioma. Tus registros son tuyos.</p>
     <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Quiero Acceso Anticipado</a></p>
   </div>
 </section>
