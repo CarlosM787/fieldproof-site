@@ -58,6 +58,7 @@
     .lang-toggle { display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
     .lang-toggle a.lt { padding: 7px 12px; font-weight: 800; font-size: 13px; color: var(--muted); text-decoration: none; }
     .lang-toggle a.lt.on { background: var(--blue); color: #fff; }
+    @media (max-width: 900px) { .nav-links a.nav-tools { display: none; } } /* no room in the nav at tablet widths; the footer links the tools */
     .hero { background: linear-gradient(180deg, var(--blue-soft) 0%, #fff 90%); padding: 72px 0 80px; overflow: hidden; }
     .hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: center; }
     @media (max-width: 860px) { .hero-grid { grid-template-columns: 1fr; } .phone-col { order: 2; margin-top: 34px; } .phone { width: 260px; } }
@@ -219,7 +220,7 @@
   <div class="wrap nav-inner">
     <a class="logo" href="es.html" aria-label="TalkEstimate — inicio"><img class="logo-mark" src="apple-touch-icon.png" alt="" width="30" height="30"><span class="logo-word">Talk<em>Estimate</em></span></a>
     <div class="nav-links">
-      <a href="/es/herramientas/" data-cta="nav_free_tools">Herramientas</a>
+      <a class="nav-tools" href="/es/herramientas/" data-cta="nav_free_tools">Herramientas</a>
       <a href="#how">Cómo funciona</a>
       <a href="#features">Funciones</a>
       <a href="#pricing">Precio</a>

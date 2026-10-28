@@ -92,7 +92,7 @@ nav.top { position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-
 .chips button { font: inherit; font-size: 14px; font-weight: 700; min-width: 52px; min-height: 40px; padding: 6px 10px; border-radius: 10px; border: 1px solid var(--border); background: #fff; color: var(--ink); cursor: pointer; font-variant-numeric: tabular-nums; }
 .chips button:hover { border-color: var(--blue); color: var(--blue); }
 .chips button[aria-pressed=true] { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); }
-.linkish { background: none; border: 0; padding: 6px 0; font: inherit; font-size: 14px; font-weight: 700; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 36px; }
+.linkish { background: none; border: 0; padding: 6px 0; font: inherit; font-size: 14px; font-weight: 700; color: var(--blue); cursor: pointer; text-decoration: underline; text-underline-offset: 3px; min-height: 44px; }
 details.more { margin-top: 14px; border: 1px dashed var(--border); border-radius: 12px; padding: 4px 14px; }
 details.more[open] { padding-bottom: 14px; }
 details.more summary { cursor: pointer; font-weight: 700; padding: 10px 0; min-height: 44px; display: flex; align-items: center; }
