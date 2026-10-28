@@ -6,3 +6,12 @@
 /privacy   /privacy.html   200
 /terms     /terms.html     200
 /es        /es.html        200
+# Free tools + guides (EN) and herramientas + guías (ES): extensionless URLs, same 200-rewrite pattern as above.
+/tools/                                      /tools/index.html                                      200
+/tools                                       /tools/                                                301
+/tools/markup-margin-calculator              /tools/markup-margin-calculator.html                   200
+/guides/markup-vs-margin                     /guides/markup-vs-margin.html                          200
+/es/herramientas/                            /es/herramientas/index.html                            200
+/es/herramientas                             /es/herramientas/                                      301
+/es/herramientas/calculadora-markup-margen   /es/herramientas/calculadora-markup-margen.html        200
+/es/guias/markup-vs-margen                   /es/guias/markup-vs-margen.html                        200

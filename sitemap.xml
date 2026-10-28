@@ -31,4 +31,58 @@
     <changefreq>monthly</changefreq>
     <priority>0.3</priority>
   </url>
+  <url>
+    <loc>https://talkestimate.com/tools/</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/herramientas/</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/tools/markup-margin-calculator</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/markup-margin-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-markup-margen"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/markup-margin-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/herramientas/calculadora-markup-margen</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/markup-margin-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-markup-margen"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/markup-margin-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/guides/markup-vs-margin</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/markup-vs-margin"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/markup-vs-margen"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/markup-vs-margin"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/guias/markup-vs-margen</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/markup-vs-margin"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/markup-vs-margen"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/markup-vs-margin"/>
+  </url>
 </urlset>
