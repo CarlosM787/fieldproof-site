@@ -205,7 +205,17 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
   .page-head h1 { font-size: 18pt; }
   .page-head .sub, .page-head .kicker { display: none; }
   .calc { display: block; }
-  .panel, .result { box-shadow: none; border: 1px solid #999; position: static; break-inside: avoid; margin-bottom: 10pt; padding: 12pt; background: #fff; }
+  .panel, .result { box-shadow: none; border: 1px solid #999; position: static; margin-bottom: 8pt; padding: 8pt 12pt; background: #fff; }
+  .result { break-inside: avoid; }
+  .panel > .step-label:first-child, .panel > fieldset, #pct-hint, .field .hint, .fine + .fine { display: none !important; }
+  .step-label { margin: 6pt 0 2pt; }
+  .step-label b { display: none; }
+  .field input, .field select { box-shadow: none !important; outline: none !important; }
+  .field { margin-top: 3pt; gap: 1pt; }
+  .result .r-price { font-size: 30pt; }
+  .bar { margin: 8pt 0 4pt; }
+  .sheet .ln { padding: 4pt 0; }
+  .callout { margin-top: 8pt; padding: 6pt 10pt; }
   .field input[type=text], .field select { border: 0; border-bottom: 1px solid #999; border-radius: 0; padding: 2pt 0 2pt 14pt; min-height: 0; font-size: 12pt; }
   details.more { border: 0; padding: 0; }
   details.more:not([open]) { display: none; }
