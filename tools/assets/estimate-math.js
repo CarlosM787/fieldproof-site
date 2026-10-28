@@ -211,6 +211,97 @@ export function laborCost({ workers, hours, rateCents }) {
   return { ok: true, crewHours, cents: Math.round(crewHours * rateCents) };
 }
 
+/** Several crew lines (a lead at one rate, helpers at another): [{ workers, hours, rateCents }].
+ *  Each line is rounded to the cent once (laborCost), then the lines are added. */
+export function crewLabor(rows) {
+  let crewHours = 0;
+  let cents = 0;
+  const lines = [];
+  for (const row of rows || []) {
+    const r = laborCost(row);
+    if (!r.ok) return r;
+    lines.push(r);
+    crewHours += r.crewHours;
+    cents += r.cents;
+  }
+  if (cents > MAX_CENTS) return { ok: false, reason: 'too_big' };
+  return { ok: true, crewHours: Math.round(crewHours * 10000) / 10000, cents, lines };
+}
+
+// ---------------------------------------------------------------------------
+// A quote from any list of direct costs, with an optional contingency
+// ---------------------------------------------------------------------------
+
+/**
+ * CONTINGENCY = a % of the direct job costs set aside for the unknowns of this job (rot behind the trim,
+ * an extra trip, a part that breaks). It is its own line, it is part of the cost the price is built on,
+ * and it is counted as spent: gross profit = price - (direct costs + contingency). If the job goes to plan
+ * and the contingency is not needed, it stays with you (grossProfitIfUnusedCents).
+ *
+ * @param {object} job  money in cents
+ *   costs: [{ id, cents }]   direct job costs (labor, materials, travel, disposal, paint...)
+ *   contingencyPct           % of the direct costs (0 to 100); default 0
+ *   overhead: { mode: 'none' | 'flat' | 'pct', cents?, pct? }   pct = % of the DIRECT costs
+ *   priceOn: 'cost' | 'cost_plus_overhead'   what the markup/margin is applied to
+ *   method: 'markup' | 'margin';  pct
+ * With no contingency it gives exactly what priceJob gives for the same costs (tested).
+ */
+export function quoteJob(job) {
+  const costs = (job.costs || []).map((c) => ({ id: c.id, cents: c.cents || 0 }));
+  let direct = 0;
+  for (const c of costs) { assertCents(c.cents); direct += c.cents; }
+  if (direct > MAX_CENTS) return { ok: false, reason: 'too_big' };
+
+  const cPct = job.contingencyPct ?? 0;
+  if (!Number.isFinite(cPct) || cPct < 0 || cPct > 100) return { ok: false, reason: 'contingency_invalid' };
+  const contingency = Math.round((direct * cPct) / 100);
+  const jobCost = direct + contingency;
+
+  let overhead = 0;
+  const oh = job.overhead || { mode: 'none' };
+  if (oh.mode === 'flat') { assertCents(oh.cents || 0); overhead = oh.cents || 0; }
+  else if (oh.mode === 'pct') {
+    if (!(oh.pct >= 0) || !Number.isFinite(oh.pct)) return { ok: false, reason: 'overhead_invalid' };
+    overhead = Math.round((direct * oh.pct) / 100);
+  }
+
+  const base = job.priceOn === 'cost_plus_overhead' ? jobCost + overhead : jobCost;
+  if (base > MAX_CENTS) return { ok: false, reason: 'too_big' };
+  const priced = job.method === 'margin' ? priceFromMargin(base, job.pct) : priceFromMarkup(base, job.pct);
+  if (!priced.ok) return priced;
+  const price = priced.priceCents;
+
+  const grossProfit = price - jobCost;
+  const afterOverhead = grossProfit - overhead;
+  const warnings = [];
+  if (jobCost === 0 && overhead === 0) warnings.push('no_cost');
+  if (overhead > 0 && afterOverhead < 0) warnings.push('below_overhead');
+  if (job.method === 'margin' && job.pct >= 90) warnings.push('margin_very_high');
+  if (job.method === 'markup' && job.pct > 300) warnings.push('markup_very_high');
+  if (cPct > 50) warnings.push('contingency_very_high');
+  if (overhead > 0 && job.priceOn !== 'cost_plus_overhead') warnings.push('overhead_not_in_base');
+
+  return {
+    ok: true,
+    costs,
+    directCents: direct,
+    contingencyPct: cPct,
+    contingencyCents: contingency,
+    jobCostCents: jobCost,
+    overheadCents: overhead,
+    totalCostCents: jobCost + overhead,
+    baseCents: base,
+    priceCents: price,
+    grossProfitCents: grossProfit,
+    grossMarginPct: marginOf(price, jobCost),
+    markupOnJobCostPct: markupOf(price, jobCost),
+    afterOverheadCents: afterOverhead,
+    afterOverheadPct: price > 0 ? (afterOverhead / price) * 100 : null,
+    grossProfitIfUnusedCents: price - direct,
+    warnings,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // Painting
 // ---------------------------------------------------------------------------
@@ -232,8 +323,9 @@ export function paintQuantities(p) {
   if (Array.isArray(p.walls) && p.walls.length) {
     gross = 0;
     for (const w of p.walls) {
-      if (!(w.widthFt >= 0) || !(w.heightFt >= 0)) return { ok: false, reason: 'wall_invalid' };
-      gross += w.widthFt * w.heightFt;
+      const n = w.count ?? 1; // "2 walls of 12 x 8" in one row
+      if (!(w.widthFt >= 0) || !(w.heightFt >= 0) || !Number.isInteger(n) || n < 0) return { ok: false, reason: 'wall_invalid' };
+      gross += w.widthFt * w.heightFt * n;
     }
   } else if (p.areaSqFt >= 0) {
     gross = p.areaSqFt;
@@ -285,6 +377,13 @@ export function estimateTotals(lines, taxPct = 0) {
 }
 
 // ---------------------------------------------------------------------------
+
+/** A price spread over units (per paintable sq ft, per crew hour), half-up to the cent; null with no units. */
+export function pricePerUnit(priceCents, units) {
+  assertCents(priceCents);
+  if (!(units > 0) || !Number.isFinite(units)) return null;
+  return Math.round(priceCents / units);
+}
 
 /** Cents -> "$1,234.56" (en-US) or "$1,234.56" with the same grouping for es (US contractors). */
 export function formatMoney(cents, lang = 'en') {

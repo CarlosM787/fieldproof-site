@@ -15,6 +15,15 @@ const PAGES = [
   { file: 'es/herramientas/calculadora-markup-margen.html', url: '/es/herramientas/calculadora-markup-margen', alt: '/tools/markup-margin-calculator', lang: 'es' },
   { file: 'guides/markup-vs-margin.html', url: '/guides/markup-vs-margin', alt: '/es/guias/markup-vs-margen', lang: 'en' },
   { file: 'es/guias/markup-vs-margen.html', url: '/es/guias/markup-vs-margen', alt: '/guides/markup-vs-margin', lang: 'es' },
+  // Release B
+  { file: 'tools/painting-estimate-calculator.html', url: '/tools/painting-estimate-calculator', alt: '/es/herramientas/calculadora-estimado-pintura', lang: 'en' },
+  { file: 'es/herramientas/calculadora-estimado-pintura.html', url: '/es/herramientas/calculadora-estimado-pintura', alt: '/tools/painting-estimate-calculator', lang: 'es' },
+  { file: 'tools/labor-job-quote-calculator.html', url: '/tools/labor-job-quote-calculator', alt: '/es/herramientas/calculadora-mano-de-obra-cotizacion', lang: 'en' },
+  { file: 'es/herramientas/calculadora-mano-de-obra-cotizacion.html', url: '/es/herramientas/calculadora-mano-de-obra-cotizacion', alt: '/tools/labor-job-quote-calculator', lang: 'es' },
+  { file: 'guides/how-to-estimate-a-paint-job.html', url: '/guides/how-to-estimate-a-paint-job', alt: '/es/guias/como-estimar-pintura', lang: 'en' },
+  { file: 'es/guias/como-estimar-pintura.html', url: '/es/guias/como-estimar-pintura', alt: '/guides/how-to-estimate-a-paint-job', lang: 'es' },
+  { file: 'guides/how-to-price-labor.html', url: '/guides/how-to-price-labor', alt: '/es/guias/como-cobrar-mano-de-obra', lang: 'en' },
+  { file: 'es/guias/como-cobrar-mano-de-obra.html', url: '/es/guias/como-cobrar-mano-de-obra', alt: '/guides/how-to-price-labor', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
@@ -107,6 +116,72 @@ Deno.test('analytics from the calculator: event names and the mode only, never a
   }
   // The copied/printed result is built locally and never handed to fetch, sendBeacon or a URL.
   assert(!/fetch\(|sendBeacon|XMLHttpRequest|location\.search|localStorage/.test(js));
+});
+
+// Release B calculators: the same checks as Release A, per script and per page pair.
+const RELEASE_B = [
+  { js: 'tools/assets/painting-estimate.js', tool: 'painting_estimate', pages: ['tools/painting-estimate-calculator.html', 'es/herramientas/calculadora-estimado-pintura.html'] },
+  { js: 'tools/assets/labor-quote.js', tool: 'labor_quote', pages: ['tools/labor-job-quote-calculator.html', 'es/herramientas/calculadora-mano-de-obra-cotizacion.html'] },
+];
+for (const t of RELEASE_B) {
+  Deno.test(`${t.tool}: both pages carry every element the script needs, and load that script`, () => {
+    const js = read(t.js);
+    const ids = new Set([...js.matchAll(/\$\('([A-Za-z0-9-]+)'\)/g)].map((m) => m[1]));
+    assert(ids.size > 10);
+    for (const f of t.pages) {
+      const html = read(f);
+      for (const id of ids) assert(html.includes(`id="${id}"`), `${f} is missing #${id}`);
+      assert(html.includes(`<script type="module" src="/${t.js}"></script>`), `${f} does not load ${t.js}`);
+      assert(html.includes('class="tool-page tool-b"'), `${f}: print layout class`);
+    }
+  });
+
+  Deno.test(`${t.tool}: analytics carry the tool name and the mode only, never an amount or typed text`, () => {
+    const js = read(t.js);
+    assert(js.includes(`makeTracker('${t.tool}')`));
+    const calls = [...js.matchAll(/track\('([a-z_]+)'(?:,\s*(\{[^}]*\}))?\)/g)];
+    assert(calls.length >= 5);
+    for (const c of calls) {
+      assert(['tool_view', 'tool_first_interaction', 'tool_calc_complete', 'tool_copy', 'tool_print'].includes(c[1]), c[1]);
+      if (c[2]) assertEquals(c[2].replace(/\s/g, ''), '{calc_mode:m}');
+    }
+    // Every other call into teTrack goes through makeTracker; nothing typed reaches a request, a URL or storage.
+    assertEquals((js.match(/teTrack/g) || []).length, 0);
+    assert(!/fetch\(|sendBeacon|XMLHttpRequest|location\.search|localStorage|sessionStorage/.test(js));
+  });
+}
+
+Deno.test('tool-ui.js: the only analytics path adds the tool name to the caller params, and sends nothing itself', () => {
+  const js = read('tools/assets/tool-ui.js');
+  assertEquals((js.match(/teTrack\(/g) || []).length, 1);
+  assert(js.includes("window.teTrack(event, Object.assign({ tool_name: toolName }, params || {}))"));
+  assert(!/fetch\(|sendBeacon|XMLHttpRequest|localStorage|sessionStorage/.test(js));
+});
+
+Deno.test('painting pages: no coverage or paint price is pre-filled or claimed as typical', () => {
+  for (const f of ['tools/painting-estimate-calculator.html', 'es/herramientas/calculadora-estimado-pintura.html']) {
+    const html = read(f);
+    for (const id of ['cov', 'ppg']) {
+      const input = new RegExp(`<input[^>]*id="${id}"[^>]*>`).exec(html)![0];
+      assert(!/\svalue=/.test(input), `${f} #${id} has a value`);
+      assert(!/placeholder="[1-9]/.test(input), `${f} #${id} has a numeric placeholder`);
+    }
+    // No coverage figure or range anywhere on the page ("350-400 sq ft per gallon", "rinde 400 pies²").
+    assert(!/\d[\d,.]*\s*(?:–|-|to|a)?\s*\d*\s*(?:sq\.? ?ft|square feet|pies²|pies cuadrados)\s*(?:per|\/|por)\s*gal/i.test(html), `${f}: a coverage figure`);
+  }
+});
+
+Deno.test('directories: the two Release B tools are live cards; the estimate template stays "coming next"', () => {
+  for (const [f, links, soon] of [
+    ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor'], 'Free estimate template'],
+    ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra'], 'Plantilla de estimado gratis'],
+  ] as const) {
+    const html = read(f);
+    for (const l of links) assert(html.includes(`<a class="card" href="${l}"`), `${f}: no live card for ${l}`);
+    const soonCards = html.split(/\r?\n/).filter((line) => line.includes('class="card soon"'));
+    assertEquals(soonCards.length, 1, `${f}: one coming-next card`);
+    assert(soonCards[0].includes(soon));
+  }
 });
 
 Deno.test('the existing pages and the waitlist code are untouched by the tools work', () => {

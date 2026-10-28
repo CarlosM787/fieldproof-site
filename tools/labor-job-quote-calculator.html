@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Labor and Job Quote Calculator for Contractors — Free | TalkEstimate</title>
+  <meta name="description" content="Free labor and job quote calculator for contractors. Crew hours, materials, travel, disposal, contingency and overhead, priced by markup or target margin, with a line-item breakdown you can print. No signup." />
+  <meta name="theme-color" content="#1D4ED8" />
+  <link rel="canonical" href="https://talkestimate.com/tools/labor-job-quote-calculator" />
+  <link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-job-quote-calculator" />
+  <link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-mano-de-obra-cotizacion" />
+  <link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/labor-job-quote-calculator" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TalkEstimate" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="es_MX" />
+  <meta property="og:url" content="https://talkestimate.com/tools/labor-job-quote-calculator" />
+  <meta property="og:title" content="Labor and job quote calculator for contractors" />
+  <meta property="og:description" content="Crew hours, job costs, contingency and overhead, priced your way, with a printable line-item breakdown. Free, no signup." />
+  <meta property="og:image" content="https://talkestimate.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://talkestimate.com/og-image.png" />
+  <link rel="stylesheet" href="/tools/assets/tools.css" />
+  <link rel="modulepreload" href="/tools/assets/estimate-math.js" />
+  <link rel="modulepreload" href="/tools/assets/tool-ui.js" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://talkestimate.com/tools/labor-job-quote-calculator#app",
+        "name": "Labor and job quote calculator for contractors",
+        "url": "https://talkestimate.com/tools/labor-job-quote-calculator",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Any (runs in a web browser)",
+        "browserRequirements": "Requires JavaScript",
+        "inLanguage": "en",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "publisher": { "@id": "https://talkestimate.com/#org" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "TalkEstimate", "item": "https://talkestimate.com/" },
+          { "@type": "ListItem", "position": 2, "name": "Free tools", "item": "https://talkestimate.com/tools/" },
+          { "@type": "ListItem", "position": 3, "name": "Labor and job quote calculator" }
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://talkestimate.com/#org",
+        "name": "TalkEstimate",
+        "url": "https://talkestimate.com/"
+      }
+    ]
+  }
+  </script>
+  <script src="/analytics.js" defer></script>
+  <script type="module" src="/tools/assets/labor-quote.js"></script>
+</head>
+<body class="tool-page tool-b">
+<a class="skip" href="#calc">Skip to the calculator</a>
+
+<nav class="top" aria-label="Main">
+  <div class="wrap nav-inner">
+    <a class="logo" href="/" aria-label="TalkEstimate — home"><img class="logo-mark" src="/apple-touch-icon.png" alt="" width="30" height="30"><span class="logo-word">Talk<em>Estimate</em></span></a>
+    <div class="nav-links">
+      <a href="/tools/" aria-current="page">Free tools</a>
+      <a class="hide-sm" href="/guides/how-to-price-labor" data-cta="nav_guide_labor">Guide</a>
+      <a class="hide-sm" href="/#how">The app</a>
+      <span class="lang-toggle" aria-label="Language"><a class="lt on" href="/tools/labor-job-quote-calculator" hreflang="en" lang="en">EN</a><a class="lt" href="/es/herramientas/calculadora-mano-de-obra-cotizacion" hreflang="es" lang="es">ES</a></span>
+      <a class="btn" href="/#pricing" data-cta="tool_nav_waitlist">Join the waitlist</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div class="crumbs"><a href="/tools/">Free tools</a><span aria-hidden="true">›</span>Labor and job quote</div>
+    <header class="page-head">
+      <div class="kicker">FREE CONTRACTOR TOOL</div>
+      <h1>Labor and job quote calculator for contractors</h1>
+      <p class="sub">Add up the crew, the materials, the drive and the dump run, set a contingency for surprises, and price it your way. Then print a clean line-item breakdown.</p>
+      <div class="assure"><span>Free, no signup</span><span>Your numbers never leave this page</span><span>One-page printout</span></div>
+      <p class="print-only" id="printStamp"></p>
+    </header>
+
+    <form id="calc" class="calc" novalidate autocomplete="off">
+      <div class="panel">
+        <div class="step-label"><b>1</b> Crew</div>
+        <p class="hint">One line per rate: a lead at one cost per hour, helpers at another. Use what an hour really costs you (wage plus payroll costs), not what you bill.</p>
+        <div id="crewRows"></div>
+        <button type="button" class="linkish" id="addCrew">+ Add a crew line</button>
+
+        <div class="step-label"><b>2</b> Job costs</div>
+        <div class="field">
+          <label for="mat">Materials <span class="hint">at what you pay</span></label>
+          <div class="money"><input type="text" id="mat" inputmode="decimal" placeholder="0.00" aria-describedby="mat-err"></div>
+          <div class="err" id="mat-err" role="alert"></div>
+        </div>
+        <div class="row2">
+          <div class="field">
+            <label for="trav">Travel <span class="hint">fuel, tolls, parking</span></label>
+            <div class="money"><input type="text" id="trav" inputmode="decimal" placeholder="0.00" aria-describedby="trav-err"></div>
+            <div class="err" id="trav-err" role="alert"></div>
+          </div>
+          <div class="field">
+            <label for="disp">Disposal <span class="hint">dump fees, haul-away</span></label>
+            <div class="money"><input type="text" id="disp" inputmode="decimal" placeholder="0.00" aria-describedby="disp-err"></div>
+            <div class="err" id="disp-err" role="alert"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label for="oth">Other job costs <span class="hint">permits, rentals, subs</span></label>
+          <div class="money"><input type="text" id="oth" inputmode="decimal" placeholder="0.00" aria-describedby="oth-err"></div>
+          <div class="err" id="oth-err" role="alert"></div>
+        </div>
+
+        <div class="step-label"><b>3</b> Contingency and overhead</div>
+        <div class="field">
+          <label for="cont">Contingency <span class="hint">optional</span></label>
+          <div class="pct"><input type="text" id="cont" inputmode="decimal" placeholder="0" aria-describedby="cont-hint cont-err"></div>
+          <div class="hint" id="cont-hint">A % added to the direct costs for the unknowns of this job: rot behind the trim, an extra trip, a part that breaks. It shows as its own line. If you don’t need it, it stays with you.</div>
+          <div class="err" id="cont-err" role="alert"></div>
+        </div>
+        <details class="more">
+          <summary>Overhead (optional)</summary>
+          <p class="hint">Truck, insurance, phone, office, software: the costs of running the business that no single job pays for.</p>
+          <div class="field">
+            <label for="ohMode">How to add overhead</label>
+            <select id="ohMode">
+              <option value="none">No overhead</option>
+              <option value="pct">% of direct cost</option>
+              <option value="flat">Flat amount for this job</option>
+            </select>
+          </div>
+          <div class="field" id="ohVal-wrap" hidden>
+            <label for="ohVal">Overhead</label>
+            <div id="ohVal-box" class="money"><input type="text" id="ohVal" inputmode="decimal" placeholder="0" aria-describedby="ohVal-err"></div>
+            <div class="err" id="ohVal-err" role="alert"></div>
+          </div>
+          <label class="check" id="ohInBase-wrap" hidden><input type="checkbox" id="ohInBase" checked> <span>Price on top of overhead <span class="hint">(the markup or margin is applied to job cost + overhead)</span></span></label>
+        </details>
+
+        <div class="step-label"><b>4</b> Your price</div>
+        <fieldset class="bare">
+          <legend class="sr-only">Pricing method</legend>
+          <div class="seg">
+            <input type="radio" name="mode" id="mode-markup" value="markup" checked><label for="mode-markup">Add a markup<small>% on top of cost</small></label>
+            <input type="radio" name="mode" id="mode-margin" value="margin"><label for="mode-margin">Hit a target margin<small>% of the price you keep</small></label>
+          </div>
+        </fieldset>
+        <div class="field">
+          <label for="pct" id="pct-label" data-markup="Markup" data-margin="Target gross margin">Markup</label>
+          <div class="pct"><input type="text" id="pct" inputmode="decimal" placeholder="20" aria-describedby="pct-hint pct-err"></div>
+          <div class="hint" id="pct-hint" data-markup="Added on top of your cost. 25% on $1,000 = $1,250." data-margin="The share of the selling price you keep as gross profit.">Added on top of your cost. 25% on $1,000 = $1,250.</div>
+          <div class="err" id="pct-err" role="alert"></div>
+          <div class="chips" id="pct-chips" aria-label="Common percentages">
+            <button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button><button type="button" data-v="30">30%</button><button type="button" data-v="35">35%</button><button type="button" data-v="40">40%</button><button type="button" data-v="50">50%</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="jobName">Job name <span class="hint">optional · only on your copy or printout</span></label>
+          <input type="text" id="jobName" maxlength="80" placeholder="e.g. Back wall siding" aria-describedby="jobName-hint">
+          <div class="hint sr-only" id="jobName-hint">It stays on this page and is never sent anywhere.</div>
+        </div>
+        <p class="no-print" style="margin-top:16px"><button type="button" class="linkish" id="exampleBtn">Try an example: a siding repair, two-person crew</button></p>
+      </div>
+
+      <div class="result fit" id="result" aria-live="polite">
+        <div class="r-label">Selling price</div>
+        <div class="r-price dim" id="rPrice">$0.00</div>
+        <div class="r-sub" id="rSub"></div>
+        <div class="bar" id="bar"></div>
+        <div class="legend" id="legend"></div>
+        <h2 class="r-h" id="sheetHead" hidden>Quote breakdown</h2>
+        <div class="sheet" id="sheet"></div>
+        <h2 class="r-h" id="keepHead" hidden>What it leaves you</h2>
+        <div class="sheet" id="keep"></div>
+        <div class="callout" id="callout" hidden></div>
+        <ul class="warns" id="warns"></ul>
+        <div class="actions">
+          <button type="button" class="btn" id="copyBtn" disabled>Copy breakdown</button>
+          <button type="button" class="btn ghost" id="printBtn" disabled>Print or save PDF</button>
+          <button type="button" class="btn ghost" id="resetBtn">Clear</button>
+        </div>
+        <div class="toast" id="toast" role="status"></div>
+        <p class="fine"><b>Gross</b> margin is the price minus the job cost (direct costs plus contingency). It is not net profit: income tax, your own pay and anything you didn't enter still come out of it.</p>
+      </div>
+    </form>
+    <a class="pricebar" id="pricebar" href="#result" aria-hidden="true" tabindex="-1"><span><span class="pb-l">Selling price</span><br><span class="pb-v" id="pbPrice">$0.00</span></span><span class="pb-go">See the breakdown ↓</span></a>
+  </div>
+
+  <section class="block alt" id="explain">
+    <div class="wrap">
+      <h2>How the quote is built</h2>
+      <p class="lead">Every line is a cost you enter. The calculator adds them in a fixed order, so you can check each step on the printout.</p>
+      <div class="formula" aria-label="Formulas">
+        <b>Labor</b>            people × hours each × cost per hour, for each crew line<br>
+        <b>Crew hours</b>       people × hours each, added up<br>
+        <b>Direct job cost</b>  labor + materials + travel + disposal + other<br>
+        <b>Contingency</b>      direct job cost × contingency %<br>
+        <b>Job cost</b>         direct job cost + contingency<br>
+        <b>Overhead</b>         direct job cost × overhead %  (or a flat amount)<br>
+        <b>Selling price</b>    cost × (1 + markup)  or  cost ÷ (1 − margin)<br>
+        <b>Gross profit</b>     selling price − job cost
+      </div>
+      <p class="meta-line">“Cost” in the price line is the job cost, plus overhead when you price on top of it. Prices from a target margin are rounded up to the next cent.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap prose">
+      <h2>Contingency, in plain words</h2>
+      <p>A contingency is money set aside, inside the price, for things you can’t see yet. Here it’s a percentage of the direct job cost, shown as its own line so you (and your customer, if you share the breakdown) can see it.</p>
+      <ul>
+        <li><b>It is counted as a cost.</b> The gross profit and margin shown assume you spend it. That’s the safe way to read a quote.</li>
+        <li><b>If the job goes to plan, it stays with you.</b> The breakdown shows that number too: “If the contingency isn’t needed”.</li>
+        <li><b>It isn’t overhead.</b> Overhead is the cost of running the business. Contingency belongs to this one job.</li>
+      </ul>
+      <p>How big should it be? That depends on how much of the job you can see before you start, and only you know that. Read <a href="/guides/how-to-price-labor" data-cta="tool_to_guide_labor">How to price labor on a job</a> for a worked example with every number shown.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <h2>Quote the next job by talking through it</h2>
+          <p>TalkEstimate keeps your own prices and rates in one list and builds the estimate from them while you talk through the job. You set every price; the AI only organizes what you said.</p>
+          <p class="note">Not released yet · Android first · built and tested on a real phone</p>
+        </div>
+        <a class="btn" href="/#pricing" data-cta="tool_labor_waitlist">Join the waitlist</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <h2>Questions contractors ask</h2>
+      <div class="faq">
+        <details><summary>What hourly cost should I use for my crew?</summary><p>What an hour really costs you: the wage plus the payroll costs you pay on top of it. Your payroll records have the real number. Don’t use the rate you bill, or the markup gets counted twice.</p></details>
+        <details><summary>Do I count my own hours?</summary><p>Yes. If you do the work, your hours are a cost. Leave them out and the “profit” is really your wage.</p></details>
+        <details><summary>Should travel time be labor or travel?</summary><p>Either, as long as it’s counted once. Paid drive time can go in the crew hours; fuel, tolls and parking go in Travel.</p></details>
+        <details><summary>What’s the “price per crew hour” for?</summary><p>It’s the selling price divided by the crew hours. It shows what the job really brings in per hour of work, which is handy for comparing jobs or checking a flat price.</p></details>
+        <details><summary>Where do the numbers go?</summary><p>Nowhere. The math runs in your browser and nothing you type is sent to us. On talkestimate.com we count that the calculator was used, never what you typed.</p></details>
+      </div>
+      <p class="meta-line">Updated October 2026 · TalkEstimate</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot-wrap">
+  <div class="wrap foot">
+    <div><b style="color:var(--ink)">TalkEstimate</b> — Powered by AI. Priced by you.</div>
+    <div>
+      <a href="/tools/">Free tools</a> ·
+      <a href="/privacy.html">Privacy</a> ·
+      <a href="/terms.html">Terms</a> ·
+      <a href="/es/herramientas/calculadora-mano-de-obra-cotizacion" hreflang="es">Español</a> ·
+      <a href="mailto:support@talkestimate.com">Contact</a> ·
+      © 2026 TalkEstimate
+    </div>
+  </div>
+</footer>
+</body>
+</html>

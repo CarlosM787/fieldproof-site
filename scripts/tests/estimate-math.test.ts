@@ -178,6 +178,105 @@ Deno.test('painting: measured area path and refusals', () => {
   assertEquals(paintQuantities({ coats: 1, coverageSqFtPerGallon: 350, wastePct: 0 }), { ok: false, reason: 'area_missing' });
 });
 
+Deno.test('painting: a wall line can carry a count ("2 walls of 12 x 8"), same result as listing them', () => {
+  const counted = paintQuantities({ walls: [{ widthFt: 12, heightFt: 8, count: 2 }, { widthFt: 10, heightFt: 8, count: 2 }], openings: [{ widthFt: 3, heightFt: 7, count: 1 }, { widthFt: 3, heightFt: 4, count: 2 }], coats: 2, coverageSqFtPerGallon: 350, wastePct: 10 });
+  const listed = paintQuantities({ walls: [{ widthFt: 12, heightFt: 8 }, { widthFt: 12, heightFt: 8 }, { widthFt: 10, heightFt: 8 }, { widthFt: 10, heightFt: 8 }], openings: [{ widthFt: 3, heightFt: 7, count: 1 }, { widthFt: 3, heightFt: 4, count: 2 }], coats: 2, coverageSqFtPerGallon: 350, wastePct: 10 });
+  assertEquals(counted, listed);
+  assertEquals(paintQuantities({ walls: [{ widthFt: 12, heightFt: 8, count: 1.5 }], coats: 1, coverageSqFtPerGallon: 350, wastePct: 0 }), { ok: false, reason: 'wall_invalid' });
+  assertEquals(paintQuantities({ walls: [{ widthFt: 12, heightFt: 8, count: 0 }], coats: 1, coverageSqFtPerGallon: 350, wastePct: 0 }).grossSqFt, 0);
+});
+
+Deno.test('painting: gallons to buy never fall below the gallons needed, and only round up by less than one', () => {
+  for (let area = 1; area <= 3000; area += 37) {
+    for (const cov of [150, 275, 300, 333, 400]) {
+      for (const waste of [0, 5, 10, 12.5]) {
+        const r = paintQuantities({ areaSqFt: area, coats: 2, coverageSqFtPerGallon: cov, wastePct: waste });
+        assert(r.ok);
+        assert(r.gallonsToBuy >= r.gallonsExact - 1e-9 && r.gallonsToBuy - r.gallonsExact < 1, `${area}/${cov}/${waste}`);
+        assert(Number.isInteger(r.gallonsToBuy));
+      }
+    }
+  }
+});
+
+// ── Crew lines and a quote with contingency ──────────────────────────────────
+Deno.test('crew lines: each line rounded once, then added; a bad line refuses the whole crew', () => {
+  assertEquals(M.crewLabor([{ workers: 1, hours: 9, rateCents: 4200 }, { workers: 1, hours: 9, rateCents: 2400 }]),
+    { ok: true, crewHours: 18, cents: 59400, lines: [{ ok: true, crewHours: 9, cents: 37800 }, { ok: true, crewHours: 9, cents: 21600 }] });
+  assertEquals(M.crewLabor([{ workers: 3, hours: 2.25, rateCents: 1999 }]).cents, 13493); // 6.75 h x $19.99 = 134.9325
+  assertEquals(M.crewLabor([]), { ok: true, crewHours: 0, cents: 0, lines: [] });
+  assertEquals(M.crewLabor([{ workers: 1, hours: 8, rateCents: 3000 }, { workers: 2.5, hours: 8, rateCents: 3000 }]), { ok: false, reason: 'workers_invalid' });
+});
+
+Deno.test('contingency: its own line, a % of the direct costs, counted as spent in the gross profit', () => {
+  const r = M.quoteJob({ costs: [{ id: 'lab', cents: 60000 }, { id: 'mat', cents: 40000 }], contingencyPct: 10, method: 'markup', pct: 25, overhead: { mode: 'none' }, priceOn: 'cost' });
+  assert(r.ok);
+  assertEquals(r.directCents, 100000);
+  assertEquals(r.contingencyCents, 10000);
+  assertEquals(r.jobCostCents, 110000);
+  assertEquals(r.priceCents, 137500); // (1000 + 100) x 1.25
+  assertEquals(r.grossProfitCents, 27500); // price - (direct + contingency)
+  assertEquals(r.grossMarginPct, 20);
+  assertEquals(r.grossProfitIfUnusedCents, 37500); // the contingency comes back if it isn't spent
+  // contingency is figured on the direct costs, half-up once
+  assertEquals(M.quoteJob({ costs: [{ id: 'x', cents: 333 }], contingencyPct: 10, method: 'markup', pct: 0 }).contingencyCents, 33);
+  assertEquals(M.quoteJob({ costs: [{ id: 'x', cents: 335 }], contingencyPct: 10, method: 'markup', pct: 0 }).contingencyCents, 34);
+});
+
+Deno.test('contingency: refusals and warnings', () => {
+  const base = { costs: [{ id: 'x', cents: 10000 }], method: 'markup', pct: 20 };
+  assertEquals(M.quoteJob({ ...base, contingencyPct: -1 }), { ok: false, reason: 'contingency_invalid' });
+  assertEquals(M.quoteJob({ ...base, contingencyPct: 101 }), { ok: false, reason: 'contingency_invalid' });
+  assertEquals(M.quoteJob({ ...base, contingencyPct: NaN }), { ok: false, reason: 'contingency_invalid' });
+  assertEquals(M.quoteJob({ ...base, contingencyPct: 60 }).warnings, ['contingency_very_high']);
+  assertEquals(M.quoteJob({ ...base, contingencyPct: 50 }).warnings, []);
+  assertEquals(M.quoteJob({ costs: [], method: 'markup', pct: 20 }).warnings, ['no_cost']);
+  assertEquals(M.quoteJob({ ...base, method: 'margin', pct: 100 }), { ok: false, reason: 'margin_100' });
+  const below = M.quoteJob({ ...base, pct: 5, overhead: { mode: 'flat', cents: 2000 }, priceOn: 'cost' });
+  assertEquals(below.warnings, ['below_overhead', 'overhead_not_in_base']);
+  assertThrows(() => M.quoteJob({ costs: [{ id: 'x', cents: 1.5 }], method: 'markup', pct: 0 }));
+  assertEquals(M.quoteJob({ costs: [{ id: 'a', cents: MAX_CENTS }, { id: 'b', cents: 1 }], method: 'markup', pct: 0 }), { ok: false, reason: 'too_big' });
+});
+
+Deno.test('quoteJob with no contingency gives exactly what priceJob gives (same costs, overhead, method)', () => {
+  for (let mat = 0; mat <= 200000; mat += 13777) {
+    for (const lab of [0, 999, 52500]) {
+      for (const oh of [{ mode: 'none' }, { mode: 'pct', pct: 12.5 }, { mode: 'flat', cents: 7300 }]) {
+        for (const inBase of [false, true]) {
+          for (const [method, pct] of [['markup', 0], ['markup', 22.5], ['margin', 30], ['margin', 66.67]] as const) {
+            const a = priceJob({ materialsCents: mat, laborCents: lab, otherCents: 450, overhead: oh, priceOn: inBase ? 'direct_plus_overhead' : 'direct', method, pct });
+            const b = M.quoteJob({ costs: [{ id: 'm', cents: mat }, { id: 'l', cents: lab }, { id: 'o', cents: 450 }], overhead: oh, priceOn: inBase ? 'cost_plus_overhead' : 'cost', method, pct });
+            for (const k of ['directCents', 'overheadCents', 'baseCents', 'priceCents', 'grossProfitCents', 'grossMarginPct', 'afterOverheadCents', 'afterOverheadPct']) {
+              assertEquals(b[k], a[k], `${k} mat ${mat} lab ${lab} ${JSON.stringify(oh)} ${inBase} ${method} ${pct}`);
+            }
+            assertEquals(b.warnings, a.warnings);
+          }
+        }
+      }
+    }
+  }
+});
+
+Deno.test('target-margin quotes with contingency still never land under the margin asked for', () => {
+  for (let cost = 1; cost <= 400000; cost += 9973) {
+    for (const c of [0, 5, 10, 15]) {
+      for (const m of [10, 25, 33.33, 40]) {
+        const r = M.quoteJob({ costs: [{ id: 'x', cents: cost }], contingencyPct: c, method: 'margin', pct: m });
+        assert(r.ok);
+        assert(r.grossMarginPct >= m - 1e-9, `cost ${cost} cont ${c} margin ${m}`);
+      }
+    }
+  }
+});
+
+Deno.test('price per unit (per sq ft, per crew hour): half-up to the cent, null with no units', () => {
+  assertEquals(M.pricePerUnit(82059, 314), 261);
+  assertEquals(M.pricePerUnit(161688, 18), 8983);
+  assertEquals(M.pricePerUnit(1000, 0), null);
+  assertEquals(M.pricePerUnit(1000, -2), null);
+  assertEquals(M.pricePerUnit(250, 100), 3); // 2.5 cents -> 3
+});
+
 // ── Estimate builder: the $300 invariant ─────────────────────────────────────
 Deno.test('a typed $300 fixed price stays $300, whatever the quantity says', () => {
   assertEquals(lineTotal({ fixedPriceCents: 30000, qty: 7 }), { ok: true, cents: 30000 });
