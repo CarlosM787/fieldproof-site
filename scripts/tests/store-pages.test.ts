@@ -37,10 +37,13 @@ Deno.test('the in-app path uses the app\'s real labels (EN and ES)', () => {
 
 Deno.test('Google Play content: what is deleted, what is kept and for how long, and the email path', () => {
   const del = read('delete-account.html');
-  for (const s of ['What is deleted', 'What is kept, and for how long', 'Stripe', 'Supabase', 'OpenAI', 'within 30 days',
+  for (const s of ['What is deleted', 'What is kept, and for how long', 'Stripe', 'Supabase', 'OpenAI',
     'mailto:carlos@moraleslabs.com', 'Qué se borra', 'Qué se guarda y por cuánto tiempo']) {
     assert(del.includes(s), s);
   }
+  // No deadline or legal claim Carlos has not approved (MCR5 owner decisions 2026-10-28: no inaccurate policies).
+  assert(!/\b\d+\s+(days|días)\b/i.test(del), 'no promised response deadline');
+  assert(!/law requires|leyes fiscales/i.test(del), 'no claim about what the law requires');
 });
 
 Deno.test('no unfilled placeholders or stale claims', () => {
