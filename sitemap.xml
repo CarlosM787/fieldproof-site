@@ -97,4 +97,76 @@
     <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/markup-vs-margen"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/markup-vs-margin"/>
   </url>
+  <url>
+    <loc>https://talkestimate.com/tools/painting-estimate-calculator</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/painting-estimate-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-estimado-pintura"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/painting-estimate-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/herramientas/calculadora-estimado-pintura</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/painting-estimate-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-estimado-pintura"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/painting-estimate-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/tools/labor-job-quote-calculator</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-job-quote-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-mano-de-obra-cotizacion"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/labor-job-quote-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/herramientas/calculadora-mano-de-obra-cotizacion</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-job-quote-calculator"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-mano-de-obra-cotizacion"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/labor-job-quote-calculator"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/guides/how-to-estimate-a-paint-job</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-estimate-a-paint-job"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/como-estimar-pintura"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/how-to-estimate-a-paint-job"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/guias/como-estimar-pintura</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-estimate-a-paint-job"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/como-estimar-pintura"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/how-to-estimate-a-paint-job"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/guides/how-to-price-labor</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-price-labor"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/como-cobrar-mano-de-obra"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/how-to-price-labor"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/guias/como-cobrar-mano-de-obra</loc>
+    <lastmod>2026-10-27</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-price-labor"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/como-cobrar-mano-de-obra"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/how-to-price-labor"/>
+  </url>
 </urlset>

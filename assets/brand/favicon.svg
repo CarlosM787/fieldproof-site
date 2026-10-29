@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Favicon: the TalkEstimate mark, simplified for 16-32 px (two rows merge into one; bars and total stay). -->
+  <rect width="64" height="64" rx="14" fill="#1D4ED8"/>
+  <path d="M14 9h36a7 7 0 0 1 7 7v22a7 7 0 0 1-7 7H30l-11 9v-9h-5a7 7 0 0 1-7-7V16a7 7 0 0 1 7-7z" fill="#FFFFFF"/>
+  <path d="M16.5 24v8M23 19.5v17" stroke="#1D4ED8" stroke-width="5" stroke-linecap="round"/>
+  <path d="M31 23h17" stroke="#8A9BC9" stroke-width="5" stroke-linecap="round"/>
+  <path d="M31 33h17" stroke="#F5B800" stroke-width="6" stroke-linecap="round"/>
+</svg>

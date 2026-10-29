@@ -189,10 +189,48 @@ a.card:hover { border-color: var(--blue); }
 .card.soon .ct { color: var(--muted); }
 .meta-line { color: var(--muted); font-size: 14px; margin-top: 10px; }
 
+/* Release B tools (painting estimate, labor and job quote): repeatable measurement / crew rows, unit suffixes,
+   section heads and subtotals in the worksheet. Scoped to .tool-b so Release A pages look exactly as before. */
+.tool-b fieldset.bare { border: 0; padding: 0; min-width: 0; }
+.tool-b .panel .hint { color: var(--muted); font-size: 13px; font-weight: 500; }
+.tool-b .panel p.hint { margin-top: 6px; }
+.tool-b .panel > .hint + .dimrow, .tool-b .panel > .hint + div { margin-top: 4px; }
+.unit { position: relative; display: flex; align-items: center; }
+.unit::after { content: attr(data-unit); position: absolute; right: 14px; color: var(--muted); font-weight: 700; font-size: 15px; pointer-events: none; }
+.unit input { padding-right: 100px !important; }
+.dimrow { border: 1px solid var(--border); border-radius: 12px; padding: 4px 12px 12px; margin-top: 10px; background: var(--surface); }
+.dimhead { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.dimtitle { font-weight: 800; font-size: 14px; }
+.dimhead .rm { font-size: 14px; padding: 6px 2px; }
+.dims .field { margin-top: 0; gap: 4px; }
+.row3.dims { align-items: end; } /* a label that wraps ("Costo / hora" at 320px) keeps the three boxes level */
+.dims .field > label { font-size: 14px; }
+.dims .field input[type=text] { font-size: 17px; padding: 10px; min-height: 46px; }
+@media (max-width: 380px) { .row3.dims { grid-template-columns: 1fr 1fr 1fr; gap: 8px; } }
+.tool-b .result .r-h { font-size: 13px; font-weight: 800; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; margin-top: 20px; }
+.tool-b .result .r-h + .sheet { margin-top: 6px; }
+.sheet .ln.sub .k, .sheet .ln.sub .v { font-weight: 800; }
+.sheet .ln.total { font-size: 17px; border-top: 2px solid var(--ink); margin-top: -1px; }
+.sheet .ln.total .v { font-weight: 800; }
+.sheet .ln .k { min-width: 0; }
+.sheet .ln.item { font-size: 14px; padding: 6px 0; }
+.sheet .ln.item .v { font-weight: 600; color: var(--muted); }
+.sheet .indent { display: inline-block; padding-left: 14px; }
+.tool-b { --c-cont: #A78BFA; }
+/* Anything scrolled or focused into view clears the sticky nav. */
+.tool-b .result, .tool-b .field, .tool-b .dimrow, .tool-b .step-label { scroll-margin-top: 80px; }
+/* 44px touch targets on the Release B pages (Release A's chips are 40px and its toggle 34px; left as approved). */
+.chips button { min-height: 44px; } /* every tool page (was Release B only) */
+.lang-toggle a.lt { padding: 12px 10px; min-width: 44px; text-align: center; } /* 44px touch target on every page */
+@media (min-width: 901px) { .result.fit { max-height: calc(100vh - 100px); overflow-y: auto; overscroll-behavior: contain; } }
+
 footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; margin-top: 24px; }
 .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
 .foot a { color: var(--muted); }
 @media (max-width: 720px) { body { font-size: 17px; } }
+
+/* Release B worksheets print with slightly narrower page margins (named page; Release A keeps 14mm). */
+@page worksheet { margin: 10mm 12mm; }
 
 /* Print: just the worksheet, the inputs it came from, and where it came from */
 .print-only { display: none; }
@@ -207,10 +245,14 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
   .calc { display: block; }
   .panel, .result { box-shadow: none; border: 1px solid #999; position: static; margin-bottom: 8pt; padding: 8pt 12pt; background: #fff; }
   .result { break-inside: avoid; }
+  /* Markup page: inputs and worksheet side by side, so it stays one page even with overhead open. */
+  .tool-page:not(.tool-b) .calc { display: grid !important; grid-template-columns: 1fr 1fr; gap: 10pt; align-items: start; }
+  .tool-page:not(.tool-b) details.more > p.hint { display: none; }
+  .tool-page:not(.tool-b) .result .r-price { font-size: 24pt; }
   .panel > .step-label:first-child, .panel > fieldset, #pct-hint, .field .hint, .fine + .fine { display: none !important; }
   .step-label { margin: 6pt 0 2pt; }
   .step-label b { display: none; }
-  .field input, .field select { box-shadow: none !important; outline: none !important; }
+  .field input, .field select { box-shadow: none !important; outline: none !important; caret-color: transparent; }
   .field { margin-top: 3pt; gap: 1pt; }
   .result .r-price { font-size: 30pt; }
   .bar { margin: 8pt 0 4pt; }
@@ -221,4 +263,27 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
   details.more:not([open]) { display: none; }
   .bar span { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
   .legend i { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+  /* Release B: the worksheet itself carries every input, so the form is left off the page. */
+  .tool-b .panel { display: none !important; }
+  .tool-b .result { border: 0; padding: 0; max-height: none; overflow: visible; break-inside: auto; }
+  .tool-b .result .r-price { font-size: 24pt; }
+  .tool-b .result .r-h { margin-top: 8pt; font-size: 9pt; }
+  .tool-b .bar, .tool-b .legend { display: none; } /* the worksheet lists the same amounts */
+  .tool-b .sheet .ln.item { font-size: 9.5pt; padding: 0.5pt 0; }
+  .tool-b main { page: worksheet; }
+  .tool-b .sheet .ln { font-size: 10.5pt; line-height: 1.3; padding: 2pt 0; break-inside: avoid; }
+  .tool-b .callout { padding: 4pt 8pt; margin-top: 6pt; }
+  .tool-b .warns { margin-top: 6pt; gap: 4pt; }
+  .tool-b .sheet .ln .k small { display: inline; font-size: 8.5pt; margin-left: 6pt; }
+  .tool-b .callout { break-inside: avoid; }
+  .tool-b .toast, .tool-b .warns:empty { display: none; }
+  .tool-b .fine { margin-top: 6pt; }
+  .tool-b .page-head { padding-bottom: 4pt; }
+  .tool-b .sheet .ln.total, .tool-b .sheet .ln.key { font-size: 12pt; }
+  .tool-b .warns li, .tool-b .callout, .tool-b .fine { font-size: 10pt; }
+  .tool-b .warns li { padding: 4pt 8pt; }
+  .tool-b #printStamp { font-size: 10pt; color: #333; overflow-wrap: anywhere; }
+  .tool-b .page-head h1 { font-size: 16pt; }
+  .tool-b .result .r-price { font-size: 22pt; }
+  .tool-b .fine { font-size: 9pt; }
 }

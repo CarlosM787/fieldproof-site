@@ -7,7 +7,6 @@
   <title>TalkEstimate — Talk the job. Send the estimate. Win the work.</title>
   <meta name="description" content="TalkEstimate turns your jobsite voice walkthrough into a priced, professional estimate your customer approves by text — priced from YOUR price list, never AI guesses." />
   <meta name="theme-color" content="#1D4ED8" />
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%231D4ED8'/%3E%3Crect x='38' y='34' width='24' height='34' rx='12' fill='white'/%3E%3Cpath d='M30 56 a20 20 0 0 0 40 0' fill='none' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='50' y1='76' x2='50' y2='84' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cline x1='40' y1='84' x2='60' y2='84' stroke='white' stroke-width='6' stroke-linecap='round'/%3E%3Cpath d='M32 32 a18 12 0 0 1 36 0 z' fill='%23FACC15'/%3E%3Crect x='28' y='30' width='44' height='6' rx='3' fill='%23FACC15'/%3E%3Crect x='46' y='18' width='8' height='10' rx='3' fill='%23FACC15'/%3E%3C/svg%3E" />
   <link rel="canonical" href="https://talkestimate.com/" />
   <link rel="alternate" hreflang="en" href="https://talkestimate.com/" />
   <link rel="alternate" hreflang="es" href="https://talkestimate.com/es.html" />
@@ -18,11 +17,11 @@
   <meta property="og:site_name" content="TalkEstimate" />
   <meta property="og:locale" content="en_US" />
   <meta property="og:locale:alternate" content="es_MX" />
-  <meta property="og:image" content="https://talkestimate.com/og-image.png" />
+  <meta property="og:image" content="https://talkestimate.com/assets/og/og-home-en.png" />
   <meta property="og:url" content="https://talkestimate.com/" />
   <meta property="og:title" content="TalkEstimate — Send the estimate before you leave the driveway" />
   <meta property="og:description" content="Talk through the job on-site. Get a priced, professional estimate your customer approves by text. Your prices — never AI guesses." />
-  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://talkestimate.com/og-image.png" />
+  <meta name="twitter:card" content="summary_large_image" /><meta name="twitter:image" content="https://talkestimate.com/assets/og/og-home-en.png" />
   <meta name="twitter:title" content="TalkEstimate — Send the estimate before you leave the driveway" />
   <meta name="twitter:description" content="Talk through the job on-site. Get a priced, professional estimate your customer approves by text. Your prices — never AI guesses." />
   <style>
@@ -143,6 +142,20 @@
     .price-was { color: var(--muted); margin-top: 4px; }
     .price-list { text-align: left; margin: 22px auto 0; max-width: 320px; color: var(--ink); font-size: 15px; line-height: 2; }
     .price-list li { list-style: none; } .price-list li::before { content: "✓ "; color: var(--green); font-weight: 800; }
+    /* Plans (Free / Starter / Pro) */
+    .plans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; margin: 40px auto 0; max-width: 980px; text-align: left; }
+    @media (max-width: 860px) { .plans { grid-template-columns: 1fr; max-width: 460px; } }
+    .plan { background: #fff; border: 1px solid var(--border); border-radius: 18px; padding: 24px; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 2px 10px rgba(16,24,40,.05); }
+    .plan.pick { border: 2px solid var(--blue); box-shadow: 0 12px 32px rgba(29,78,216,.12); }
+    .plan .p-name { font-weight: 800; font-size: 20px; }
+    .plan .p-when { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: var(--muted); text-transform: uppercase; }
+    .plan .p-when.soon { color: var(--amber); }
+    .plan .p-price { font-size: 44px; font-weight: 800; line-height: 1.05; margin-top: 4px; }
+    .plan .p-price small { font-size: 16px; color: var(--muted); font-weight: 600; }
+    .plan ul { list-style: none; padding: 0; margin: 10px 0 0; font-size: 15px; line-height: 1.5; }
+    .plan li { padding: 5px 0 5px 22px; position: relative; color: var(--ink); }
+    .plan li::before { content: "✓"; position: absolute; left: 0; color: var(--green); font-weight: 800; }
+    .plans-note { color: var(--muted); font-size: 14px; max-width: 760px; margin: 18px auto 0; }
 
     /* FAQ */
     .faq { max-width: 720px; margin: 40px auto 0; }
@@ -236,12 +249,15 @@
   }
   </script>
   <script src="/analytics.js" defer></script>
+  <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+  <link rel="preload" href="/assets/fonts/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/brand/brand.css" />
 </head>
 <body>
 
 <nav>
   <div class="wrap nav-inner">
-    <a class="logo" href="index.html" aria-label="TalkEstimate — home"><img class="logo-mark" src="apple-touch-icon.png" alt="" width="30" height="30"><span class="logo-word">Talk<em>Estimate</em></span></a>
+    <a class="logo" href="index.html" aria-label="TalkEstimate — home"><img class="logo-mark" src="/assets/brand/mark.svg" alt="" width="30" height="30"><span class="logo-word">Talk<em>Estimate</em></span></a>
     <div class="nav-links">
       <a class="nav-tools" href="/tools/" data-cta="nav_free_tools">Free tools</a>
       <a href="#how">How it works</a>
@@ -437,20 +453,44 @@
 <section id="pricing">
   <div class="wrap center">
     <h2>Simple pricing</h2>
-    <p class="lead">One plan. Everything included. Cancel anytime.</p>
+    <p class="lead">What TalkEstimate will cost when it opens. Start free, no card. Every plan keeps your prices and your records.</p>
+    <div class="plans">
+      <div class="plan">
+        <div class="p-when">At launch</div>
+        <div class="p-name">Free</div>
+        <div class="p-price">$0<small> forever</small></div>
+        <ul>
+          <li>As many estimates as you want, typed or added yourself</li>
+          <li>Your own price list</li>
+          <li>Approval links, PDFs, change orders and invoices</li>
+          <li>AI help for a few jobs each month</li>
+        </ul>
+      </div>
+      <div class="plan pick">
+        <div class="p-when">At launch</div>
+        <div class="p-name">Starter</div>
+        <div class="p-price">$19.99<small>/month</small></div>
+        <ul>
+          <li>Everything in Free</li>
+          <li>Talk through the job: AI organizes many more jobs each month</li>
+        </ul>
+      </div>
+      <div class="plan">
+        <div class="p-when soon">Coming after launch</div>
+        <div class="p-name">Pro</div>
+        <div class="p-price">$49.99<small>/month</small></div>
+        <ul>
+          <li>Everything in Starter</li>
+          <li>The most AI-organized jobs each month</li>
+          <li>An advanced AI check that points out missed scope. It never touches your prices.</li>
+          <li>Repeat a past job in one tap</li>
+        </ul>
+      </div>
+    </div>
+    <p class="plans-note">When it opens: 14 days with everything turned on, no card. After that you stay on Free unless you choose a plan, and you're never charged without subscribing. No per-user pricing. Your estimates and records stay yours on every plan, even if you stop paying.</p>
     <div class="price-card">
       <div class="price-tag">EARLY ACCESS</div>
-      <div class="price-num">$29<small>/month</small></div>
-      <div class="price-was"><b>When it opens, you start with a 14-day free trial — no card up front.</b> Subscribe any time during the trial and your card is charged only when the trial ends. Then $29/month. Cancel anytime, and your records stay visible either way.</div>
-      <ul class="price-list">
-        <li>Unlimited estimates — no monthly caps</li>
-        <li>Voice walkthroughs + AI organizing</li>
-        <li>Your personal cost book</li>
-        <li>Customer approval links + PDFs</li>
-        <li>Change orders, approved before the work</li>
-        <li>Margin-protection checks</li>
-      </ul>
-      <p style="margin-top:18px;color:var(--muted);font-size:14px">No per-user pricing. No "approval is a premium feature" tiers.<br>Everything is included, for one flat price. Always.</p>
+      <p style="margin-top:8px;color:var(--muted)">Not released yet. Join the list and we'll set you up personally when it opens.</p>
       <form class="wl-form" id="wl">
         <label for="wl-email" class="sr-only">Your email address</label>
         <input type="email" id="wl-email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required />
@@ -493,7 +533,7 @@
 <section>
   <div class="wrap center">
     <h2>Win the jobs you’re losing to faster replies.</h2>
-    <p class="lead">14-day free trial, then $29/month — no card up front. Set up personally. Cancel anytime; your records stay yours.</p>
+    <p class="lead">Start free, no card. Starter $19.99/month when it opens; Pro after launch. Set up personally. Your records stay yours.</p>
     <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Get Early Access</a></p>
   </div>
 </section>
