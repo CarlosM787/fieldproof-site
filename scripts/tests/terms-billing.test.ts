@@ -14,3 +14,8 @@ Deno.test('terms: live billing, operator named, no refund promise, no unreleased
   assert(!/refund/i.test(t));
   assert(!t.includes('Delete account'), 'in-app deletion is not released yet');
 });
+
+Deno.test('terms name the current payment merchant (Stripe seller) next to the operator', () => {
+  assert(t.includes('the merchant for TalkEstimate payments is <b>AmplifyWebX LLC</b>'));
+  assert(t.includes('is operated by Morales Labs LLC.'));
+});
