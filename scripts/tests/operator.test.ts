@@ -39,12 +39,19 @@ Deno.test('every footer credits Morales Labs LLC; no page still credits only the
   for (const f of files) {
     const html = read(f);
     assert(!html.includes('© 2026 TalkEstimate'), `${f} footer`);
-    assert(!/amplifywebx/i.test(html), `${f} names no old operator`);
+    // AmplifyWebX LLC appears only as the current Stripe merchant, in the terms' billing section.
+    if (f !== 'terms.html') assert(!/amplifywebx/i.test(html), `${f} names no old operator`);
   }
   for (const f of ['index.html', 'es.html']) {
     assert(read(f).includes('© 2026 Morales Labs LLC'), `${f} footer`);
     assert(read(f).includes('"legalName": "Morales Labs LLC"'), `${f} JSON-LD`);
   }
+});
+
+Deno.test('terms: AmplifyWebX LLC only as the payment merchant, never as operator', () => {
+  const t = read('terms.html');
+  assertEquals((t.match(/AmplifyWebX/g) ?? []).length, 1);
+  assert(t.includes('the merchant for TalkEstimate payments is <b>AmplifyWebX LLC</b>'));
 });
 
 Deno.test('no street address is published (undecided for safety)', () => {
