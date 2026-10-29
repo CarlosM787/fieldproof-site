@@ -30,9 +30,12 @@ Deno.test('the in-app path uses the app\'s real labels (EN and ES)', () => {
     '<b>Ajustes</b>', '<b>Eliminar cuenta</b>', '<b>Continuar</b>', '<b>Eliminar mi cuenta</b>']) {
     assert(del.includes(label), label);
   }
+  // App labels sub.manage / sub.title. Google Play builds have no Manage subscription (consumption-only,
+  // fieldproof lib/store-billing.ts), so email comes first and the button is "where the app shows it".
   const sup = read('support.html');
-  assert(sup.includes('Settings → Subscription → Manage subscription'));
-  assert(sup.includes('Ajustes → Suscripción → Administrar suscripción'));
+  assert(sup.includes('use <b>Manage subscription</b> on the app\'s <b>Your Plan</b> screen where'));
+  assert(sup.includes('usa <b>Administrar suscripción</b> en la pantalla <b>Tu Plan</b>'));
+  assert(!sup.includes('open the app and go to'), 'no in-app path that Android builds do not have');
 });
 
 Deno.test('Google Play content: what is deleted, what is kept and for how long, and the email path', () => {
