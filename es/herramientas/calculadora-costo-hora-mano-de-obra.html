@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Calculadora de Costo por Hora de Mano de Obra para Contratistas — Gratis | TalkEstimate</title>
+  <meta name="description" content="Calculadora gratis del costo real por hora de mano de obra para contratistas. Sueldo, impuestos de nómina, seguro de accidentes y otros costos, repartidos en las horas que de verdad cobras. Sin registrarte." />
+  <meta name="theme-color" content="#1D4ED8" />
+  <link rel="canonical" href="https://talkestimate.com/es/herramientas/calculadora-costo-hora-mano-de-obra" />
+  <link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-cost-per-hour-calculator" />
+  <link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/calculadora-costo-hora-mano-de-obra" />
+  <link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/labor-cost-per-hour-calculator" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="TalkEstimate" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:locale:alternate" content="en_US" />
+  <meta property="og:url" content="https://talkestimate.com/es/herramientas/calculadora-costo-hora-mano-de-obra" />
+  <meta property="og:title" content="Calculadora de costo por hora de mano de obra para contratistas" />
+  <meta property="og:description" content="Lo que de verdad te cuesta una hora cobrada: sueldo, impuestos de nómina, seguro de accidentes y las horas que nadie paga. Gratis, sin registrarte." />
+  <meta property="og:image" content="https://talkestimate.com/assets/og/og-labor-es.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://talkestimate.com/assets/og/og-labor-es.png" />
+  <link rel="stylesheet" href="/tools/assets/tools.css" />
+  <link rel="modulepreload" href="/tools/assets/estimate-math.js" />
+  <link rel="modulepreload" href="/tools/assets/tool-ui.js" />
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebApplication",
+        "@id": "https://talkestimate.com/es/herramientas/calculadora-costo-hora-mano-de-obra#app",
+        "name": "Calculadora de costo por hora de mano de obra para contratistas",
+        "url": "https://talkestimate.com/es/herramientas/calculadora-costo-hora-mano-de-obra",
+        "applicationCategory": "BusinessApplication",
+        "operatingSystem": "Cualquiera (funciona en el navegador)",
+        "browserRequirements": "Requiere JavaScript",
+        "inLanguage": "es",
+        "isAccessibleForFree": true,
+        "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+        "publisher": { "@id": "https://talkestimate.com/#org" }
+      },
+      {
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "TalkEstimate", "item": "https://talkestimate.com/es.html" },
+          { "@type": "ListItem", "position": 2, "name": "Herramientas gratis", "item": "https://talkestimate.com/es/herramientas/" },
+          { "@type": "ListItem", "position": 3, "name": "Calculadora de costo por hora de mano de obra" }
+        ]
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://talkestimate.com/#org",
+        "name": "TalkEstimate",
+        "url": "https://talkestimate.com/"
+      }
+    ]
+  }
+  </script>
+  <script src="/analytics.js" defer></script>
+  <script type="module" src="/tools/assets/labor-rate.js"></script>
+  <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+  <link rel="preload" href="/assets/fonts/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="/assets/brand/brand.css" />
+</head>
+<body class="tool-page tool-b">
+<a class="skip" href="#calc">Ir a la calculadora</a>
+
+<nav class="top" aria-label="Principal">
+  <div class="wrap nav-inner">
+    <a class="logo" href="/es.html" aria-label="TalkEstimate — inicio"><img class="logo-mark" src="/assets/brand/mark.svg" alt="" width="30" height="30"><span class="logo-word">Talk<em>Estimate</em></span></a>
+    <div class="nav-links">
+      <a href="/es/herramientas/" aria-current="page">Herramientas</a>
+      <a class="hide-sm" href="/es/guias/como-cobrar-mano-de-obra" data-cta="nav_guide_labor">Guía</a>
+      <a class="hide-sm" href="/es.html#how">La app</a>
+      <span class="lang-toggle" aria-label="Idioma"><a class="lt" href="/tools/labor-cost-per-hour-calculator" hreflang="en" lang="en">EN</a><a class="lt on" href="/es/herramientas/calculadora-costo-hora-mano-de-obra" hreflang="es" lang="es">ES</a></span>
+      <a class="btn" href="/es.html#pricing" data-cta="tool_nav_waitlist">Únete a la lista</a>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap">
+    <div class="crumbs"><a href="/es/herramientas/">Herramientas gratis</a><span aria-hidden="true">›</span>Costo por hora</div>
+    <header class="page-head">
+      <div class="kicker">HERRAMIENTA GRATIS PARA CONTRATISTAS</div>
+      <h1>Calculadora de costo por hora de mano de obra para contratistas</h1>
+      <p class="sub">El sueldo no es lo que te cuesta una hora. Suma los impuestos de nómina, el seguro de accidentes y las horas pagadas que nadie te paga, y ve el costo real de una hora cobrada.</p>
+      <div class="assure"><span>Gratis, sin registrarte</span><span>Tus números no salen de esta página</span><span>Se imprime en una página</span></div>
+      <p class="print-only" id="printStamp"></p>
+    </header>
+
+    <form id="calc" class="calc" novalidate autocomplete="off">
+      <div class="panel">
+        <div class="step-label"><b>1</b> Sueldo</div>
+        <div class="field">
+          <label for="wage">Sueldo por hora</label>
+          <div class="money"><input type="text" id="wage" inputmode="decimal" placeholder="0.00" aria-describedby="wage-hint wage-err"></div>
+          <div class="hint" id="wage-hint">Lo que le pagas a esta persona por hora, antes de impuestos. ¿Son tus propias horas? Usa lo que quieres llevarte por hora.</div>
+          <div class="err" id="wage-err" role="alert"></div>
+        </div>
+
+        <div class="step-label"><b>2</b> Horas en un año</div>
+        <div class="field">
+          <label for="paid">Horas pagadas <span class="hint">al año, con vacaciones pagadas</span></label>
+          <div class="num"><input type="text" id="paid" inputmode="decimal" placeholder="0" aria-describedby="paid-err"></div>
+          <div class="err" id="paid-err" role="alert"></div>
+          <div class="chips" id="paid-chips" aria-label="Horas pagadas comunes">
+            <button type="button" data-v="2080">2,080 · 40 h × 52 semanas</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="billable">Horas que cobras <span class="hint">al año, en trabajos que cobras</span></label>
+          <div class="num"><input type="text" id="billable" inputmode="decimal" placeholder="0" aria-describedby="billable-hint billable-err"></div>
+          <div class="hint" id="billable-hint">No cuentes horas en el taller, manejo que no cobras, días de lluvia, días festivos ni vacaciones. Tus hojas de horas o los trabajos del año pasado tienen el número real.</div>
+          <div class="err" id="billable-err" role="alert"></div>
+        </div>
+
+        <div class="step-label"><b>3</b> Lo que pagas encima del sueldo</div>
+        <div class="field">
+          <label for="tax">Impuestos de nómina del patrón <span class="hint">% del sueldo</span></label>
+          <div class="pct"><input type="text" id="tax" inputmode="decimal" placeholder="0" aria-describedby="tax-hint tax-err"></div>
+          <div class="hint" id="tax-hint">Seguro Social y Medicare son 7.65%. Suma el impuesto de desempleo federal y estatal; tu reporte de nómina o tu contador tienen el total.</div>
+          <div class="err" id="tax-err" role="alert"></div>
+          <div class="chips" id="tax-chips" aria-label="Impuesto de nómina común">
+            <button type="button" data-v="7.65">7.65% · solo Seguro Social + Medicare</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="comp">Seguro de accidentes (workers’ comp) <span class="hint">$ por cada $100 de sueldo, de tu póliza</span></label>
+          <div class="money"><input type="text" id="comp" inputmode="decimal" placeholder="0.00" aria-describedby="comp-hint comp-err"></div>
+          <div class="hint" id="comp-hint">La tarifa del código de clase de esta persona. Cambia mucho según el oficio y el estado.</div>
+          <div class="err" id="comp-err" role="alert"></div>
+        </div>
+        <div class="field">
+          <label for="other">Otros costos del año <span class="hint">opcional · prestaciones, teléfono, herramienta que pones</span></label>
+          <div class="money"><input type="text" id="other" inputmode="decimal" placeholder="0.00" aria-describedby="other-err"></div>
+          <div class="err" id="other-err" role="alert"></div>
+        </div>
+        <div class="field">
+          <label for="workerName">Persona o puesto <span class="hint">opcional · solo en tu copia o impresión</span></label>
+          <input type="text" id="workerName" maxlength="80" placeholder="p. ej. Carpintero principal" aria-describedby="workerName-hint">
+          <div class="hint sr-only" id="workerName-hint">Se queda en esta página y nunca se envía a ningún lado.</div>
+        </div>
+        <p class="no-print" style="margin-top:16px"><button type="button" class="linkish" id="exampleBtn">Prueba un ejemplo: un encargado que gana $28 la hora</button></p>
+      </div>
+
+      <div class="result fit" id="result" aria-live="polite">
+        <div class="r-label">Costo por hora cobrada</div>
+        <div class="r-price dim" id="rPrice">$0.00</div>
+        <div class="r-sub" id="rSub"></div>
+        <div class="bar" id="bar"></div>
+        <div class="legend" id="legend"></div>
+        <h2 class="r-h" id="sheetHead" hidden>Un año de esta persona</h2>
+        <div class="sheet" id="sheet"></div>
+        <h2 class="r-h" id="whyHead" hidden>Por qué cuesta más que el sueldo</h2>
+        <div class="sheet" id="why"></div>
+        <div class="callout" id="callout" hidden></div>
+        <ul class="warns" id="warns"></ul>
+        <div class="actions">
+          <button type="button" class="btn" id="copyBtn" disabled>Copiar desglose</button>
+          <button type="button" class="btn ghost" id="printBtn" disabled>Imprimir o guardar PDF</button>
+          <button type="button" class="btn ghost" id="resetBtn">Borrar</button>
+        </div>
+        <div class="toast" id="toast" role="status"></div>
+        <p class="fine">Esto es un <b>costo</b>, no lo que cobras. Los gastos generales (camioneta, seguro, oficina) y tu markup van encima cuando cotizas un trabajo.</p>
+      </div>
+    </form>
+    <a class="pricebar" id="pricebar" href="#result" aria-hidden="true" tabindex="-1"><span><span class="pb-l">Costo por hora cobrada</span><br><span class="pb-v" id="pbPrice">$0.00</span></span><span class="pb-go">Ver el desglose ↓</span></a>
+  </div>
+
+  <section class="block alt" id="explain">
+    <div class="wrap">
+      <h2>Cómo se calcula el costo por hora</h2>
+      <p class="lead">Un año de todo lo que pagas por esta persona, dividido entre las horas que de verdad puedes cobrar.</p>
+      <div class="formula" aria-label="Fórmulas">
+        <b>Sueldo del año</b>        sueldo por hora × horas pagadas<br>
+        <b>Impuestos de nómina</b>   sueldo del año × % de impuestos<br>
+        <b>Seguro de accidentes</b>  sueldo del año ÷ 100 × tarifa por $100<br>
+        <b>Costo del año</b>         sueldo + impuestos + seguro + otros<br>
+        <b>Costo por hora</b>        costo del año ÷ horas que cobras
+      </div>
+      <p class="meta-line">Cada cantidad del año se redondea al centavo una vez; el costo por hora se redondea al centavo.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap prose">
+      <h2>Las horas que cobras, en palabras simples</h2>
+      <p>Pagas cada hora de la hoja de horas. Solo puedes cobrar las horas que terminan en el trabajo de un cliente. La diferencia es dinero real: si pagas 2,080 horas y cobras 1,664, cada hora cobrada tiene que cargar 1.25 horas de sueldo.</p>
+      <ul>
+        <li><b>Pagadas pero no cobradas:</b> días festivos y vacaciones, días de lluvia, tiempo en el taller y de limpieza, capacitación, manejo que no cobras, regresos que arreglas gratis.</li>
+        <li><b>Usa tus propios registros.</b> Las hojas de horas contra las horas facturadas de los últimos meses dicen más que cualquier regla general.</li>
+        <li><b>Usa el número en la cotización.</b> El costo por hora cobrada es el “costo por hora” de una línea de equipo en la <a href="/es/herramientas/calculadora-mano-de-obra-cotizacion" data-cta="rate_tool_to_quote">calculadora de mano de obra y cotización</a>. Los gastos generales y el markup se suman allí.</li>
+      </ul>
+      <p>La <a href="/es/guias/como-cobrar-mano-de-obra" data-cta="rate_tool_to_guide">guía para cobrar la mano de obra</a> usa este mismo ejemplo y luego lo convierte en una cotización completa.</p>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap prose">
+      <h2>De dónde salen los números</h2>
+      <ul>
+        <li><b>Seguro Social y Medicare:</b> el patrón paga 6.2% y 1.45% del sueldo, 7.65% en total (el Seguro Social para al llegar al tope anual de sueldo). <a href="https://www.irs.gov/taxtopics/tc751" rel="noopener">IRS, tema 751</a> (en inglés).</li>
+        <li><b>Desempleo federal (FUTA):</b> 6.0% de los primeros $7,000 de sueldo de cada empleado, normalmente 0.6% después del crédito por el impuesto de desempleo estatal. <a href="https://www.irs.gov/taxtopics/tc759" rel="noopener">IRS, tema 759</a> (en inglés). Cada estado fija su propia tasa de desempleo.</li>
+        <li><b>Seguro de accidentes:</b> se cobra por cada $100 de nómina según el código de clase. Las tarifas las fija cada estado; tu póliza dice la tuya. Ejemplo: las <a href="https://iic.idaho.gov/wp-content/uploads/2026/05/Rates2026-1.pdf" rel="noopener">tarifas 2026 de la Comisión Industrial de Idaho</a> (en inglés), por cada $100 de nómina para cada código de clase.</li>
+        <li><b>Para darte una idea:</b> en junio de 2026, el sueldo fue 70.0% de lo que los patrones privados gastaron por hora trabajada en compensación; el resto fueron prestaciones y costos obligatorios por ley. <a href="https://www.bls.gov/news.release/ecec.nr0.htm" rel="noopener">BLS, Employer Costs for Employee Compensation</a> (en inglés).</li>
+      </ul>
+      <p class="meta-line">Fuentes revisadas el 2 de noviembre de 2026. Las reglas de impuestos cambian; tu proveedor de nómina o tu contador tienen los números que te aplican.</p>
+    </div>
+  </section>
+
+  <section class="block">
+    <div class="wrap">
+      <div class="cta-band">
+        <div>
+          <h2>Cotiza el próximo trabajo hablando</h2>
+          <p>TalkEstimate guarda tus propios precios y costos por hora en una lista y arma el estimado con ellos mientras hablas del trabajo — en español o inglés. Tú pones cada precio; la IA solo organiza lo que dijiste.</p>
+          <p class="note">Todavía sin lanzar · Android primero · construida y probada en un teléfono real</p>
+        </div>
+        <a class="btn" href="/es.html#pricing" data-cta="tool_rate_waitlist">Únete a la lista</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="block alt">
+    <div class="wrap">
+      <h2>Preguntas de contratistas</h2>
+      <div class="faq">
+        <details><summary>¿Esto es lo que debo cobrar por hora?</summary><p>No. Es lo que te cuesta una hora. Lo que cobras tiene que cubrir esto, más tus gastos generales, más tu ganancia. Pon este número en la cotización como costo y suma lo demás encima.</p></details>
+        <details><summary>Trabajo solo. ¿Esto me aplica?</summary><p>Sí. Usa como sueldo lo que quieres llevarte por hora y cuenta tus propias horas cobradas. El impuesto de trabajo por cuenta propia no es un impuesto de nómina del patrón: pregúntale a quien te hace los impuestos cuánto apartar, y deja el campo de impuestos de nómina en lo que te aplique.</p></details>
+        <details><summary>¿Dónde encuentro mi tarifa del seguro de accidentes?</summary><p>En tu póliza o en la cotización de tu aseguradora: una tarifa en dólares por cada $100 de nómina para cada código de clase. Usa la del trabajo que hace esta persona.</p></details>
+        <details><summary>¿Las horas extra cambian el número?</summary><p>Sí, si son de siempre. Cuenta las horas extra en las horas pagadas y cobradas, y suma el medio tiempo extra de sueldo, más los impuestos y el seguro sobre él, en “Otros costos del año”. Esos impuestos no se suman solos en ese campo.</p></details>
+        <details><summary>¿A dónde van los números?</summary><p>A ningún lado. Las cuentas se hacen en tu navegador y nada de lo que escribes nos llega. En talkestimate.com contamos que se usó la calculadora, nunca lo que escribiste.</p></details>
+      </div>
+      <p class="meta-line">Actualizado noviembre de 2026 · TalkEstimate</p>
+    </div>
+  </section>
+</main>
+
+<footer class="foot-wrap">
+  <div class="wrap foot">
+    <div><b style="color:var(--ink)">TalkEstimate</b> — Impulsado por IA. Con tus precios.</div>
+    <div>
+      <a href="/es/herramientas/">Herramientas gratis</a> ·
+      <a href="/privacy.html">Privacidad</a> ·
+      <a href="/terms.html">Términos</a> ·
+      <a href="/tools/labor-cost-per-hour-calculator" hreflang="en">English</a> ·
+      <a href="mailto:support@talkestimate.com">Contacto</a> ·
+      © 2026 TalkEstimate
+    </div>
+  </div>
+</footer>
+</body>
+</html>

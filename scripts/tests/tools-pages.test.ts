@@ -24,6 +24,9 @@ const PAGES = [
   { file: 'es/guias/como-estimar-pintura.html', url: '/es/guias/como-estimar-pintura', alt: '/guides/how-to-estimate-a-paint-job', lang: 'es' },
   { file: 'guides/how-to-price-labor.html', url: '/guides/how-to-price-labor', alt: '/es/guias/como-cobrar-mano-de-obra', lang: 'en' },
   { file: 'es/guias/como-cobrar-mano-de-obra.html', url: '/es/guias/como-cobrar-mano-de-obra', alt: '/guides/how-to-price-labor', lang: 'es' },
+  // Contractor hub 2026-11
+  { file: 'tools/labor-cost-per-hour-calculator.html', url: '/tools/labor-cost-per-hour-calculator', alt: '/es/herramientas/calculadora-costo-hora-mano-de-obra', lang: 'en' },
+  { file: 'es/herramientas/calculadora-costo-hora-mano-de-obra.html', url: '/es/herramientas/calculadora-costo-hora-mano-de-obra', alt: '/tools/labor-cost-per-hour-calculator', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
@@ -122,6 +125,7 @@ Deno.test('analytics from the calculator: event names and the mode only, never a
 const RELEASE_B = [
   { js: 'tools/assets/painting-estimate.js', tool: 'painting_estimate', pages: ['tools/painting-estimate-calculator.html', 'es/herramientas/calculadora-estimado-pintura.html'] },
   { js: 'tools/assets/labor-quote.js', tool: 'labor_quote', pages: ['tools/labor-job-quote-calculator.html', 'es/herramientas/calculadora-mano-de-obra-cotizacion.html'] },
+  { js: 'tools/assets/labor-rate.js', tool: 'labor_rate', pages: ['tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html'] },
 ];
 for (const t of RELEASE_B) {
   Deno.test(`${t.tool}: both pages carry every element the script needs, and load that script`, () => {
@@ -173,8 +177,8 @@ Deno.test('painting pages: no coverage or paint price is pre-filled or claimed a
 
 Deno.test('directories: the two Release B tools are live cards; the estimate template stays "coming next"', () => {
   for (const [f, links, soon] of [
-    ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor'], 'Free estimate template'],
-    ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra'], 'Plantilla de estimado gratis'],
+    ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor', '/tools/labor-cost-per-hour-calculator'], 'Free estimate template'],
+    ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra', '/es/herramientas/calculadora-costo-hora-mano-de-obra'], 'Plantilla de estimado gratis'],
   ] as const) {
     const html = read(f);
     for (const l of links) assert(html.includes(`<a class="card" href="${l}"`), `${f}: no live card for ${l}`);

@@ -119,3 +119,14 @@ Deno.test('labor guide: the calculator example button uses the same inputs as th
     assert(js.includes(s), `example is missing ${s}`);
   }
 });
+
+Deno.test('labor guide step 1: the lead cost per billable hour, and the tool example uses the same inputs', () => {
+  const r = M.laborHourCost({ wageCents: 2800, paidHours: 2080, billableHours: 1664, payrollTaxPct: 9, compPer100: 9, otherYearCents: 150000 });
+  assertEquals([r.wagesCents, r.taxCents, r.compCents, r.totalCents, r.perHourCents, r.unbilledHours], [5824000, 524160, 524160, 7022320, 4220, 416]);
+  onPages(['guides/how-to-price-labor.html', 'es/guias/como-cobrar-mano-de-obra.html'], [
+    usd(5824000), usd(524160), usd(150000), usd(7022320), usd(4220), '2,080', '1,664', '416', '1.25',
+    `${pct1(r.aboveWagePct)}%`, `${pct1(r.onCostPct)}%`, '/tools/', '7.65%',
+  ]);
+  const js = read('tools/assets/labor-rate.js');
+  for (const s of ["$('wage').value = '28'", "$('paid').value = '2080'", "$('billable').value = '1664'", "$('tax').value = '9'", "$('comp').value = '9'", "$('other').value = '1500'"]) assert(js.includes(s), s);
+});

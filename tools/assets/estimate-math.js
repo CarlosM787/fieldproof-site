@@ -228,6 +228,60 @@ export function crewLabor(rows) {
   return { ok: true, crewHours: Math.round(crewHours * 10000) / 10000, cents, lines };
 }
 
+/**
+ * What one billable hour of a worker really costs you, from a year of pay and payroll costs.
+ *   wageCents        hourly wage (cents)
+ *   paidHours        hours you pay in a year (2,080 = 40 h x 52 weeks, paid time off included)
+ *   billableHours    hours that end up on a job you charge for (drive, shop and rain days excluded)
+ *   payrollTaxPct    employer payroll taxes as a % of pay (Social Security + Medicare are 7.65%; add unemployment)
+ *   compPer100       workers' comp rate in dollars per $100 of payroll (that is also a % of pay)
+ *   otherYearCents   anything else you pay for this worker in a year (benefits, phone, tool allowance)
+ * Every dollar is a yearly total, rounded half-up to the cent once; the hourly cost is total / billable hours,
+ * half-up to the cent. It is a COST: markup, overhead and profit go on top in the quote, not here.
+ */
+export function laborHourCost(p) {
+  const wage = p.wageCents;
+  assertCents(wage);
+  const other = p.otherYearCents || 0;
+  assertCents(other);
+  const paid = p.paidHours;
+  const billable = p.billableHours;
+  if (!(paid > 0) || paid > 8784 || !Number.isFinite(paid)) return { ok: false, reason: 'paid_hours_invalid' };
+  if (!(billable > 0) || billable > 8784 || !Number.isFinite(billable)) return { ok: false, reason: 'billable_invalid' };
+  const taxPct = p.payrollTaxPct ?? 0;
+  const comp = p.compPer100 ?? 0;
+  if (!Number.isFinite(taxPct) || taxPct < 0 || taxPct > 100) return { ok: false, reason: 'tax_invalid' };
+  if (!Number.isFinite(comp) || comp < 0 || comp > 100) return { ok: false, reason: 'comp_invalid' };
+
+  const wagesCents = Math.round(wage * paid);
+  if (wagesCents > MAX_CENTS) return { ok: false, reason: 'too_big' };
+  const taxCents = Math.round((wagesCents * taxPct) / 100);
+  const compCents = Math.round((wagesCents * comp) / 100);
+  const totalCents = wagesCents + taxCents + compCents + other;
+  if (totalCents > MAX_CENTS) return { ok: false, reason: 'too_big' };
+  const perHourCents = Math.round(totalCents / billable);
+
+  const warnings = [];
+  if (totalCents === 0) warnings.push('no_cost');
+  if (billable > paid) warnings.push('billable_over_paid');
+  else if (billable < paid / 2) warnings.push('billable_low');
+  if (taxPct === 0 && wagesCents > 0) warnings.push('no_payroll_tax');
+  if (taxPct > 30) warnings.push('tax_very_high');
+  if (comp > 40) warnings.push('comp_very_high');
+
+  return {
+    ok: true,
+    wagesCents, taxCents, compCents, otherCents: other, totalCents,
+    paidHours: paid, billableHours: billable, unbilledHours: Math.round((paid - billable) * 100) / 100,
+    perHourCents,
+    // Why the hour costs more than the wage: what you pay on top of wages, and the paid hours nobody is billed for.
+    onCostPct: wagesCents > 0 ? ((taxCents + compCents + other) / wagesCents) * 100 : null,
+    unbilledPct: (paid / billable - 1) * 100,
+    aboveWagePct: wage > 0 ? (totalCents / billable / wage - 1) * 100 : null,
+    warnings,
+  };
+}
+
 // ---------------------------------------------------------------------------
 // A quote from any list of direct costs, with an optional contingency
 // ---------------------------------------------------------------------------

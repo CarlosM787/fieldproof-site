@@ -9,7 +9,7 @@ import * as math from '../../tools/assets/estimate-math.js';
 // deno-lint-ignore no-explicit-any
 const M: any = math;
 const {
-  amountProblem, estimateTotals, laborCost, lineTotal, marginOf, marginToMarkup, markupOf, markupToMargin,
+  amountProblem, estimateTotals, laborCost, laborHourCost, lineTotal, marginOf, marginToMarkup, markupOf, markupToMargin,
   MAX_CENTS, paintQuantities, parseAmount, pct1, priceFromMargin, priceFromMarkup, priceJob, toCents,
 } = M;
 
@@ -339,5 +339,46 @@ Deno.test('painting: the gallons bought always cover the area, even when the nee
       assert(q.gallonsToBuy * cov >= area - 1e-6, `${area}/${cov}: ${q.gallonsToBuy} gal`);
       assert(q.gallonsExact * cov >= area - 1e-6 && q.gallonsExact <= q.gallonsToBuy, `${area}/${cov}: shows ${q.gallonsExact}`);
     }
+  }
+});
+
+// ── Labor cost per hour ──────────────────────────────────────────────────────
+Deno.test('labor cost per hour: the guide example, every line by hand', () => {
+  // $28/h x 2,080 paid h = $58,240; 9% payroll taxes $5,241.60; comp $9 per $100 = $5,241.60; other $1,500
+  // = $70,223.20 a year / 1,664 billable h = $42.2014 -> $42.20
+  const r = laborHourCost({ wageCents: 2800, paidHours: 2080, billableHours: 1664, payrollTaxPct: 9, compPer100: 9, otherYearCents: 150000 });
+  assert(r.ok);
+  assertEquals([r.wagesCents, r.taxCents, r.compCents, r.totalCents, r.perHourCents], [5824000, 524160, 524160, 7022320, 4220]);
+  assertEquals(r.unbilledHours, 416);
+  assertEquals(pct1(r.onCostPct), 20.6); // 11,983.20 / 58,240
+  assertEquals(pct1(r.unbilledPct), 25); // 2,080 / 1,664 = 1.25
+  assertEquals(pct1(r.aboveWagePct), 50.7); // 42.2014 / 28
+  assertEquals(r.warnings, []);
+});
+
+Deno.test('labor cost per hour: billing every paid hour with no on-costs gives back the wage', () => {
+  const r = laborHourCost({ wageCents: 2550, paidHours: 2080, billableHours: 2080 });
+  assertEquals([r.perHourCents, r.aboveWagePct], [2550, 0]);
+  assertEquals(r.warnings, ['no_payroll_tax']);
+});
+
+Deno.test('labor cost per hour: refusals and warnings', () => {
+  const base = { wageCents: 3000, paidHours: 2080, billableHours: 1500, payrollTaxPct: 8 };
+  assertEquals(laborHourCost({ ...base, billableHours: 0 }).reason, 'billable_invalid');
+  assertEquals(laborHourCost({ ...base, paidHours: 0 }).reason, 'paid_hours_invalid');
+  assertEquals(laborHourCost({ ...base, paidHours: 9000 }).reason, 'paid_hours_invalid');
+  assertEquals(laborHourCost({ ...base, payrollTaxPct: 101 }).reason, 'tax_invalid');
+  assertEquals(laborHourCost({ ...base, compPer100: -1 }).reason, 'comp_invalid');
+  assertEquals(laborHourCost({ ...base, wageCents: 100000000 }).reason, 'too_big');
+  assert(laborHourCost({ ...base, billableHours: 2200 }).warnings.includes('billable_over_paid'));
+  assert(laborHourCost({ ...base, billableHours: 900 }).warnings.includes('billable_low'));
+  assert(laborHourCost({ ...base, compPer100: 45 }).warnings.includes('comp_very_high'));
+  assertEquals(laborHourCost({ ...base, wageCents: 0 }).warnings.includes('no_cost'), true);
+});
+
+Deno.test('labor cost per hour: the hourly cost times billable hours is the yearly cost, within half a cent an hour', () => {
+  for (let w = 1500; w <= 6000; w += 137) for (const b of [1000, 1300, 1500, 1664, 1872, 2080]) {
+    const r = laborHourCost({ wageCents: w, paidHours: 2080, billableHours: b, payrollTaxPct: 9.35, compPer100: 7.21, otherYearCents: 123456 });
+    assert(Math.abs(r.perHourCents * b - r.totalCents) <= b / 2 + 1e-6, `${w}/${b}`);
   }
 });
