@@ -370,7 +370,8 @@ Deno.test('labor cost per hour: refusals and warnings', () => {
   assertEquals(laborHourCost({ ...base, payrollTaxPct: 101 }).reason, 'tax_invalid');
   assertEquals(laborHourCost({ ...base, compPer100: -1 }).reason, 'comp_invalid');
   assertEquals(laborHourCost({ ...base, wageCents: 100000000 }).reason, 'too_big');
-  assert(laborHourCost({ ...base, billableHours: 2200 }).warnings.includes('billable_over_paid'));
+  assertEquals(laborHourCost({ ...base, billableHours: 2200 }).reason, 'billable_over_paid'); // would show a cost below the wage
+  assert(laborHourCost({ ...base, billableHours: 2080 }).ok); // billing every paid hour is fine
   assert(laborHourCost({ ...base, billableHours: 900 }).warnings.includes('billable_low'));
   assert(laborHourCost({ ...base, compPer100: 45 }).warnings.includes('comp_very_high'));
   assertEquals(laborHourCost({ ...base, wageCents: 0 }).warnings.includes('no_cost'), true);

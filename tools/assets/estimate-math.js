@@ -248,6 +248,8 @@ export function laborHourCost(p) {
   const billable = p.billableHours;
   if (!(paid > 0) || paid > 8784 || !Number.isFinite(paid)) return { ok: false, reason: 'paid_hours_invalid' };
   if (!(billable > 0) || billable > 8784 || !Number.isFinite(billable)) return { ok: false, reason: 'billable_invalid' };
+  // Every billed hour is also a paid hour: more billable than paid would show a cost below the wage and underquote.
+  if (billable > paid) return { ok: false, reason: 'billable_over_paid' };
   const taxPct = p.payrollTaxPct ?? 0;
   const comp = p.compPer100 ?? 0;
   if (!Number.isFinite(taxPct) || taxPct < 0 || taxPct > 100) return { ok: false, reason: 'tax_invalid' };
@@ -263,8 +265,7 @@ export function laborHourCost(p) {
 
   const warnings = [];
   if (totalCents === 0) warnings.push('no_cost');
-  if (billable > paid) warnings.push('billable_over_paid');
-  else if (billable < paid / 2) warnings.push('billable_low');
+  if (billable < paid / 2) warnings.push('billable_low');
   if (taxPct === 0 && wagesCents > 0) warnings.push('no_payroll_tax');
   if (taxPct > 30) warnings.push('tax_very_high');
   if (comp > 40) warnings.push('comp_very_high');

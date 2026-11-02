@@ -32,7 +32,7 @@ const T = {
     callout: (c) => `Use <b>${c}</b> as this worker’s <b>cost per hour</b> in the <a href="/tools/labor-job-quote-calculator" data-cta="rate_to_quote">labor and job quote calculator</a>. It is a cost, not your billing rate: overhead and your markup go on top there.`,
     warn: {
       no_cost: 'Everything is $0: enter the wage to see a cost.',
-      billable_over_paid: 'More billable hours than paid hours? Every billed hour is a paid hour too. Check both numbers.',
+      billable_over_paid: 'Billable hours can’t be more than paid hours: every hour you bill is also an hour you pay.',
       billable_low: 'Fewer than half the paid hours are billed. If that’s right, it is the biggest thing to fix in your pricing.',
       no_payroll_tax: 'No payroll taxes entered. For an employee you pay at least Social Security and Medicare (7.65% of pay), plus unemployment tax.',
       tax_very_high: 'Payroll taxes over 30% of pay are unusual. Check the number with your payroll records.',
@@ -72,7 +72,7 @@ const T = {
     callout: (c) => `Usa <b>${c}</b> como el <b>costo por hora</b> de esta persona en la <a href="/es/herramientas/calculadora-mano-de-obra-cotizacion" data-cta="rate_to_quote">calculadora de mano de obra y cotización</a>. Es un costo, no lo que cobras: los gastos generales y tu markup van encima allí.`,
     warn: {
       no_cost: 'Todo está en $0: escribe el sueldo para ver un costo.',
-      billable_over_paid: '¿Más horas cobradas que pagadas? Cada hora que cobras también la pagas. Revisa los dos números.',
+      billable_over_paid: 'Las horas que cobras no pueden ser más que las horas pagadas: cada hora que cobras también la pagas.',
       billable_low: 'Cobras menos de la mitad de las horas que pagas. Si es así, es lo primero que hay que arreglar en tus precios.',
       no_payroll_tax: 'No escribiste impuestos de nómina. Por un empleado pagas al menos Seguro Social y Medicare (7.65% del sueldo), más el impuesto de desempleo.',
       tax_very_high: 'Impuestos de nómina de más de 30% del sueldo no son comunes. Revisa el número con tu nómina.',
@@ -111,6 +111,12 @@ function compute() {
   if (wage.empty) return renderEmpty(T.need.wage);
   if (paid.empty) return renderEmpty(T.need.paid);
   if (billable.empty) return renderEmpty(T.need.billable);
+  if (billable.value > paid.value) {
+    // An inline error on the field, like any other bad entry: a cost below the wage would underquote every job.
+    $('billable').setAttribute('aria-invalid', 'true');
+    $('billable-err').textContent = T.warn.billable_over_paid;
+    return renderEmpty(FIX_MSG);
+  }
 
   const r = laborHourCost({
     wageCents: wage.cents, paidHours: paid.value, billableHours: billable.value,
@@ -177,7 +183,7 @@ function render(r, ctx) {
 
   $('callout').innerHTML = T.callout(money(r.perHourCents));
   $('callout').hidden = false;
-  $('warns').innerHTML = r.warnings.map((w) => `<li${w === 'billable_over_paid' || w === 'no_cost' ? ' class="bad"' : ''}>${T.warn[w]}</li>`).join('');
+  $('warns').innerHTML = r.warnings.map((w) => `<li${w === 'no_cost' ? ' class="bad"' : ''}>${T.warn[w]}</li>`).join('');
   $('copyBtn').disabled = false; $('printBtn').disabled = false;
   setBar(r.perHourCents);
 }
