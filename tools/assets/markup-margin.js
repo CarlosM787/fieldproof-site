@@ -17,6 +17,7 @@ const T = {
     tooBig: 'That amount is larger than this calculator handles.',
     wholeCrew: 'Use a whole number of people.',
     pctMax: 'Use a number from 0 to 1000.',
+    fix: 'Fix the field marked in red to see the price.',
     legend: { mat: 'Materials', lab: 'Labor', oth: 'Other job costs', oh: 'Overhead', pro: 'Left after overhead', gp: 'Gross profit' },
     rows: {
       direct: 'Direct job cost', directSmall: 'materials + labor + other',
@@ -57,6 +58,7 @@ const T = {
     tooBig: 'Esa cantidad es más grande de lo que maneja esta calculadora.',
     wholeCrew: 'Usa un número entero de personas.',
     pctMax: 'Usa un número de 0 a 1000.',
+    fix: 'Corrige el campo marcado en rojo para ver el precio.',
     legend: { mat: 'Materiales', lab: 'Mano de obra', oth: 'Otros costos', oh: 'Gastos generales', pro: 'Queda después de gastos generales', gp: 'Ganancia bruta' },
     rows: {
       direct: 'Costo directo del trabajo', directSmall: 'materiales + mano de obra + otros',
@@ -121,10 +123,12 @@ function readNumber(id, { integer = false, max = Infinity } = {}) {
   const fail = (msg) => { el.setAttribute('aria-invalid', 'true'); if (errEl) errEl.textContent = msg; return { bad: true }; };
   el.removeAttribute('aria-invalid'); if (errEl) errEl.textContent = '';
   if (raw.trim() === '') return { empty: true, value: 0 };
-  const n = parseAmount(raw);
+  let n = parseAmount(raw);
   if (n === null) {
     const p = amountProblem(raw);
-    return fail(p && p.kind === 'unclear_thousands' ? T.unclear(String(p.thousands), String(p.decimal)) : T.invalid);
+    // "33.333" in a field that stops at 1000 can only be 33.333: no need to ask about thousands.
+    if (p && p.kind === 'unclear_thousands' && p.thousands > max) n = p.decimal;
+    else return fail(p && p.kind === 'unclear_thousands' ? T.unclear(String(p.thousands), String(p.decimal)) : T.invalid);
   }
   if (integer && !Number.isInteger(n)) return fail(T.wholeCrew);
   if (n > max) return fail(T.pctMax);
@@ -177,7 +181,9 @@ function compute() {
   const anyBad = mat.bad || lab.bad || oth.bad || ohBad || pct.bad;
   const anyCost = !(mat.empty && (laborHelperOn ? false : lab.empty) && oth.empty) || (laborHelperOn && lab.cents > 0);
   if (anyBad || pct.empty || !anyCost) {
-    renderEmpty(anyBad ? '' : (!anyCost ? T.empty : T.needPct[m]));
+    // A field with an error: say so under the price, and open a collapsed section that hides it.
+    if (anyBad) document.querySelectorAll('[aria-invalid=true]').forEach((el) => { const d = el.closest('details'); if (d) d.open = true; });
+    renderEmpty(anyBad ? T.fix : (!anyCost ? T.empty : T.needPct[m]));
     return;
   }
 

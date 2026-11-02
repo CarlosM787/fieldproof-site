@@ -18,6 +18,7 @@ const MSG = {
     tooBig: 'That amount is larger than this calculator handles.',
     whole: 'Use a whole number.',
     range: (lo, hi) => `Use a number from ${fmtNum(lo)} to ${fmtNum(hi)}.`,
+    fix: 'Fix the field marked in red to see the price.',
   },
   es: {
     unclear: (a, b) => `¿Es ${a} o ${b}? Escríbelo sin el punto, o con coma para los miles.`,
@@ -25,8 +26,17 @@ const MSG = {
     tooBig: 'Esa cantidad es más grande de lo que maneja esta calculadora.',
     whole: 'Usa un número entero.',
     range: (lo, hi) => `Usa un número de ${fmtNum(lo)} a ${fmtNum(hi)}.`,
+    fix: 'Corrige el campo marcado en rojo para ver el precio.',
   },
 }[LANG];
+
+/** Shown under the $0.00 price while a field has an error, so the result never sits blank. */
+export const FIX_MSG = MSG.fix;
+
+/** Opens any collapsed section (overhead, labor helper...) that holds a field with an error, so the red field is visible. */
+export function revealInvalid() {
+  document.querySelectorAll('[aria-invalid=true]').forEach((el) => { const d = el.closest('details'); if (d) d.open = true; });
+}
 
 function fieldState(el) {
   const errEl = document.getElementById(el.id + '-err');
@@ -57,10 +67,12 @@ export function readNumber(idOrEl, { integer = false, max = Infinity, min = 0 } 
   const fail = fieldState(el);
   const raw = el.value;
   if (raw.trim() === '') return { empty: true, value: 0 };
-  const n = parseAmount(raw);
+  let n = parseAmount(raw);
   if (n === null) {
     const p = amountProblem(raw);
-    return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(fmtNum(p.thousands), fmtNum(p.decimal, 3)) : MSG.invalid);
+    // "33.333" in a field that stops at 1000 can only be 33.333: no need to ask about thousands.
+    if (p && p.kind === 'unclear_thousands' && p.thousands > max) n = p.decimal;
+    else return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(fmtNum(p.thousands), fmtNum(p.decimal, 3)) : MSG.invalid);
   }
   if (integer && !Number.isInteger(n)) return fail(MSG.whole);
   if (n > max || n < min) return fail(MSG.range(min, max));

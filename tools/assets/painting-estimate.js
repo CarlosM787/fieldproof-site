@@ -5,7 +5,7 @@
 import { paintQuantities, laborCost, lineTotal, quoteJob, pricePerUnit, markupToMargin, marginToMarkup, MAX_CENTS } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, clearField, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid,
 } from './tool-ui.js';
 
 const T = {
@@ -273,7 +273,7 @@ function compute() {
   syncChips('coat-chips', coats.value, coats.empty);
 
   const anyBad = (walls && walls.bad) || (area && area.bad) || openings.bad || coats.bad || cov.bad || waste.bad || ppg.bad || mat.bad || lab.bad || ohBad || pct.bad;
-  if (anyBad) return renderEmpty('');
+  if (anyBad) { revealInvalid(); return renderEmpty(FIX_MSG); }
 
   // 1. Quantities
   let need = null;
