@@ -32,13 +32,17 @@ Deno.test('no page promises that drafts are on the phone or that a dead zone cos
 
 Deno.test('the no-signal answer says what works and what needs a signal (EN and ES)', () => {
   const en = read('index.html');
-  assert(en.includes('<summary>Does it work with no signal?</summary><p>Partly.'));
+  assert(en.includes('<summary>Does it work with no signal?</summary><p>Partly. If an estimate is already open on your phone when you lose signal'));
+  assert(en.includes('start the estimate before you go in and leave it open'));
+  assert(!en.includes('Once you’ve started an estimate'), 'an estimate left offline cannot be reopened (M05/M06)');
   for (const s of ['the recording stays on your phone, even if the app closes', '“Retry Uploads.”',
     'Starting a new estimate, opening the ones you’ve saved, turning a walkthrough into an estimate and sending it all need a signal']) {
     assert(en.includes(s), s);
   }
   const es = read('es.html');
-  assert(es.includes('<summary>¿Funciona sin señal?</summary><p>En parte.'));
+  assert(es.includes('<summary>¿Funciona sin señal?</summary><p>En parte. Si ya tienes un estimado abierto en tu teléfono cuando se va la señal'));
+  assert(es.includes('empieza el estimado antes de entrar y déjalo abierto'));
+  assert(!es.includes('Ya que empezaste un estimado'), 'un estimado que se cierra sin señal no se puede volver a abrir');
   for (const s of ['la grabación se queda en tu teléfono, aunque se cierre la app', '“Reintentar Subidas.”',
     'Para empezar un estimado nuevo, abrir los que ya guardaste, convertir el recorrido en estimado y mandarlo sí se necesita señal']) {
     assert(es.includes(s), s);
