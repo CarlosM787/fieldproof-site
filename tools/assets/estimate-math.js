@@ -343,8 +343,11 @@ export function paintQuantities(p) {
 
   const area = round2(gross - openings);
   const coatArea = round2(area * coats);
-  const gallonsExact = round2((coatArea / p.coverageSqFtPerGallon) * (1 + p.wastePct / 100));
-  const gallonsToBuy = Math.ceil(gallonsExact - 1e-9);
+  // Both go UP from the unrounded need: 401 sq ft at 400 per gallon needs 1.0025 gal, shown as 1.01 and bought as 2.
+  // (Rounding the need to 1.00 first would buy 1 gallon and leave a square foot bare.)
+  const need = (coatArea / p.coverageSqFtPerGallon) * (1 + p.wastePct / 100);
+  const gallonsExact = Math.ceil(need * 100 - 1e-6) / 100;
+  const gallonsToBuy = Math.ceil(need - 1e-9);
   return { ok: true, grossSqFt: round2(gross), openingsSqFt: round2(openings), paintableSqFt: area, coatSqFt: coatArea, gallonsExact, gallonsToBuy };
 }
 

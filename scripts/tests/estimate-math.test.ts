@@ -327,3 +327,17 @@ Deno.test({
     }
   },
 });
+
+Deno.test('painting: the gallons bought always cover the area, even when the need is a hair over a whole gallon', () => {
+  // 401 sq ft at 400 sq ft/gal = 1.0025 gal: one gallon leaves a square foot bare, so it buys 2 (and shows 1.01, not 1.00).
+  const r = paintQuantities({ areaSqFt: 401, coats: 1, coverageSqFtPerGallon: 400, wastePct: 0 });
+  assertEquals([r.gallonsExact, r.gallonsToBuy], [1.01, 2]);
+  assertEquals(paintQuantities({ areaSqFt: 1201, coats: 1, coverageSqFtPerGallon: 400, wastePct: 0 }).gallonsToBuy, 4);
+  for (let area = 1; area <= 4000; area += 1) {
+    for (const cov of [250, 300, 350, 400]) {
+      const q = paintQuantities({ areaSqFt: area, coats: 1, coverageSqFtPerGallon: cov, wastePct: 0 });
+      assert(q.gallonsToBuy * cov >= area - 1e-6, `${area}/${cov}: ${q.gallonsToBuy} gal`);
+      assert(q.gallonsExact * cov >= area - 1e-6 && q.gallonsExact <= q.gallonsToBuy, `${area}/${cov}: shows ${q.gallonsExact}`);
+    }
+  }
+});

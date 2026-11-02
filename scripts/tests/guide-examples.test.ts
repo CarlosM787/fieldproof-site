@@ -29,16 +29,16 @@ Deno.test('paint guide: area, coats, gallons needed and gallons to buy', () => {
     openings: [{ widthFt: 3, heightFt: 7, count: 2 }, { widthFt: 3, heightFt: 4, count: 1 }],
     coats: 2, coverageSqFtPerGallon: 300, wastePct: 10,
   });
-  assertEquals(q, { ok: true, grossSqFt: 368, openingsSqFt: 54, paintableSqFt: 314, coatSqFt: 628, gallonsExact: 2.3, gallonsToBuy: 3 });
+  assertEquals(q, { ok: true, grossSqFt: 368, openingsSqFt: 54, paintableSqFt: 314, coatSqFt: 628, gallonsExact: 2.31, gallonsToBuy: 3 });
   assertEquals(12 * 8 * 2, 192); assertEquals(11 * 8 * 2, 176); assertEquals(3 * 7 * 2, 42); assertEquals(3 * 4, 12);
-  onPages(PAINT_PAGES, ['192', '176', '368', '− 42', '− 12', '314', '628', '2.30', '0.70']);
+  onPages(PAINT_PAGES, ['192', '176', '368', '− 42', '− 12', '314', '628', '2.31', '0.69', '98.18']);
 });
 
 Deno.test('paint guide: paint priced on the gallons bought, the job cost, overhead and the target-margin price', () => {
   const paint = M.lineTotal({ qty: 3, unitPriceCents: 4250 });
-  const fraction = M.lineTotal({ qty: 2.3, unitPriceCents: 4250 });
+  const fraction = M.lineTotal({ qty: 2.31, unitPriceCents: 4250 });
   const lab = M.laborCost({ workers: 2, hours: 6, rateCents: 3200 });
-  assertEquals([paint.cents, fraction.cents, lab.cents], [12750, 9775, 38400]);
+  assertEquals([paint.cents, fraction.cents, lab.cents], [12750, 9818, 38400]);
   const costs = [{ id: 'paint', cents: paint.cents }, { id: 'mat', cents: 3800 }, { id: 'lab', cents: lab.cents }];
   const r = M.quoteJob({ costs, overhead: { mode: 'pct', pct: 12 }, priceOn: 'cost_plus_overhead', method: 'margin', pct: 25 });
   assert(r.ok);
@@ -56,7 +56,7 @@ Deno.test('paint guide: paint priced on the gallons bought, the job cost, overhe
   assertEquals(mk.priceCents, 76930);
   assertEquals(pct1(mk.afterOverheadPct), '20.0');
   onPages(PAINT_PAGES, [
-    usd(4250), usd(12750), usd(9775), usd(3800), usd(38400), usd(54950), usd(6594), usd(61544), usd(82059),
+    usd(4250), usd(12750), usd(9818), usd(3800), usd(38400), usd(54950), usd(6594), usd(61544), usd(82059),
     `${usd(27109)} · 33.0%`, `${usd(20515)} · 25.0%`, usd(261), usd(76930), '12%', '25%', '20%',
   ]);
 });
