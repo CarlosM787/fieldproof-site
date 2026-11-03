@@ -107,11 +107,12 @@ section.alt { background: #EEF3FF; border-block: 1px solid #E0E8FA; }
 /* Home: "How it works" as a flow */
 @media (min-width: 900px) {
   .steps-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
-  .step:not(:last-child)::after { content: "→"; position: absolute; right: -24px; top: 34px; width: 20px; text-align: center;
-    color: var(--safety); font-weight: 800; font-size: 22px; font-family: var(--display); }
+  .step:not(:last-child)::after { content: "→"; position: absolute; right: -27px; top: 40px; width: 26px; height: 26px; border-radius: 50%; z-index: 2;
+    display: flex; align-items: center; justify-content: center; background: var(--safety); color: var(--ink);
+    font-weight: 800; font-size: 16px; font-family: var(--display); box-shadow: 0 2px 6px rgba(16,24,40,.18); }
 }
 .step { position: relative; border-top: 4px solid var(--blue); padding-top: 24px; }
-.step .num { width: 52px; height: 52px; border-radius: 50%; font-size: 22px; box-shadow: 0 0 0 5px rgba(245,184,0,.28); }
+.step .num { width: 52px; height: 52px; border-radius: 50%; font-size: 22px; box-shadow: 0 0 0 5px rgba(245,184,0,.28); margin-left: auto; margin-right: auto; }
 .step h3 { font-size: var(--fs-xl); }
 
 /* Tools hub: icons on every card (decorative; the card text says what it is) */
