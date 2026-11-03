@@ -352,13 +352,14 @@ $('printBtn').addEventListener('click', doPrint);
 $('resetBtn').addEventListener('click', doReset);
 $('exampleBtn').addEventListener('click', loadExample);
 
-// Phones: show the price bar while the full result is off screen and there is a price to show.
+// Phones: show the price bar whenever the full result is off screen (the live price, or $0.00 while fields are empty).
 let resultVisible = true;
 function syncPricebar() {
   const bar = $('pricebar');
   if (!bar) return;
   $('pbPrice').textContent = lastResult ? money(lastResult.r.priceCents) : money(0);
-  bar.classList.toggle('show', !!lastResult && !resultVisible);
+  bar.classList.toggle('show', !resultVisible);
+  $('pbPrice').classList.toggle('dim', !lastResult);
 }
 if ('IntersectionObserver' in window) {
   new IntersectionObserver((entries) => { resultVisible = entries[0].isIntersecting; syncPricebar(); }, { threshold: 0.15 }).observe($('result'));

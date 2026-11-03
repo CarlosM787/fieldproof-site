@@ -22,3 +22,45 @@ h2 { letter-spacing: -0.3px; }
 
 /* Figures line up like a worksheet. */
 .r-price, .price-num, .pb-v, .demo-total, .sheet .ln .v, .mini .ln, table.conv td { font-variant-numeric: tabular-nums; }
+
+/* ── 2026-11 polish layer (WO-20261103-04) ─────────────────────────────────────────────────────────
+   Same brand (blue + safety yellow + ink), more depth: a brighter hero, cards that sit off the page,
+   wider calculators with a stronger result card. Visual only: no copy, math or layout order changes. */
+:root {
+  --shadow-1: 0 1px 2px rgba(16,24,40,.06), 0 6px 18px rgba(16,24,40,.06);
+  --shadow-2: 0 2px 4px rgba(16,24,40,.06), 0 18px 40px -12px rgba(29,78,216,.28);
+  --wash: #F3F7FF;
+}
+
+/* Home: hero with a little color depth, a highlighted promise, cards with real elevation. */
+.hero { background: radial-gradient(900px 420px at 88% -10%, #CFE0FF 0%, rgba(207,224,255,0) 65%), linear-gradient(180deg, #EAF1FF 0%, #fff 88%); }
+.hero h1 em { background: linear-gradient(transparent 68%, rgba(245,184,0,.38) 68%); padding: 0 2px; }
+.phone { box-shadow: 0 40px 80px -20px rgba(16,24,40,.45), 0 0 0 1px rgba(16,24,40,.08); }
+section.alt { background: var(--wash); }
+.step, .feature, .story-card, .demo-card, .plan, .faq details { box-shadow: var(--shadow-1); border-color: #E2E8F0; }
+.step .num { background: var(--ink); color: var(--safety-text); font-family: var(--display); }
+.feature { transition: transform .15s ease, box-shadow .15s ease; }
+.feature:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.plan.pick { box-shadow: var(--shadow-2); }
+.rule-card { border: 1px solid #334155; }
+@media (prefers-reduced-motion: reduce) { .feature, a.card { transition: none; } .feature:hover, a.card:hover { transform: none; } }
+
+/* Tools and guides: a tinted head band, wider calculators, a result card that reads as the answer. */
+.tool-page main { background: linear-gradient(180deg, #EEF4FF 0, #fff 460px); }
+.tool-page .wrap { max-width: 1180px; }
+@media (min-width: 901px) {
+  .tool-page .calc { grid-template-columns: minmax(0, 1.08fr) minmax(0, .92fr); gap: 28px; }
+}
+.tool-page .panel { box-shadow: var(--shadow-1); border-color: #E2E8F0; padding: 26px 28px; }
+@media (max-width: 420px) { .tool-page .panel { padding: 18px 16px; } }
+.tool-page .step-label { color: var(--ink); }
+.tool-page .step-label b { width: 28px; height: 28px; border-radius: 14px; font-size: 14px; background: var(--ink); color: var(--safety-text); font-family: var(--display); }
+.tool-page .result { border-top: 6px solid var(--blue); box-shadow: var(--shadow-2); }
+.tool-page .result .r-price { color: var(--ink); }
+.tool-page .result .r-price:not(.dim) { text-decoration: underline; text-decoration-color: var(--safety); text-decoration-thickness: 5px; text-underline-offset: 8px; }
+.tool-page .field .hint { line-height: 1.45; }
+.cards .card { box-shadow: var(--shadow-1); border-color: #E2E8F0; transition: transform .15s ease, box-shadow .15s ease, border-color .15s; }
+a.card:hover { transform: translateY(-2px); box-shadow: var(--shadow-2); }
+.page-head .kicker { background: var(--ink); }
+.cta-band { background: radial-gradient(600px 240px at 100% 0%, rgba(29,78,216,.55), rgba(29,78,216,0) 70%), var(--ink); }
+@media print { .tool-page main { background: none; } .tool-page .result .r-price { text-decoration: none; } .tool-page .result { border-top: 1px solid #999; } }

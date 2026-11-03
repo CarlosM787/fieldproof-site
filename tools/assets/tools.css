@@ -138,6 +138,7 @@ details.more summary { cursor: pointer; font-weight: 700; padding: 10px 0; min-h
   .pricebar.show { transform: none; }
   .pricebar .pb-l { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #94A3B8; text-transform: uppercase; }
   .pricebar .pb-v { font-size: 22px; font-weight: 800; font-variant-numeric: tabular-nums; }
+  .pricebar .pb-v.dim { color: #94A3B8; }
   .pricebar .pb-go { font-size: 14px; font-weight: 700; color: #93C5FD; white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) { .pricebar { transition: none; } }

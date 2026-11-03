@@ -108,7 +108,8 @@ export function todayLong() {
   return new Date().toLocaleDateString(LOCALE, { year: 'numeric', month: 'long', day: 'numeric' });
 }
 
-/** Phones: show the price bar while the full result is off screen and there is a price to show. */
+/** Phones: show the price bar whenever the full result is off screen, so the live price (or $0.00 while fields are
+ *  still empty) is always in view while you type. Tapping it jumps to the breakdown. */
 export function pricebar(resultId = 'result') {
   let visible = true;
   let cents = null;
@@ -116,7 +117,8 @@ export function pricebar(resultId = 'result') {
     const bar = $('pricebar');
     if (!bar) return;
     $('pbPrice').textContent = money(cents || 0);
-    bar.classList.toggle('show', cents !== null && !visible);
+    bar.classList.toggle('show', !visible);
+    $('pbPrice').classList.toggle('dim', cents === null);
   };
   if ('IntersectionObserver' in window) {
     new IntersectionObserver((entries) => { visible = entries[0].isIntersecting; sync(); }, { threshold: 0.15 }).observe($(resultId));
