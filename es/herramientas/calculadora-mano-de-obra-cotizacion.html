@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Calculadora de Mano de Obra y Cotización para Contratistas — Gratis | TalkEstimate</title>
+  <title>Calculadora de mano de obra y cotización para contratistas — Gratis | TalkEstimate</title>
   <meta name="description" content="Calculadora gratis de mano de obra y cotización para contratistas. Horas de tu equipo, materiales, traslado, escombro, imprevistos y gastos generales, con markup o margen, y un desglose por partidas para imprimir. Sin registrarte." />
   <meta name="theme-color" content="#1D4ED8" />
   <link rel="canonical" href="https://talkestimate.com/es/herramientas/calculadora-mano-de-obra-cotizacion" />
@@ -76,7 +76,7 @@
       <a class="hide-sm" href="/es/guias/como-cobrar-mano-de-obra" data-cta="nav_guide_labor">Guía</a>
       <a class="hide-sm" href="/es.html#how">La app</a>
       <span class="lang-toggle" aria-label="Idioma"><a class="lt" href="/tools/labor-job-quote-calculator" hreflang="en" lang="en">EN</a><a class="lt on" href="/es/herramientas/calculadora-mano-de-obra-cotizacion" hreflang="es" lang="es">ES</a></span>
-      <a class="btn" href="/es.html#pricing" data-cta="tool_nav_waitlist">Únete a la lista</a>
+      <a class="btn" href="/es.html#pricing" data-cta="tool_nav_waitlist">Únete a la lista de espera</a>
     </div>
   </div>
 </nav>
@@ -101,7 +101,7 @@
 
         <div class="step-label"><b>2</b> Costos del trabajo</div>
         <div class="field">
-          <label for="mat">Materiales <span class="hint">a lo que tú pagas</span></label>
+          <label for="mat">Materiales <span class="hint">al precio que tú pagas</span></label>
           <div class="money"><input type="text" id="mat" inputmode="decimal" placeholder="0.00" aria-describedby="mat-err"></div>
           <div class="err" id="mat-err" role="alert"></div>
         </div>
@@ -118,7 +118,7 @@
           </div>
         </div>
         <div class="field">
-          <label for="oth">Otros costos del trabajo <span class="hint">permisos, renta de equipo, subcontratistas</span></label>
+          <label for="oth">Otros costos del trabajo <span class="hint">permisos, renta de herramienta o maquinaria, subcontratistas</span></label>
           <div class="money"><input type="text" id="oth" inputmode="decimal" placeholder="0.00" aria-describedby="oth-err"></div>
           <div class="err" id="oth-err" role="alert"></div>
         </div>
@@ -154,13 +154,13 @@
           <legend class="sr-only">Método de precio</legend>
           <div class="seg">
             <input type="radio" name="mode" id="mode-markup" value="markup" checked><label for="mode-markup">Sumar un markup<small>% encima del costo</small></label>
-            <input type="radio" name="mode" id="mode-margin" value="margin"><label for="mode-margin">Llegar a un margen<small>% del precio que te queda</small></label>
+            <input type="radio" name="mode" id="mode-margin" value="margin"><label for="mode-margin">Buscar un margen<small>el % del precio que te quedas</small></label>
           </div>
         </fieldset>
         <div class="field">
           <label for="pct" id="pct-label" data-markup="Markup" data-margin="Margen bruto que quieres">Markup</label>
           <div class="pct"><input type="text" id="pct" inputmode="decimal" placeholder="20" aria-describedby="pct-hint pct-err"></div>
-          <div class="hint" id="pct-hint" data-markup="Se suma encima de tu costo. 25% sobre $1,000 = $1,250." data-margin="La parte del precio de venta que te queda como ganancia bruta. El precio se redondea al siguiente centavo, para que nunca te quedes con menos.">Se suma encima de tu costo. 25% sobre $1,000 = $1,250.</div>
+          <div class="hint" id="pct-hint" data-markup="Se suma encima de tu costo. 25% sobre $1,000 = $1,250." data-margin="La parte del precio de venta que te queda como ganancia bruta. El precio se redondea hacia arriba al siguiente centavo, para que nunca te quedes con menos.">Se suma encima de tu costo. 25% sobre $1,000 = $1,250.</div>
           <div class="err" id="pct-err" role="alert"></div>
           <div class="chips" id="pct-chips" aria-label="Porcentajes comunes">
             <button type="button" data-v="10">10%</button><button type="button" data-v="15">15%</button><button type="button" data-v="20">20%</button><button type="button" data-v="25">25%</button><button type="button" data-v="30">30%</button><button type="button" data-v="35">35%</button><button type="button" data-v="40">40%</button><button type="button" data-v="50">50%</button>
@@ -219,7 +219,7 @@
   <section class="block">
     <div class="wrap prose">
       <h2>Los imprevistos, en palabras claras</h2>
-      <p>Los imprevistos son dinero apartado, dentro del precio, para lo que todavía no puedes ver. Aquí son un porcentaje del costo directo del trabajo, en su propia línea, para que tú (y tu cliente, si le enseñas el desglose) lo vean.</p>
+      <p>Los imprevistos son dinero apartado, dentro del precio, para lo que todavía no puedes ver. Aquí son un porcentaje del costo directo del trabajo, en su propia línea, para que tú (y tu cliente, si le enseñas el desglose) los vean.</p>
       <ul>
         <li><b>Se cuentan como costo.</b> La ganancia bruta y el margen que ves suponen que los gastas. Es la forma segura de leer una cotización.</li>
         <li><b>Si el trabajo sale como lo planeaste, se quedan contigo.</b> El desglose también te muestra ese número: “Si no usas los imprevistos”.</li>
@@ -237,7 +237,7 @@
           <p>TalkEstimate guarda tus propios precios y costos por hora en una lista y arma el estimado con ellos mientras hablas del trabajo — en español o inglés. Tú pones cada precio; la IA solo organiza lo que dijiste.</p>
           <p class="note">Todavía sin lanzar · Android primero · construida y probada en un teléfono real</p>
         </div>
-        <a class="btn" href="/es.html#pricing" data-cta="tool_labor_waitlist">Únete a la lista</a>
+        <a class="btn" href="/es.html#pricing" data-cta="tool_labor_waitlist">Únete a la lista de espera</a>
       </div>
     </div>
   </section>

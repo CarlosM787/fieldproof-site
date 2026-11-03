@@ -63,7 +63,7 @@ const T = {
       below_overhead: (s) => `This price doesn’t cover the overhead you entered: you’d be ${s} short after overhead.`,
       margin_very_high: 'A 90%+ margin means a price at least 10× your cost. Did you mean markup?',
       markup_very_high: 'That markup more than quadruples your cost. Double-check the number.',
-      overhead_not_in_base: 'Your markup or margin is applied to job costs only, so the overhead comes out of your gross profit. Tick “Price on top of overhead” to cover it in the price.',
+      overhead_not_in_base: 'Your markup or margin is applied to job costs only, so the overhead comes out of your gross profit. Check “Price on top of overhead” to cover it in the price.',
       ppg_zero: 'Paint at $0 per gallon: fine if the customer supplies it, otherwise enter what you pay.',
       too_big: 'Those numbers are larger than this calculator handles.',
     },
@@ -112,7 +112,7 @@ const T = {
       perSqft: 'Precio por pie² a pintar',
     },
     legend: { paint: 'Pintura', mat: 'Materiales', lab: 'Mano de obra', oh: 'Gastos generales', pro: 'Queda después de gastos generales', gp: 'Ganancia bruta' },
-    leftover: (need, buy, left) => `Necesitas <b>${need} gal</b>, así que compras <b>${buy} gal</b>: aquí la pintura se cuenta en galones enteros, así que se redondea hacia arriba. Te sobran como <b>${left} gal</b> para retoques.`,
+    leftover: (need, buy, left) => `Necesitas <b>${need} gal</b>, así que compras <b>${buy} gal</b>: aquí la pintura se cuenta en galones enteros, por eso se redondea hacia arriba. Te sobran como <b>${left} gal</b> para retoques.`,
     exactBuy: (buy) => `Necesitas exactamente <b>${buy} gal</b>, así que no se redondea nada.`,
     mmNote: {
       markup: (p, m) => ` Tu ${p}% de markup equivale a <b>${m}% de margen bruto</b>.`,

@@ -40,7 +40,7 @@ const T = {
       below_overhead: (s) => `This price doesn’t cover the overhead you entered: you’d be ${s} short after overhead.`,
       margin_very_high: 'A 90%+ margin means a price at least 10× your cost. Did you mean markup?',
       markup_very_high: 'That markup more than quadruples your cost. Double-check the number.',
-      overhead_not_in_base: { markup: 'Your markup is applied to job costs only, so the overhead comes out of your gross profit. Tick “Price on top of overhead” to cover it in the price.', margin: 'Your margin is figured on job costs only, so the overhead comes out of your gross profit. Tick “Price on top of overhead” to cover it in the price.' },
+      overhead_not_in_base: { markup: 'Your markup is applied to job costs only, so the overhead comes out of your gross profit. Check “Price on top of overhead” to cover it in the price.', margin: 'Your margin is figured on job costs only, so the overhead comes out of your gross profit. Check “Price on top of overhead” to cover it in the price.' },
     },
     copied: 'Copied. Paste it into a text, email or your notes.',
     copyFail: 'Your browser blocked copying. Select the numbers and copy them by hand.',

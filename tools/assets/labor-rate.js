@@ -65,7 +65,7 @@ const T = {
       billable: 'Horas que cobras', billableSmall: (u) => `${u} horas pagadas no se cobran`,
       perHour: 'Costo por hora cobrada', perHourSmall: 'costo del año ÷ horas que cobras',
       onCost: 'Lo que pagas encima del sueldo', onCostSmall: 'impuestos + seguro + otros, como % del sueldo',
-      unbilled: 'Horas pagadas que no cobras', unbilledSmall: 'suma esto a cada hora que cobras',
+      unbilled: 'Horas pagadas que no cobras', unbilledSmall: 'esto se suma a cada hora que cobras',
       above: 'Arriba del sueldo', aboveSmall: 'costo por hora cobrada vs el sueldo por hora',
       hrs: (n) => `${n} h`,
     },
