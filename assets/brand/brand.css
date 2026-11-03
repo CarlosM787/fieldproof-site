@@ -141,3 +141,15 @@ section.alt { background: #EEF3FF; border-block: 1px solid #E0E8FA; }
   .tool-page .field input, .tool-page .field select { scroll-margin-top: 84px; scroll-margin-bottom: 112px; }
 }
 @media print { .cards a.card::before, .phone-col::before, .step::after { display: none; } .phone { transform: none; } }
+
+/* The nav call to action stays on one line ("Únete a la lista de espera" wrapped to two and overflowed the header on phones) */
+nav .nav-links a.btn { white-space: nowrap; }
+@media (max-width: 900px) { nav .nav-links { gap: 16px; } }
+@media (max-width: 420px) { nav .nav-links { gap: 10px; } nav .nav-links a.btn { font-size: 14px; padding: 10px 13px; } }
+@media (max-width: 340px) { nav .nav-links { gap: 6px; } nav .nav-links a.btn { font-size: 13px; padding: 9px 8px; } }
+@media (min-width: 721px) and (max-width: 1000px) { nav .nav-links { gap: 12px; } nav .logo-word { font-size: 19px; } nav .nav-links a { font-size: 14px; } nav .nav-links a.btn { padding: 10px 14px; } }
+@media (min-width: 721px) and (max-width: 780px) { nav .nav-links { gap: 10px; } nav .nav-links a { font-size: 13.5px; } nav .nav-links a.btn { padding: 9px 11px; } }
+/* Smallest phones (320px): the hero phone mock was a fixed 300px in a 288px column */
+.hero-grid > * { min-width: 0; }
+.phone { max-width: 100%; }
+.features { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
