@@ -5,7 +5,7 @@
 import { paintQuantities, laborCost, lineTotal, quoteJob, pricePerUnit, markupToMargin, marginToMarkup, MAX_CENTS } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, clearField, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar,
 } from './tool-ui.js';
 
 const T = {
@@ -515,3 +515,4 @@ $('exampleBtn').addEventListener('click', loadExample);
 addRow('wall');
 track('tool_view');
 compute();
+keepFocusAboveBar();

@@ -5,7 +5,7 @@
 import { crewLabor, quoteJob, pricePerUnit, markupToMargin, marginToMarkup } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, clearField, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar,
 } from './tool-ui.js';
 
 const T = {
@@ -392,3 +392,4 @@ $('exampleBtn').addEventListener('click', loadExample);
 addRow();
 track('tool_view');
 compute();
+keepFocusAboveBar();

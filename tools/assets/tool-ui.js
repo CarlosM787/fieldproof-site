@@ -135,3 +135,15 @@ export async function copyToClipboard(text, okMsg, failMsg) {
 export function pageAddress() {
   return location.origin.indexOf('talkestimate.com') >= 0 ? location.origin + location.pathname : 'talkestimate.com';
 }
+/** Phones: when a field gets focus, keep it above the live price bar (the keyboard can push it under). */
+export function keepFocusAboveBar() {
+  document.addEventListener('focusin', (e) => {
+    const el = e.target;
+    if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement) || !matchMedia('(max-width: 900px)').matches) return;
+    setTimeout(() => {
+      const bottom = el.getBoundingClientRect().bottom;
+      const limit = (window.visualViewport ? window.visualViewport.height : window.innerHeight) - 100;
+      if (bottom > limit) window.scrollBy({ top: bottom - limit, behavior: 'auto' });
+    }, 250);
+  });
+}
