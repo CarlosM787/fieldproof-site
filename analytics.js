@@ -101,11 +101,27 @@
   window.dataLayer = window.dataLayer || [];
   function gtag() { window.dataLayer.push(arguments); }
 
-  if (ENABLED) {
+  // Google's script (~180 KB) is fetched AFTER the page has painted: on the visitor's first touch, click, key or scroll,
+  // or GA_DELAY_MS after the load event, whichever comes first. Nothing is lost: the page view and every event below
+  // wait in dataLayer and are sent the moment the script arrives. Loading it during first paint made Google's own
+  // Lighthouse put it on the headline's critical path (mobile LCP 4.3 s with it, 2.1 s without; WO-20261104-08).
+  var GA_DELAY_MS = 2500;
+  var gaRequested = false;
+  var GA_TRIGGERS = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
+  function loadGa() {
+    if (gaRequested || !ENABLED) return;
+    gaRequested = true;
+    GA_TRIGGERS.forEach(function (t) { window.removeEventListener(t, loadGa, true); });
     var s = document.createElement('script');
     s.async = true;
     s.src = 'https://www.googletagmanager.com/gtag/js?id=' + encodeURIComponent(GA_MEASUREMENT_ID);
     document.head.appendChild(s);
+  }
+
+  if (ENABLED) {
+    GA_TRIGGERS.forEach(function (t) { window.addEventListener(t, loadGa, { capture: true, passive: true }); });
+    var gaLater = function () { setTimeout(loadGa, GA_DELAY_MS); };
+    if (document.readyState === 'complete') gaLater(); else window.addEventListener('load', gaLater);
     gtag('js', new Date());
     gtag('config', GA_MEASUREMENT_ID, {
       anonymize_ip: true,
@@ -120,6 +136,7 @@
   window.teGaIds = function () {
     return new Promise(function (resolve) {
       if (!ENABLED) { resolve({}); return; }
+      loadGa(); // normally already loaded by the visitor typing in the form; this makes sure
       var out = {}, pending = 2, done = false;
       function finish() { if (done) return; done = true; resolve(out); }
       var timer = setTimeout(finish, 600);

@@ -6,12 +6,17 @@ import { assert, assertEquals, assertFalse } from 'jsr:@std/assert@1';
 
 const SRC = Deno.readTextFileSync(new URL('../../analytics.js', import.meta.url));
 
-function boot(env: { host?: string; id?: string } = {}) {
+function boot(env: { host?: string; id?: string; readyState?: string } = {}) {
   const code = SRC.replace("var GA_MEASUREMENT_ID = 'G-23MSFMVK4B';", `var GA_MEASUREMENT_ID = '${env.id ?? 'G-23MSFMVK4B'}';`);
   const loaded: string[] = [];
-  const win: Record<string, unknown> = { addEventListener() {} };
+  const listeners: Record<string, (() => void)[]> = {};
+  const win: Record<string, unknown> = {
+    addEventListener(t: string, f: () => void) { (listeners[t] ??= []).push(f); },
+    removeEventListener(t: string, f: () => void) { listeners[t] = (listeners[t] ?? []).filter((g) => g !== f); },
+  };
+  const fire = (t: string) => (listeners[t] ?? []).slice().forEach((f) => f());
   const document = {
-    readyState: 'complete', referrer: '', documentElement: { lang: 'en' },
+    readyState: env.readyState ?? 'complete', referrer: '', documentElement: { lang: 'en' },
     head: { appendChild: (el: { src: string }) => loaded.push(el.src) },
     createElement: () => ({ src: '' }),
     querySelectorAll: () => [], addEventListener() {},
@@ -27,7 +32,7 @@ function boot(env: { host?: string; id?: string } = {}) {
       if (entry[0] === 'get') (entry[3] as (v: unknown) => void)(answers[entry[2] as string]);
     }
   };
-  return { win, loaded, dl, ids, answerGets };
+  return { win, loaded, dl, ids, answerGets, fire, listeners };
 }
 
 Deno.test('GA ids: on the production site they come from GA\'s own "get" command (client id and session id)', async () => {
@@ -73,4 +78,45 @@ Deno.test('GA ids: nothing personal - only the two analytics ids, never the meas
   const out = await p;
   assertEquals(Object.keys(out).sort(), ['ga_client_id', 'ga_session_id']);
   assertFalse(JSON.stringify(out).includes('G-'));
+});
+
+// WO-20261104-08: Google's ~180 KB script loads after first paint, so it is never on the headline's critical path.
+Deno.test('GA loader: the script is NOT requested while the page paints, but the page view is already queued', () => {
+  const b = boot({ readyState: 'loading' });
+  assertEquals(b.loaded.length, 0);
+  assert(b.dl().some((e) => e[0] === 'config' && e[1] === 'G-23MSFMVK4B'), 'config queued in dataLayer');
+  assert(b.dl().some((e) => e[0] === 'js'), 'js timestamp queued');
+});
+
+Deno.test('GA loader: the first touch, click, key or scroll requests it once, and only once', () => {
+  for (const t of ['pointerdown', 'keydown', 'touchstart', 'scroll']) {
+    const b = boot({ readyState: 'loading' });
+    b.fire(t); b.fire(t); b.fire('scroll');
+    assertEquals(b.loaded, ['https://www.googletagmanager.com/gtag/js?id=G-23MSFMVK4B'], t);
+  }
+});
+
+Deno.test('GA loader: with no interaction it is requested a moment after the load event', async () => {
+  const b = boot({ readyState: 'loading' });
+  b.fire('load');
+  assertEquals(b.loaded.length, 0);
+  await new Promise((r) => setTimeout(r, 2700));
+  assertEquals(b.loaded.length, 1);
+  b.fire('pointerdown');
+  assertEquals(b.loaded.length, 1);
+});
+
+Deno.test('GA loader: asking for the GA ids (waitlist submit) requests the script right away', async () => {
+  const b = boot({ readyState: 'loading' });
+  const p = b.ids();
+  assertEquals(b.loaded.length, 1);
+  b.answerGets({ client_id: '1.2', session_id: '3' });
+  assertEquals(await p, { ga_client_id: '1.2', ga_session_id: '3' });
+});
+
+Deno.test('GA loader: off the production host nothing is ever requested, even after interaction', () => {
+  const b = boot({ host: 'localhost', readyState: 'loading' });
+  b.fire('pointerdown'); b.fire('load');
+  assertEquals(b.loaded.length, 0);
+  assertEquals(['pointerdown', 'keydown', 'touchstart', 'scroll', 'load'].flatMap((t) => b.listeners[t] ?? []).length, 0);
 });
