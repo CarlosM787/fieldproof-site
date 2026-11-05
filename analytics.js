@@ -104,8 +104,10 @@
   // Google's script (~180 KB) is fetched AFTER the page has painted: on the visitor's first touch, click, key or scroll,
   // or GA_DELAY_MS after the load event, whichever comes first. Nothing is lost: the page view and every event below
   // wait in dataLayer and are sent the moment the script arrives. Loading it during first paint made Google's own
-  // Lighthouse put it on the headline's critical path (mobile LCP 4.3 s with it, 2.1 s without; WO-20261104-08).
-  var GA_DELAY_MS = 2500;
+  // Lighthouse put it on the headline's critical path (mobile LCP 4.3 s with it, 1.8 s without; WO-20261104-08).
+  // 1000 ms is the shortest delay measured to stay off that path: loading right at the load event (even via
+  // requestIdleCallback) still lands before Lighthouse's observed paint and puts LCP back at about 4 s.
+  var GA_DELAY_MS = 1000;
   var gaRequested = false;
   var GA_TRIGGERS = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
   function loadGa() {

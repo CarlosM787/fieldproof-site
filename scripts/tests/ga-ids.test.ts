@@ -100,7 +100,7 @@ Deno.test('GA loader: with no interaction it is requested a moment after the loa
   const b = boot({ readyState: 'loading' });
   b.fire('load');
   assertEquals(b.loaded.length, 0);
-  await new Promise((r) => setTimeout(r, 2700));
+  await new Promise((r) => setTimeout(r, 1200));
   assertEquals(b.loaded.length, 1);
   b.fire('pointerdown');
   assertEquals(b.loaded.length, 1);
