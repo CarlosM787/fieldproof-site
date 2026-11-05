@@ -1,7 +1,9 @@
-// The hero phone mock ("Step 4 of 7 · Pricing") must add up the way the app does (fieldproof
-// lib/pricing-engine.ts): each line shows its price AFTER markup, the first totals row is the sum
-// BEFORE markup, markup = that sum × the stated %, and the lines add up to the Total.
-// W-1 (2026-11-01): the row was called "Subtotal", so a reader adding the lines got the Total instead.
+// The hero proof card (U3, 2026-11-04): a real spoken walkthrough and the priced lines it became. It replaced the
+// decorative phone mock. The prices are the example rate ($50/hour, 20% markup on cost), so every priced line is a
+// whole-cent cost x 1.2, the priced lines add up to the "so far" total, and the line that needs the contractor's
+// hours shows no price (nothing is guessed). The second walkthrough in #demo is held to the same rules.
+// Also pinned here: the hero pricing strip says exactly what the pricing section says, and every waitlist
+// call to action on the home pages uses one name.
 // Run with:  npx deno test --allow-read scripts/tests/hero-math.test.ts
 
 import { assert, assertEquals } from 'jsr:@std/assert@1';
@@ -9,36 +11,84 @@ import { assert, assertEquals } from 'jsr:@std/assert@1';
 const read = (p: string) => Deno.readTextFileSync(new URL(`../../${p}`, import.meta.url));
 const cents = (s: string) => Math.round(Number(s.replace(/[$,]/g, '')) * 100);
 
-function mock(html: string) {
-  const start = html.indexOf('<div class="phone"');
-  const block = html.slice(start, html.indexOf('<div class="marg">', start) + 200);
-  const lines = [...block.matchAll(/<div class="amt">(\$[\d,.]+)<\/div>/g)].map((m) => cents(m[1]));
-  const rows = [...block.matchAll(/<div class="row(?: grand)?"><span>([^<]+)<\/span><span>(\$[\d,.]+)<\/span><\/div>/g)]
-    .map((m) => ({ label: m[1], value: cents(m[2]) }));
-  const margin = Number(/(\d+(?:\.\d+)?)%/.exec(block.slice(block.indexOf('class="marg"')))![1]);
-  return { lines, rows, margin };
+function block(html: string, open: string, close: string) {
+  const a = html.indexOf(open);
+  assert(a >= 0, `${open} not found`);
+  return html.slice(a, html.indexOf(close, a));
 }
 
-for (const [page, labels] of [
-  ['index.html', ['Before markup', 'Markup', 'Total']],
-  ['es.html', ['Antes del aumento', 'Aumento', 'Total']],
+function priced(card: string, li: string, total: string) {
+  const rows = [...card.matchAll(new RegExp(`<div class="${li}"><span>([\\s\\S]*?)</span><b>([^<]+)</b></div>`, 'g'))]
+    .map((m) => ({ label: m[1], price: m[2] }));
+  const t = new RegExp(`<div class="${total}"><span>[^<]+</span><(?:b|span)>(\\$[\\d,.]+)</(?:b|span)></div>`).exec(card);
+  assert(t, 'total row');
+  return { rows, total: cents(t![1]) };
+}
+
+for (const [page, quote, unpriced, cta, strip] of [
+  ['index.html', 'Master bedroom, twelve by fourteen', 'needs your hours', 'Join the waitlist',
+    ['<b>Free</b> $0', '<b>Starter</b> $19.99/mo', '<b>Pro</b> $49.99/mo <i>after launch</i>', '14-day free trial when it opens, no card']],
+  ['es.html', 'La recámara principal, doce por catorce', 'faltan tus horas', 'Únete a la lista de espera',
+    ['<b>Gratis</b> $0', '<b>Starter</b> $19.99/mes', '<b>Pro</b> $49.99/mes <i>después del lanzamiento</i>', 'Prueba gratis de 14 días cuando abra, sin tarjeta']],
 ] as const) {
-  Deno.test(`${page}: hero mock math matches the app`, () => {
-    const { lines, rows, margin } = mock(read(page));
-    assertEquals(rows.map((r) => r.label), [...labels], 'row labels');
-    const [before, markup, total] = rows.map((r) => r.value);
-    assertEquals(lines.reduce((a, b) => a + b, 0), total, 'the line prices add up to the Total');
-    assertEquals(before + markup, total, 'before markup + markup = total');
-    assertEquals(markup, Math.round(before * 0.2), 'markup is 20% of the cost (the page says 20%)');
-    // A whole-cent cost × 1.2 is a whole number of cents divisible by 6 (price × 5 = cost × 6).
-    for (const l of lines) assertEquals(l % 6, 0, `line ${l} cents is a whole-cent cost × 1.2`);
-    assertEquals(Number(((markup / total) * 100).toFixed(1)), margin, 'margin = markup / total');
-    assert(!rows.some((r) => r.label === 'Subtotal'), 'no "Subtotal" row that the lines do not add up to');
+  Deno.test(`${page}: the hero proof card is real text (not hidden), comes with its spoken words, and its math holds`, () => {
+    const html = read(page);
+    const hero = block(html, '<header class="hero">', '</header>');
+    const card = block(hero, '<figure class="proof">', '</figure>');
+    assert(!/aria-hidden="true">[^<]{8,}/.test(card), 'the proof is readable by screen readers');
+    assert(!hero.includes('class="phone"'), 'the decorative phone mock is gone from the hero');
+    assert(card.includes(quote), 'the spoken walkthrough is shown');
+    const { rows, total } = priced(card, 'proof-li', 'proof-total');
+    const prices = rows.filter((r) => r.price !== '—').map((r) => cents(r.price));
+    assertEquals(prices.length, 3);
+    assertEquals(prices.reduce((a, b) => a + b, 0), total, 'priced lines add up to the total so far');
+    for (const c of prices) assertEquals(c % 6, 0, `${c} cents is a whole-cent cost x 1.2`);
+    const open = rows.filter((r) => r.price === '—');
+    assertEquals(open.length, 1);
+    assert(open[0].label.includes(unpriced), 'the unknown line asks for hours instead of guessing');
+    assert(card.includes('$50/'), 'the example rate is stated next to the prices');
+  });
+
+  Deno.test(`${page}: the second walkthrough in #demo still adds up, and the first one is not repeated there`, () => {
+    const html = read(page);
+    const demo = block(html, '<section class="alt" id="demo">', '</section>');
+    assert(!demo.includes(quote), 'the hero walkthrough is not shown twice');
+    const { rows, total } = priced(demo, 'demo-li', 'demo-total');
+    const prices = rows.map((r) => cents(r.price));
+    assertEquals(prices.reduce((a, b) => a + b, 0), total);
+    for (const c of prices) assertEquals(c % 6, 0);
+  });
+
+  Deno.test(`${page}: the hero pricing strip says exactly what the pricing section says`, () => {
+    const html = read(page);
+    const s = block(html, '<div class="price-strip"', '</div>');
+    for (const part of strip) assert(s.includes(part), part);
+    const pricing = block(html, '<section id="pricing"', '</section>');
+    for (const amount of ['$0', '$19.99', '$49.99']) assert(pricing.includes(`<div class="p-price">${amount}`), amount);
+    assert(/14 d(ays|ías)/.test(pricing), 'the 14-day trial is in the pricing section too');
+    assert(s.includes('href="#pricing"'));
+  });
+
+  Deno.test(`${page}: every waitlist call to action uses one name`, () => {
+    const html = read(page);
+    const labels = [...html.matchAll(/data-cta="(?:nav_get_app|hero_get_app|footer_get_access)"[^>]*>([^<]+)</g)].map((m) => m[1]);
+    labels.push(/<button type="submit" id="wl-btn">([^<]+)</.exec(html)![1]);
+    assertEquals(labels.length, 4);
+    assertEquals(new Set(labels).size, 1, labels.join(' | '));
+    assertEquals(labels[0], cta);
+    assert(!/Early Access|Acceso Anticipado/i.test(html), 'the old name is gone');
+  });
+
+  Deno.test(`${page}: the home page links straight to the markup and margin calculator in its own language`, () => {
+    const html = read(page);
+    const href = page === 'es.html' ? '/es/herramientas/calculadora-markup-margen' : '/tools/markup-margin-calculator';
+    assert(html.includes(`<a href="${href}" data-cta="home_markup_calculator">`), href);
   });
 }
 
 Deno.test('es.html calls markup "aumento", never "ganancia" or the English word', () => {
-  const es = read('es.html').replace(/<!--[\s\S]*?-->/g, '').replace(/<style[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
+  // link addresses are not prose: the Spanish calculator's own URL is /es/herramientas/calculadora-markup-margen
+  const es = read('es.html').replace(/ href="[^"]*"/g, '').replace(/<!--[\s\S]*?-->/g, '').replace(/<style[\s\S]*?<\/style>/g, '').replace(/<script[\s\S]*?<\/script>/g, '');
   assert(!/ganancia/i.test(es), 'no "ganancia"');
   assert(!/\bmarkup\b/i.test(es), 'no English "markup" in the Spanish page');
   assert(es.includes('20% de aumento sobre el costo'));

@@ -294,7 +294,7 @@ Deno.test('neither page fires any old or new browser success event; the meaning 
 Deno.test('the public form text, the privacy line and the visible layout are untouched; the check container is empty and takes no room until used', () => {
   const en = Deno.readTextFileSync(new URL('../../index.html', import.meta.url));
   assert(en.includes('By joining, you agree to our <a href="privacy.html">Privacy&nbsp;Policy</a>. No spam — we email you personally to get you set up.'));
-  assert(en.includes('Get Early Access'));
+  assert(en.includes('<button type="submit" id="wl-btn">Join the waitlist</button>'));
   for (const p of PAGES) {
     const html = Deno.readTextFileSync(new URL(p.file, import.meta.url));
     assertEquals((html.match(/<div id="wl-ts"><\/div>/g) ?? []).length, 1, p.name);

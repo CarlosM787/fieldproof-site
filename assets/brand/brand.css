@@ -153,3 +153,42 @@ nav .nav-links a.btn { white-space: nowrap; }
 .hero-grid > * { min-width: 0; }
 .phone { max-width: 100%; }
 .features { grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); }
+/* ── U3 proof-first hero (WO-20261104-04) ─────────────────────────────────────────────────────────
+   The real spoken walkthrough and the priced lines it became sit in the hero as readable text (the
+   decorative phone mock is gone); on phones it comes right after the headline. A compact pricing strip
+   repeats the plan prices exactly as the pricing section states them. */
+.proof-col { position: relative; }
+.proof-col::before { content: ""; position: absolute; width: 86%; aspect-ratio: 1; border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: radial-gradient(circle, rgba(245,184,0,.26) 0%, rgba(245,184,0,0) 68%); z-index: 0; pointer-events: none; }
+.proof { position: relative; z-index: 1; margin: 0 auto; max-width: 480px; background: #fff; border: 1px solid #DCE4F5; border-radius: 20px;
+  box-shadow: 0 24px 48px rgba(16,24,40,.14); padding: 22px 22px 18px; text-align: left; }
+.proof-tag { font: 800 12px/1.2 var(--display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.proof-quote { margin: 10px 0 0; font-size: 17px; line-height: 1.5; font-style: italic; color: var(--ink); background: #F5F8FF;
+  border-left: 4px solid var(--safety); border-radius: 10px; padding: 12px 14px; }
+.proof-arrow { margin: 14px 0 6px; font-weight: 800; font-size: 14px; color: var(--blue); }
+.proof-li { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; padding: 9px 0; border-bottom: 1px solid #EEF1F6; font-size: 15px; color: var(--ink); }
+.proof-li b, .proof-total b { white-space: nowrap; font-variant-numeric: tabular-nums; }
+.proof-total { display: flex; justify-content: space-between; padding-top: 12px; font-weight: 800; font-size: 19px; color: var(--ink); }
+.proof-note { margin-top: 10px; font-size: 13.5px; line-height: 1.45; color: var(--muted); }
+.price-strip { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 18px; font-size: 14px; color: var(--ink); }
+.price-strip .ps { background: #fff; border: 1px solid #DCE4F5; border-radius: 999px; padding: 5px 12px; white-space: nowrap; }
+.price-strip .ps i { font-style: normal; color: var(--muted); }
+.price-strip .ps-note { color: var(--muted); }
+.price-strip a { font-weight: 800; color: var(--blue); text-decoration: none; white-space: nowrap; }
+.price-strip a:hover { text-decoration: underline; }
+@media (max-width: 860px) {
+  .hero-grid { gap: 0; }
+  .hero-copy { display: contents; }
+  .hero-copy .eyebrow { order: 1; }
+  .hero-copy h1 { order: 2; }
+  .proof-col { order: 3; margin: 18px 0 6px; }
+  .hero-copy .sub { order: 4; }
+  .hero-copy .hero-ctas { order: 5; }
+  .hero-copy .price-strip { order: 6; }
+  .hero-copy .hero-note { order: 7; }
+  .hero-copy .checks { order: 8; }
+  .proof { padding: 18px 16px 14px; }
+  .proof-quote { font-size: 16px; }
+}
+.proof-li .flag { color: var(--amber); font-weight: 700; }
+@media print { .proof-col::before { display: none; } }

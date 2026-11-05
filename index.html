@@ -272,7 +272,7 @@
 
 <header class="hero">
   <div class="wrap hero-grid">
-    <div>
+    <div class="hero-copy">
       <div class="eyebrow">POWERED BY AI. PRICED BY YOU.</div>
       <h1>Talk the job.<br>Send the estimate <em>before you leave the driveway.</em></h1>
       <p class="sub">TalkEstimate turns your jobsite walkthrough into a priced, professional estimate your customer approves by text. Priced from <b>your</b> price list — never AI guesses.</p>
@@ -280,7 +280,14 @@
         <a class="btn big" href="#pricing" data-cta="hero_get_app">Join the waitlist</a>
         <a class="btn big ghost" href="#demo" data-cta="hero_see_demo">See it in action</a>
       </div>
-      <div class="hero-note">Built and tested on a real phone · not released yet · Android first, iPhone later · 14-day free trial when it opens, no card up front · <a href="es.html" style="color:var(--blue);font-weight:800">¿Hablas español? →</a></div>
+      <div class="price-strip" aria-label="Pricing when it opens">
+        <span class="ps"><b>Free</b> $0</span>
+        <span class="ps"><b>Starter</b> $19.99/mo</span>
+        <span class="ps"><b>Pro</b> $49.99/mo <i>after launch</i></span>
+        <span class="ps-note">14-day free trial when it opens, no card</span>
+        <a href="#pricing" data-cta="hero_see_plans">See plans →</a>
+      </div>
+      <div class="hero-note">Built and tested on a real phone · not released yet · Android first, iPhone later · <a href="es.html" style="color:var(--blue);font-weight:800">¿Hablas español? →</a></div>
       <div class="checks">
         <div>Your prices, always</div>
         <div>Walkthroughs kept if signal drops</div>
@@ -288,26 +295,18 @@
         <div>Speaks English &amp; Spanish</div>
       </div>
     </div>
-    <div class="phone-col">
-      <div class="phone" aria-hidden="true">
-        <div class="screen">
-          <div class="app-head">
-            <div class="t">Price Estimate</div>
-            <div class="steps">Step 4 of 7 · Pricing</div>
-          </div>
-          <div class="li"><div><div class="d">Interior Wall Painting (2 coats)<span class="badge">COST BOOK</span></div><div class="m">416 sqft · 8.3 labor hrs</div></div><div class="amt">$673.92</div></div>
-          <div class="li"><div><div class="d">Drywall Patch (small)<span class="badge">COST BOOK</span></div><div class="m">3 count · 1.5 labor hrs</div></div><div class="amt">$100.80</div></div>
-          <div class="li"><div><div class="d">Masking &amp; Protection<span class="badge">COST BOOK</span></div><div class="m">1 flat · 1 labor hr</div></div><div class="amt">$78.00</div></div>
-          <div class="li"><div><div class="d">Cleanup + Disposal<span class="badge">COST BOOK</span></div><div class="m">margin check ✓</div></div><div class="amt">$66.00</div></div>
-          <div class="tot">
-            <div class="row"><span>Before markup</span><span>$765.60</span></div>
-            <div class="row"><span>Markup</span><span>$153.12</span></div>
-            <div class="row grand"><span>Total</span><span>$918.72</span></div>
-            <div class="marg">Estimated margin: 16.7% — Caution</div>
-          </div>
-          <div class="app-cta">Check Missing Costs</div>
-        </div>
-      </div>
+    <div class="proof-col">
+      <figure class="proof">
+        <div class="proof-tag">🎙 You, on the jobsite · 20 seconds</div>
+        <blockquote class="proof-quote">“Master bedroom, twelve by fourteen, eight-foot ceilings. Two coats on the walls. Three nail pops to patch. And they want the closet door replaced — I’ll need to pick one up.”</blockquote>
+        <div class="proof-arrow"><span aria-hidden="true">↓</span> Priced from your price list</div>
+        <div class="proof-li"><span>Interior Wall Painting (2 coats) · 416 sqft</span><b>$673.92</b></div>
+        <div class="proof-li"><span>Drywall Patch (small) · 3</span><b>$100.80</b></div>
+        <div class="proof-li"><span>Door Installation · 1</span><b>$120.00</b></div>
+        <div class="proof-li"><span>Material Pickup · <span class="flag">needs your hours</span></span><b>—</b></div>
+        <div class="proof-total"><span>Total so far</span><b>$894.72</b></div>
+        <figcaption class="proof-note">It heard the pickup trip but <b>didn’t guess</b> how long it takes. That’s yours to say. Example prices: $50/hour, 20% markup.</figcaption>
+      </figure>
     </div>
   </div>
 </header>
@@ -328,24 +327,8 @@
 <section class="alt" id="demo">
   <div class="wrap center">
     <h2>Say it. Watch it become an estimate.</h2>
-    <p class="lead">A real 20-second walkthrough, exactly as spoken:</p>
+    <p class="lead">Another real walkthrough, exactly as spoken:</p>
     <div class="demo-grid" style="text-align:left">
-      <div class="demo-card">
-        <div class="demo-tag">🎙 YOU, ON THE JOBSITE</div>
-        <p class="demo-quote">“Master bedroom, twelve by fourteen, eight-foot ceilings. Two coats on the walls. Three nail pops to patch. And they want the closet door replaced — I’ll need to pick one up.”</p>
-      </div>
-      <div class="demo-arrow">→</div>
-      <div class="demo-card">
-        <div class="demo-tag">📋 YOUR ESTIMATE, YOUR PRICES</div>
-        <div class="demo-li"><span>Interior Wall Painting (2 coats) · 416 sqft</span><b>$673.92</b></div>
-        <div class="demo-li"><span>Drywall Patch (small) · 3</span><b>$100.80</b></div>
-        <div class="demo-li"><span>Door Installation · 1</span><b>$120.00</b></div>
-        <div class="demo-li"><span>Material Pickup · <span class="flag">needs your hours</span></span><b>—</b></div>
-        <div class="demo-total"><span>Total so far</span><span>$894.72</span></div>
-      </div>
-    </div>
-    <p class="lead" style="margin-top:22px">Notice the last line — it heard the pickup trip but <b>didn’t guess</b> how long it takes. That’s yours to say. Nothing is ever invented.</p>
-    <div class="demo-grid" style="text-align:left;margin-top:30px">
       <div class="demo-card">
         <div class="demo-tag">🎙 A HANDYMAN JOB</div>
         <p class="demo-quote">“Bathroom: swap the faucet, the toilet keeps running, two dead outlets, and two small holes in the wall to patch.”</p>
@@ -360,7 +343,7 @@
         <div class="demo-total"><span>Total</span><span>$290.40</span></div>
       </div>
     </div>
-    <p class="lead" style="margin-top:18px;font-size:15px">Example prices at a $50/hour rate with 20% markup — in the app, every number comes from YOUR price list.</p>
+    <p class="lead" style="margin-top:18px;font-size:15px">Example prices at a $50/hour rate with 20% markup — in the app, every number comes from YOUR price list. <a href="/tools/markup-margin-calculator" data-cta="home_markup_calculator">Try the free markup and margin calculator →</a></p>
   </div>
 </section>
 
@@ -489,7 +472,7 @@
     </div>
     <p class="plans-note">When it opens: 14 days with everything turned on, no card. After that you stay on Free unless you choose a plan, and you're never charged without subscribing. No per-user pricing. Your estimates and records stay yours on every plan, even if you stop paying.</p>
     <div class="price-card">
-      <div class="price-tag">EARLY ACCESS</div>
+      <div class="price-tag">WAITLIST</div>
       <p style="margin-top:8px;color:var(--muted)">Not released yet. Join the list and we'll set you up personally when it opens.</p>
       <form class="wl-form" id="wl">
         <label for="wl-email" class="sr-only">Your email address</label>
@@ -505,7 +488,7 @@
         </select>
         <input class="hp" type="text" id="wl-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div id="wl-ts"></div>
-        <button type="submit" id="wl-btn">Get Early Access</button>
+        <button type="submit" id="wl-btn">Join the waitlist</button>
         <div class="wl-msg" id="wl-msg" role="status" aria-live="polite"></div>
         <p class="wl-consent">By joining, you agree to our <a href="privacy.html">Privacy&nbsp;Policy</a>. No spam — we email you personally to get you set up.</p>
       </form>
@@ -525,7 +508,7 @@
       <details><summary>What trades does it support?</summary><p>Handyman, painting, drywall, and general work today — with pre-loaded price templates for each that you customize once and reuse forever. More trades are coming, based on what the first contractors ask for.</p></details>
       <details><summary>How is this different from Jobber or Joist?</summary><p>Those are big service-business platforms — scheduling, dispatch, CRM, marketing — and they're priced like it. TalkEstimate does one thing extremely well: the fastest path from standing on a jobsite to an approved estimate. One flow, one flat price, nothing gated, nothing capped.</p></details>
       <details><summary>What about mid-job changes?</summary><p>The customer adds work halfway through? Hit "+ Change" on the job, say what changed, and send them a priced change order to approve — before you do the extra work. No more unpaid extras.</p></details>
-      <details><summary>iPhone or Android?</summary><p>Android first — that's where the build runs and where it has been tested on a real phone. iPhone is next on the roadmap. Join early access and we'll tell you the moment it opens.</p></details>
+      <details><summary>iPhone or Android?</summary><p>Android first — that's where the build runs and where it has been tested on a real phone. iPhone is next on the roadmap. Join the waitlist and we'll tell you the moment it opens.</p></details>
     </div>
   </div>
 </section>
@@ -534,7 +517,7 @@
   <div class="wrap center">
     <h2>Win the jobs you’re losing to faster replies.</h2>
     <p class="lead">Start free, no card. Starter $19.99/month when it opens; Pro after launch. Set up personally. Your records stay yours.</p>
-    <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Get Early Access</a></p>
+    <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Join the waitlist</a></p>
   </div>
 </section>
 
