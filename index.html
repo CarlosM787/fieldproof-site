@@ -503,7 +503,7 @@
           <option>General / Remodel</option>
           <option>Other</option>
         </select>
-        <input class="hp" type="text" id="wl-company" name="company" tabindex="-1" autocomplete="off" aria-hidden="true" />
+        <input class="hp" type="text" id="wl-hp" name="te_hp_x" tabindex="-1" autocomplete="off" aria-hidden="true" />
         <div id="wl-ts"></div>
         <button type="submit" id="wl-btn">Get Early Access</button>
         <div class="wl-msg" id="wl-msg" role="status" aria-live="polite"></div>
@@ -615,6 +615,9 @@
 
     form.addEventListener('submit', async function (e) {
       e.preventDefault();
+      // waitlist_submit_attempt = the button was pressed with a valid form (an attempt, never "a lead"). Without it GA
+      // cannot tell someone who started and left from someone whose request failed or reached the server.
+      track('waitlist_submit_attempt', { form_name: 'waitlist' });
       btn.disabled = true;                 // block double-submit
       msg.className = 'wl-msg';
       msg.textContent = '';
@@ -627,7 +630,7 @@
       var payload = Object.assign({
         email: document.getElementById('wl-email').value,
         trade: document.getElementById('wl-trade').value,
-        company: document.getElementById('wl-company').value
+        company: document.getElementById('wl-hp').value
       }, attribution(), await gaIds());
       if (token) payload.turnstile_token = token;
       try {
