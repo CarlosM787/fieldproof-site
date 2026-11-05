@@ -106,7 +106,7 @@ function run(pageFile: string, fetchImpl: (url: string, init: { body: string }) 
   const form = el('wl');
   el('wl-email').value = 'person@gmail.com';
   el('wl-trade').value = 'Painting';
-  el('wl-company').value = '';
+  el('wl-hp').value = '';
   return {
     form, btn: el('wl-btn'), msg: el('wl-msg'), events, requests, scriptsAdded, renders, resetsOfWidget, win,
     submit: async () => { await form.listeners.submit({ preventDefault() {} }); },
@@ -126,7 +126,7 @@ for (const p of PAGES) {
     await t.submit();
     assertEquals(t.msg.textContent, p.ok);
     assertEquals(t.msg.className, 'wl-msg ok');
-    assertEquals(t.names(), [], 'no waitlist_submit, no form_submit_success, nothing');
+    assertEquals(t.names(), ['waitlist_submit_attempt'], 'only the attempt: no lead or success event, the server alone knows');
     assertEquals(t.form.resets, 1);
     assertFalse(t.btn.disabled);
   });
@@ -158,7 +158,7 @@ for (const p of PAGES) {
     for (const [label, f] of failures) {
       const t = run(p.file, f);
       await t.submit();
-      assertEquals(t.names(), ['form_submit_error'], label);
+      assertEquals(t.names(), ['waitlist_submit_attempt', 'form_submit_error'], label);
       assertEquals(t.msg.className, 'wl-msg err', label);
       assertFalse(t.btn.disabled, `${label}: the button comes back so they can retry`);
       assertEquals(t.form.resets, 0, `${label}: what they typed is not lost`);
@@ -204,7 +204,7 @@ for (const p of PAGES) {
     assertEquals(sent.body.ga_session_id, '1700000123');
     assertFalse(JSON.stringify(sent.body).includes('G-'), 'the measurement id (G-...) is never in the request');
     assertFalse('turnstile_token' in sent.body, 'no human-check token while the check is dormant');
-    assertEquals(t.names(), ['form_start']);
+    assertEquals(t.names(), ['form_start', 'waitlist_submit_attempt']);
   });
 
   Deno.test(`${p.name}: no analytics ids when analytics is not running (nothing is added to the request)`, async () => {
@@ -253,7 +253,7 @@ for (const p of PAGES) {
     await t.submit();
     assertEquals(t.requests[1].body.turnstile_token, 'token-2', 'a second try never reuses the first token');
     assertEquals(t.scriptsAdded.length, 1, 'the script is loaded once');
-    assertEquals(t.names(), ['form_start']);
+    assertEquals(t.names(), ['form_start', 'waitlist_submit_attempt', 'waitlist_submit_attempt'], 'one attempt per press');
   });
 
   Deno.test(`${p.name}: HUMAN CHECK ON but blocked or silent: the visitor is NOT stopped by the page - the form goes without a token and the server decides`, async () => {
@@ -282,14 +282,41 @@ Deno.test('neither page fires any old or new browser success event; the meaning 
   for (const p of PAGES) {
     const html = Deno.readTextFileSync(new URL(p.file, import.meta.url));
     assertFalse(html.includes('form_submit_success'), p.name);
-    assertFalse(html.includes('waitlist_submit'), `${p.name}: the browser reports no success any more`);
-    assertFalse(/track\('[a-z_]*(success|submit)'/.test(html.replace(/form_submit_error/g, '')), p.name);
+    const events = [...html.matchAll(/track\('([a-z_]+)'/g)].map((m) => m[1]).sort();
+    assertEquals(events, ['form_start', 'form_submit_error', 'waitlist_submit_attempt'], `${p.name}: start, attempt, error; never a success`);
+    assertFalse(/track\('[a-z_]*(success|submit|lead)'/.test(html), p.name);
     assert(/No "success" event is sent from the browser/.test(html), `${p.name}: the comment explains why`);
   }
   const analytics = Deno.readTextFileSync(new URL('../../analytics.js', import.meta.url));
   assertFalse(analytics.includes('form_submit_success'));
   assertFalse(analytics.includes('waitlist_submit'));
 });
+
+for (const p of PAGES) {
+  Deno.test(`${p.name}: the attempt event fires once per press, before the request, carries no personal data, and a pending request blocks a second one`, async () => {
+    let release: (v: unknown) => void = () => {};
+    const held = new Promise((r) => (release = r));
+    const t = run(p.file, () => held as Promise<unknown>);
+    const pending = t.submit();
+    await Promise.resolve();
+    assertEquals(t.names(), ['waitlist_submit_attempt'], 'sent as the button is pressed, before any answer');
+    assertEquals(t.events[0][1], { form_name: 'waitlist' });
+    assertFalse(JSON.stringify(t.events).includes('@'), 'no email in any event');
+    release(await answer(200, { ok: true }));
+    await pending;
+    assertEquals(t.names(), ['waitlist_submit_attempt']);
+  });
+
+  Deno.test(`${p.name}: the bot trap is not an autofill target (no company/organization/address name), and is still sent as "company" so the server is unchanged`, () => {
+    const html = Deno.readTextFileSync(new URL(p.file, import.meta.url));
+    const trap = html.match(/<input class="hp"[^>]*>/)?.[0] ?? '';
+    assert(trap.includes('id="wl-hp"'), p.name);
+    assertFalse(/company|organi[sz]ation|business|address|name="(name|email|tel|url)"/i.test(trap), `${p.name}: ${trap}`);
+    assert(/tabindex="-1"/.test(trap) && /aria-hidden="true"/.test(trap) && /autocomplete="off"/.test(trap), p.name);
+    assertEquals(html.indexOf('id="wl-company"'), -1, `${p.name}: the old autofill-shaped id is gone`);
+    assert(formScript(html).includes("company: document.getElementById('wl-hp').value"), p.name);
+  });
+}
 
 Deno.test('the public form text, the privacy line and the visible layout are untouched; the check container is empty and takes no room until used', () => {
   const en = Deno.readTextFileSync(new URL('../../index.html', import.meta.url));
@@ -299,7 +326,7 @@ Deno.test('the public form text, the privacy line and the visible layout are unt
     const html = Deno.readTextFileSync(new URL(p.file, import.meta.url));
     assertEquals((html.match(/<div id="wl-ts"><\/div>/g) ?? []).length, 1, p.name);
     assert(html.includes('#wl-ts:empty { display: none; }'), p.name);
-    assertNotEquals(html.indexOf('id="wl-company"'), -1);
+    assertNotEquals(html.indexOf('id="wl-hp"'), -1);
   }
   const es = Deno.readTextFileSync(new URL('../../es.html', import.meta.url));
   assert(es.includes('Al unirte, aceptas nuestra <a href="privacy.html">Política de Privacidad</a>. Sin spam — te escribimos personalmente para configurarte.'));
