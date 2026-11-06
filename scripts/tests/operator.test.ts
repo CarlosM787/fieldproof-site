@@ -69,6 +69,8 @@ Deno.test('terms describe billing as it is live (since 2026-10-27), with no refu
   assert(t.includes('A paid plan stays active until'), 'cancel at period end (Stripe portal setting)');
   assert(/Deleting your account cancels your subscription and permanently\s+deletes your data\./.test(t), 'account deletion cancels the subscription');
   assert(!/right away/.test(t), 'no timing promise that only the in-app path keeps');
-  assert(!/refund/i.test(t), 'no refund statement until Carlos approves one (09_ draft)');
-  assertEquals((t.match(/Last updated: October 28, 2026/g) ?? []).length, 1);
+  // Carlos 2026-11-06 approved refund option A (09_ draft): reviewed, never guaranteed.
+  assert(/not refunded for partial months/.test(t), 'option A refund sentence');
+  assert(!/full refund|money-back|refund guarantee|guaranteed refund/i.test(t), 'no refund guarantee');
+  assertEquals((t.match(/Last updated: November 6, 2026/g) ?? []).length, 1);
 });

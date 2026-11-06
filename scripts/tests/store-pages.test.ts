@@ -67,3 +67,12 @@ Deno.test('the sitemap lists both pages', () => {
   const sm = read('sitemap.xml');
   for (const p of PAGES) assert(sm.includes(`<loc>https://talkestimate.com/${p}</loc>`), p);
 });
+
+Deno.test('refund policy option A (Carlos 2026-11-06): no partial-month refunds, mistaken charges reviewed, no guarantee', () => {
+  const norm = (s: string) => s.replace(/\s+/g, ' ');
+  const terms = norm(read('terms.html')), support = norm(read('support.html'));
+  assert(terms.includes('Payments are not refunded for partial months. If you think you were charged by mistake, email us within 30 days and we will review it.'));
+  assert(support.includes('Payments are not refunded for partial months.'));
+  assert(support.includes('Los pagos no se reembolsan por meses parciales.'));
+  for (const page of [terms, support]) assert(!/full refund|money-back|reembolso completo|garant[ií]a de devoluci/i.test(page), 'no refund guarantee');
+});

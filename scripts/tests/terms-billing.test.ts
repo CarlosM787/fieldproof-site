@@ -11,7 +11,8 @@ Deno.test('terms: live billing, operator named, no refund promise, no unreleased
   assert(t.includes('billed monthly, in advance, through Stripe'));
   assert(t.includes('A paid plan stays active until'));
   assert(t.includes('operated by <b>Morales Labs LLC</b>, an Arizona limited liability company'));
-  assert(!/refund/i.test(t));
+  assert(/not refunded for partial months/.test(t), 'refund option A (Carlos 2026-11-06)');
+  assert(!/full refund|money-back|refund guarantee|guaranteed refund/i.test(t), 'no refund guarantee');
   assert(!t.includes('Delete account'), 'in-app deletion is not released yet');
 });
 
