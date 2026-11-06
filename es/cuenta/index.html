@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'self'; form-action 'self'" />
+  <meta name="robots" content="noindex, nofollow" />
+  <title>TalkEstimate — Tu cuenta</title>
+  <meta name="description" content="Entra para ver tu plan de TalkEstimate, empezar Starter o administrar tu suscripción." />
+  <meta name="theme-color" content="#1D4ED8" />
+  <link rel="alternate" hreflang="en" href="https://talkestimate.com/account/" />
+  <link rel="alternate" hreflang="es" href="https://talkestimate.com/es/cuenta/" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
+  <link rel="preload" href="/assets/fonts/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
+  <style>
+    :root { --ink: #101828; --muted: #475467; --blue: #1D4ED8; --border: #EAECF0; }
+    body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: var(--ink); line-height: 1.6; margin: 0; background: #F8FAFC; }
+    .top { background: #fff; border-bottom: 1px solid var(--border); }
+    .top .in { max-width: 720px; margin: 0 auto; padding: 14px 24px; display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+    .logo { display: flex; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; font-weight: 800; font-size: 20px; }
+    .logo em { font-style: normal; color: var(--blue); }
+    .lang a { color: var(--muted); text-decoration: none; font-weight: 700; font-size: 14px; padding: 4px 8px; border-radius: 8px; }
+    .lang a.on { background: var(--ink); color: #fff; }
+    .wrap { max-width: 720px; margin: 0 auto; padding: 36px 24px 56px; }
+    h1 { font-size: 30px; margin: 0 0 6px; } h2 { font-size: 20px; margin: 0 0 6px; }
+    p, li { color: #344054; }
+    .card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 22px; margin-top: 18px; }
+    label { display: block; font-weight: 700; margin-bottom: 8px; }
+    input { width: 100%; box-sizing: border-box; padding: 14px 16px; border: 2px solid var(--border); border-radius: 12px; font-size: 17px; font-family: inherit; }
+    input:focus { outline: none; border-color: var(--blue); }
+    .btn { display: inline-block; background: var(--blue); color: #fff; border: 0; border-radius: 12px; padding: 14px 22px; font-size: 16px; font-weight: 700; font-family: inherit; cursor: pointer; margin-top: 12px; }
+    .btn[disabled] { opacity: .6; cursor: default; }
+    .btn.ghost { background: #fff; color: var(--blue); border: 2px solid var(--blue); }
+    .link { background: none; border: 0; color: var(--blue); font: inherit; cursor: pointer; padding: 0; text-decoration: underline; margin-top: 12px; }
+    .who { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
+    .msg { margin-top: 12px; padding: 12px 14px; border-radius: 12px; background: #F1F5F9; color: var(--ink); }
+    .msg.err { background: #FEF3F2; color: #B42318; }
+    .msg.warn { background: #FFFAEB; color: #93370D; }
+    .msg.ok { background: #ECFDF3; color: #067647; }
+    .disclose { font-size: 14px; } .disclose li { margin-bottom: 6px; }
+    .foot { color: var(--muted); font-size: 14px; margin-top: 28px; }
+    .foot a { color: var(--blue); }
+    [hidden] { display: none !important; }
+  </style>
+  <link rel="stylesheet" href="/assets/brand/brand.css" />
+</head>
+<body>
+  <div class="top"><div class="in">
+    <a class="logo" href="/es.html"><img src="/assets/brand/mark.svg" alt="" width="28" height="28"><span>Talk<em>Estimate</em></span></a>
+    <span class="lang" aria-label="Language"><a href="/account/">EN</a><a class="on" href="/es/cuenta/">ES</a></span>
+  </div></div>
+  <main class="wrap">
+    <h1>Tu cuenta de TalkEstimate</h1>
+    <p>Entra con el correo que usas en la app TalkEstimate para ver tu plan, empezar Starter o administrar tu suscripción.</p>
+    <div id="page-msg" class="msg" hidden></div>
+    <div id="status-msg" class="msg" hidden role="status"></div>
+
+    <div id="step-email" class="card" hidden>
+      <form id="form-email" novalidate>
+        <label id="email-label" for="email"></label>
+        <input id="email" type="email" autocomplete="email" inputmode="email" required />
+        <button id="send" class="btn" type="submit"></button>
+        <div id="email-msg" class="msg" hidden role="alert"></div>
+      </form>
+    </div>
+
+    <div id="step-code" class="card" hidden>
+      <form id="form-code" novalidate>
+        <label id="code-label" for="code"></label>
+        <input id="code" type="text" inputmode="numeric" autocomplete="one-time-code" maxlength="10" required />
+        <button id="verify" class="btn" type="submit"></button>
+        <div id="code-msg" class="msg" hidden role="alert"></div>
+      </form>
+      <button id="other-email" class="link" type="button"></button>
+    </div>
+
+    <div id="step-account" hidden>
+      <div class="who"><span id="who"></span><button id="sign-out" class="link" type="button"></button></div>
+      <div id="plan-msg" class="msg" hidden></div>
+      <div id="plan-box" class="card" hidden>
+        <h2 id="plan-title"></h2>
+        <p id="plan-body"></p>
+        <div id="pay-msg" class="msg" hidden></div>
+        <button id="manage" class="btn ghost" type="button" hidden></button>
+        <button id="update-payment" class="btn" type="button" hidden></button>
+      </div>
+      <div id="starter-box" class="card" hidden>
+        <h2 id="starter-title"></h2>
+        <ul><li id="starter-ai"></li><li id="starter-manual"></li></ul>
+        <p><b id="disclose-title"></b></p>
+        <ul id="disclose" class="disclose"></ul>
+        <button id="start" class="btn" type="button"></button>
+      </div>
+      <div id="action-msg" class="msg" hidden role="alert"></div>
+    </div>
+
+    <p class="foot"><a href="/terms.html">Términos</a> · <a href="/privacy.html">Política de privacidad</a> · <a href="/support.html#es">Soporte</a> · © 2026 Morales Labs LLC</p>
+  </main>
+  <script src="/assets/vendor/supabase-js-2.109.0.js"></script>
+  <script src="/assets/account.js"></script>
+</body>
+</html>

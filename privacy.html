@@ -24,9 +24,9 @@
 <body>
   <div class="wrap">
     <h1>TalkEstimate Privacy Policy</h1>
-    <p class="updated">Last updated: October 16, 2026</p>
+    <p class="updated">Last updated: November 6, 2026</p>
 
-    <p>TalkEstimate is a mobile estimating tool for contractors. This policy
+    <p>TalkEstimate is a mobile estimating tool for contractors. TalkEstimate is operated by <b>Morales Labs LLC</b>, an Arizona limited liability company; in this policy "we" means Morales Labs LLC. This policy
     explains what information the app handles and why. Short version: your
     data exists to make your estimates work, it is never sold, and there are
     no ads or cross-app tracking.</p>
@@ -45,6 +45,14 @@
       you enter, plus how you reached the site (campaign tags, the referring
       site and the first page you visited), so we can contact you about
       access.</li>
+      <li><b>Account page (this website):</b> if you sign in at
+      <a href="/account/">talkestimate.com/account/</a>, your email address is
+      used to send a login code (through Supabase, the same way the app does),
+      and you stay signed in in that browser until you sign out.</li>
+      <li><b>Payments:</b> paid plans are handled by Stripe, our payment
+      processor. Stripe collects your card and billing details under its own
+      privacy policy; we never see or store your card number. Stripe tells us
+      whether your plan is active, so the app can show the right plan.</li>
     </ul>
 
     <h2>How it's used</h2>
@@ -98,16 +106,21 @@
     browser's tracking protection or an analytics blocker will stop it.</p>
 
     <h2>Data deletion</h2>
-    <p>There is no delete button in the app yet. Email
+    <!-- DEPENDS:delete-account-deploy: true only once the delete-account function is deployed (Carlos line c) -->
+    <p>To delete your whole account, open the app and tap
+    <b>Settings → Delete account</b>: your estimates, recordings, photos,
+    customer records and everything else in it are deleted from TalkEstimate's
+    database and file storage right away, and a subscription is cancelled.
+    You can also email
     <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a> to ask
-    us to delete a recording or your whole account, and we will delete it
-    (estimates, recordings, photos, customer records) from TalkEstimate's
-    database and file storage within 30 days. What OpenAI already received
-    is covered by OpenAI's policy, and our hosting provider may keep backup
-    copies for a period it sets.</p>
+    us to delete a recording or your whole account; we delete it within 30
+    days. What OpenAI already received is covered by OpenAI's policy, and our
+    hosting provider may keep backup copies for a period it sets. Details:
+    <a href="/delete-account.html">Delete your account or data</a>.</p>
 
     <h2>Contact</h2>
-    <p>Questions:
+    <p>Morales Labs LLC<br />
+    Questions:
     <a href="mailto:support@talkestimate.com">support@talkestimate.com</a><br />
     Deletion requests:
     <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a></p>

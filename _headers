@@ -12,3 +12,21 @@
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
   Referrer-Policy: no-referrer
+
+# Account page: Supabase sign-in + plan; Stripe Checkout/Portal are navigations (not CSP). Never indexed or cached.
+/account/
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+/account/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+/es/cuenta/
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
+/es/cuenta/index.html
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self' https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
+  X-Robots-Tag: noindex, nofollow
+  Cache-Control: no-store
