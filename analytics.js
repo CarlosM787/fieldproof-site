@@ -216,11 +216,15 @@
   });
 
   // ── CONSENT BAR (option a) ───────────────────────────────────────────────────
+  // An in-page band, NOT a floating overlay: it sits in the page flow above the menu, so it can never cover the main
+  // button, a calculator field, the result or the waitlist button, at any screen size or scroll position (Cocoteo's
+  // D3 lesson: a fixed bottom bar covered the Play buttons on phones). "No thanks" is the same size as "Allow".
+  // Reopened from "Analytics settings", it appears right above that link.
   var TXT = {
-    en: { q: 'Count this visit with Google Analytics? It uses cookies to see which pages and tools people use. No ads, nothing you type.',
+    en: { q: 'Can we count this visit with Google Analytics? It uses cookies to see which pages and tools get used. No ads, and nothing you type.',
           allow: 'Allow', deny: 'No thanks', more: 'Privacy', label: 'Analytics choice', footer: 'Analytics settings',
           now: { granted: 'Now: allowed.', denied: 'Now: not allowed.' } },
-    es: { q: '¿Contamos esta visita con Google Analytics? Usa cookies para ver qué páginas y herramientas se usan. Sin anuncios, nada de lo que escribes.',
+    es: { q: '¿Podemos contar esta visita con Google Analytics? Usa cookies para ver qué páginas y herramientas se usan. Sin anuncios y nada de lo que escribes.',
           allow: 'Permitir', deny: 'No, gracias', more: 'Privacidad', label: 'Elección de analítica', footer: 'Configurar analítica',
           now: { granted: 'Ahora: permitido.', denied: 'Ahora: no permitido.' } }
   };
@@ -238,41 +242,53 @@
       window['ga-disable-' + GA_MEASUREMENT_ID] = true;
     }
   }
-  function showBar(show) {
-    if (!show) { if (bar && bar.parentNode) bar.parentNode.removeChild(bar); bar = null; return; }
-    var t = txt();
-    if (!bar) {
-      bar = document.createElement('div');
-      bar.setAttribute('role', 'region');
-      bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:1000;max-width:640px;margin:0 auto;background:#101828;color:#fff;border-radius:14px;padding:14px 16px;font:15px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25);display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center';
-      document.body.appendChild(bar);
+  function showBar(show, before) {
+    if (!show) {
+      // The buttons are only reachable while the band is on screen, so removing it never moves content the visitor is reading.
+      if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+      bar = null; return;
     }
+    var t = txt();
+    if (bar && bar.parentNode) bar.parentNode.removeChild(bar);
+    bar = document.createElement('div');
+    bar.className = 'te-consent';
+    bar.setAttribute('role', 'region');
     bar.setAttribute('aria-label', t.label);
-    bar.innerHTML = '';
-    var p = document.createElement('p'); p.style.cssText = 'margin:0;flex:1 1 260px;color:#fff;font:inherit';
+    bar.style.cssText = 'position:static;background:#101828;color:#fff;font:14px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif';
+    var inner = document.createElement('div');
+    inner.style.cssText = 'max-width:1100px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center';
+    var p = document.createElement('p'); p.style.cssText = 'margin:0;flex:1 1 300px;color:#fff;font:inherit';
     p.appendChild(document.createTextNode(t.q + ' ' + (consent ? t.now[consent] + ' ' : '')));
-    var a = document.createElement('a'); a.href = '/privacy.html'; a.textContent = t.more; a.style.color = '#93C5FD'; p.appendChild(a);
+    var a = document.createElement('a'); a.href = '/privacy.html'; a.textContent = t.more; a.style.cssText = 'color:#93C5FD;text-decoration:underline'; p.appendChild(a);
+    var btns = document.createElement('div'); btns.style.cssText = 'display:flex;gap:8px;flex:0 0 auto';
     var b1 = document.createElement('button'), b2 = document.createElement('button');
-    [b1, b2].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-height:44px;padding:0 18px;border-radius:10px;font:700 15px/1 inherit;cursor:pointer;border:2px solid #fff'; });
+    [b1, b2].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-height:44px;min-width:112px;padding:0 16px;border-radius:10px;font:700 15px/1 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;cursor:pointer;border:2px solid #fff'; });
     b1.textContent = t.allow; b1.style.background = '#fff'; b1.style.color = '#101828';
     b2.textContent = t.deny; b2.style.background = 'transparent'; b2.style.color = '#fff';
     b1.addEventListener('click', function () { choose('granted'); });
     b2.addEventListener('click', function () { choose('denied'); });
-    bar.appendChild(p); bar.appendChild(b1); bar.appendChild(b2);
+    btns.appendChild(b1); btns.appendChild(b2);
+    inner.appendChild(p); inner.appendChild(btns); bar.appendChild(inner);
+    if (before && before.parentNode) { before.parentNode.insertBefore(bar, before); b1.focus(); return; }
+    // First visit: top of the page, after the "skip to content" link, before the menu.
+    var skip = document.querySelector('a.skip');
+    var anchor = skip ? skip.nextSibling : document.body.firstChild;
+    document.body.insertBefore(bar, anchor || null);
   }
   function addFooterLink() {
     var f = document.querySelector('footer') || document.querySelector('main') || document.body;
     if (!f || f.querySelector('.te-consent-link')) return;
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'te-consent-link'; b.textContent = txt().footer;
-    b.style.cssText = 'background:none;border:0;padding:8px 0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer';
-    b.addEventListener('click', function () { showBar(true); });
+    b.style.cssText = 'background:none;border:0;padding:8px 0;min-height:44px;color:inherit;text-decoration:underline;font:inherit;cursor:pointer';
+    b.addEventListener('click', function () { showBar(true, b); });
     f.appendChild(b);
   }
   function initConsent() {
     if (!ENABLED) return;
     var canStore = false; try { localStorage.setItem('te.t', '1'); localStorage.removeItem('te.t'); canStore = true; } catch (e) { canStore = false; }
     if (!canStore) return; // can't remember a choice: stay off rather than ask on every page
+    try { var st = document.createElement('style'); st.textContent = '@media print{.te-consent,.te-consent-link{display:none!important}}'; document.head.appendChild(st); } catch (e) { /* cosmetic */ }
     addFooterLink();
     if (consent === null) showBar(true);
   }

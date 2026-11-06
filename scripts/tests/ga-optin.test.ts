@@ -9,6 +9,8 @@ function el(tag: string): El {
   const e: El = { tag, children: [], text: '', attrs: {}, style: { cssText: '' }, on: {}, parentNode: null };
   Object.assign(e, {
     appendChild(c: El) { c.parentNode = e; e.children.push(c); return c; },
+    insertBefore(c: El, ref: El | null) { c.parentNode = e; const i = ref ? e.children.indexOf(ref) : -1; if (i < 0) e.children.push(c); else e.children.splice(i, 0, c); return c; },
+    focus() { (e as { focused?: boolean }).focused = true; },
     removeChild(c: El) { e.children = e.children.filter((x) => x !== c); c.parentNode = null; },
     setAttribute(k: string, v: string) { e.attrs[k] = v; },
     addEventListener(t: string, f: () => void) { e.on[t] = f; },
@@ -28,7 +30,7 @@ function boot(stored: string | null, store = true) {
   const body = el('body'); const footer = el('footer');
   const document = {
     readyState: 'complete', referrer: '', documentElement: { lang: 'es' }, cookie: '', body,
-    head: { appendChild: (e: { src: string }) => loaded.push(e.src) },
+    head: { appendChild: (e: { src?: string }) => { if (e.src) loaded.push(e.src); } },
     createElement: (t: string) => el(t), createTextNode: (t: string) => ({ tag: '#text', text: t, children: [] }),
     querySelector: (q: string) => (q === 'footer' ? footer : null), querySelectorAll: () => [], addEventListener() {},
   };
@@ -40,7 +42,7 @@ function boot(stored: string | null, store = true) {
   const location = { hostname: 'talkestimate.com', pathname: '/', search: '' };
   new Function('window', 'document', 'location', 'localStorage', SRC)(win, document, location, localStorage);
   const touch = () => (listeners['pointerdown'] ?? []).forEach((f) => f());
-  const bar = () => body.children.find((c) => c.attrs.role === 'region');
+  const bar = () => all(body).concat(all(footer)).find((c) => c.attrs.role === 'region');
   const buttons = () => all(bar()!).filter((c) => c.tag === 'button');
   return { win, loaded, mem, touch, bar, buttons, footer, body };
 }
@@ -90,4 +92,25 @@ Deno.test('privacy page explains the opt-in, EN + ES', () => {
   const html = Deno.readTextFileSync(new URL('../../privacy.html', import.meta.url));
   assert(html.includes('Google Analytics only runs after you tap "Allow"'));
   assert(html.includes('Google Analytics solo funciona después de que tocas "Permitir"'));
+});
+
+Deno.test('the notice is an in-page band at the top (never a floating overlay), and reopens next to "Analytics settings"', () => {
+  const b = boot(null);
+  assertEquals(b.body.children[0], b.bar(), 'first thing in the page');
+  assert(/position:static/.test(b.bar()!.style.cssText), 'not fixed');
+  assert(!/position:fixed/.test(SRC.slice(SRC.indexOf('CONSENT BAR'))), 'no fixed overlay anywhere in the consent code');
+  b.buttons()[1].on.click();
+  assertEquals(b.bar(), undefined);
+  const link = b.footer.children.find((c) => c.text === 'Configurar analítica')!;
+  link.on.click();
+  const i = b.footer.children.indexOf(b.bar()!);
+  assert(i >= 0 && b.footer.children[i + 1] === link, 'reopened right above the link');
+});
+
+Deno.test('Allow and No thanks are equally easy: same size, side by side', () => {
+  const b = boot(null);
+  const [allow, deny] = b.buttons();
+  const size = (x: El) => x.style.cssText.match(/min-height:\d+px;min-width:\d+px/)?.[0];
+  assert(size(allow));
+  assertEquals(size(allow), size(deny));
 });
