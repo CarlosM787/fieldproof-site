@@ -6,7 +6,7 @@ import { assert, assertEquals, assertFalse } from 'jsr:@std/assert@1';
 
 const SRC = Deno.readTextFileSync(new URL('../../analytics.js', import.meta.url));
 
-function boot(env: { host?: string; id?: string; readyState?: string } = {}) {
+function boot(env: { host?: string; id?: string; readyState?: string; consent?: string | null } = {}) {
   const code = SRC.replace("var GA_MEASUREMENT_ID = 'G-23MSFMVK4B';", `var GA_MEASUREMENT_ID = '${env.id ?? 'G-23MSFMVK4B'}';`);
   const loaded: string[] = [];
   const listeners: Record<string, (() => void)[]> = {};
@@ -21,7 +21,9 @@ function boot(env: { host?: string; id?: string; readyState?: string } = {}) {
     createElement: () => ({ src: '' }),
     querySelectorAll: () => [], addEventListener() {},
   };
-  const localStorage = { getItem: () => null, setItem() {} };
+  // Option (a): these tests start from a visitor who already tapped "Allow" (the opt-in itself: ga-optin.test.ts).
+  const choice = env.consent === undefined ? 'granted' : env.consent;
+  const localStorage = { getItem: (k: string) => (k === 'te.consent.v1' && choice ? JSON.stringify({ v: 1, analytics: choice }) : null), setItem() {} };
   const location = { hostname: env.host ?? 'talkestimate.com', pathname: '/', search: '' };
   new Function('window', 'document', 'location', 'localStorage', code)(win, document, location, localStorage);
   const dl = () => (win.dataLayer as unknown[][] ?? []).map((a) => Array.from(a as ArrayLike<unknown>));

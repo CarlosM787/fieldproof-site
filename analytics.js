@@ -36,6 +36,13 @@
   var IS_PROD = (location.hostname === PROD_HOST || location.hostname === 'www.' + PROD_HOST);
   var ENABLED = !!GA_MEASUREMENT_ID && IS_PROD;
 
+  // OPT-IN (option a): Google Analytics loads only after the visitor taps "Allow" on a small bar. Until then the
+  // site sends nothing to Google and sets no cookie. The choice is kept on this device (localStorage) and can be
+  // changed from the footer link "Analytics settings". If the choice can't be stored, analytics stays off.
+  var CONSENT_KEY = 'te.consent.v1';
+  var consent = null; // 'granted' | 'denied' | null (not chosen yet)
+  try { var cv = JSON.parse(localStorage.getItem(CONSENT_KEY) || 'null'); if (cv && (cv.analytics === 'granted' || cv.analytics === 'denied')) consent = cv.analytics; } catch (e) { consent = null; }
+
   // ── CAMPAIGN ATTRIBUTION (first-party, first-touch) ────────────────────────
   var ATTR_KEY = 'te_attr';
   var UTM_KEYS = ['utm_source', 'utm_medium', 'utm_campaign', 'utm_content', 'utm_term'];
@@ -111,7 +118,7 @@
   var gaRequested = false;
   var GA_TRIGGERS = ['pointerdown', 'keydown', 'touchstart', 'scroll'];
   function loadGa() {
-    if (gaRequested || !ENABLED) return;
+    if (gaRequested || !ENABLED || consent !== 'granted') return;
     gaRequested = true;
     GA_TRIGGERS.forEach(function (t) { window.removeEventListener(t, loadGa, true); });
     var s = document.createElement('script');
@@ -120,10 +127,13 @@
     document.head.appendChild(s);
   }
 
-  if (ENABLED) {
+  function armGa() {
     GA_TRIGGERS.forEach(function (t) { window.addEventListener(t, loadGa, { capture: true, passive: true }); });
     var gaLater = function () { setTimeout(loadGa, GA_DELAY_MS); };
     if (document.readyState === 'complete') gaLater(); else window.addEventListener('load', gaLater);
+  }
+  if (ENABLED) {
+    if (consent === 'granted') armGa();
     gtag('js', new Date());
     gtag('config', GA_MEASUREMENT_ID, {
       anonymize_ip: true,
@@ -137,7 +147,7 @@
   // analytics is not running here (off, blocked, not the production host), and then the server sends nothing.
   window.teGaIds = function () {
     return new Promise(function (resolve) {
-      if (!ENABLED) { resolve({}); return; }
+      if (!ENABLED || consent !== 'granted') { resolve({}); return; }
       loadGa(); // normally already loaded by the visitor typing in the form; this makes sure
       var out = {}, pending = 2, done = false;
       function finish() { if (done) return; done = true; resolve(out); }
@@ -155,7 +165,7 @@
   // Call from anywhere: teTrack('cta_click', { cta_name: 'get_app' }).
   // No-op (and console-quiet) whenever analytics is dormant.
   window.teTrack = function (event, params) {
-    if (!ENABLED) return;
+    if (!ENABLED || consent === 'denied') return;
     var safe = Object.assign({
       site_name: 'talkestimate',
       page_path: (location.pathname || '/'),
@@ -205,11 +215,74 @@
     });
   });
 
+  // ── CONSENT BAR (option a) ───────────────────────────────────────────────────
+  var TXT = {
+    en: { q: 'Count this visit with Google Analytics? It uses cookies to see which pages and tools people use. No ads, nothing you type.',
+          allow: 'Allow', deny: 'No thanks', more: 'Privacy', label: 'Analytics choice', footer: 'Analytics settings',
+          now: { granted: 'Now: allowed.', denied: 'Now: not allowed.' } },
+    es: { q: '¿Contamos esta visita con Google Analytics? Usa cookies para ver qué páginas y herramientas se usan. Sin anuncios, nada de lo que escribes.',
+          allow: 'Permitir', deny: 'No, gracias', more: 'Privacidad', label: 'Elección de analítica', footer: 'Configurar analítica',
+          now: { granted: 'Ahora: permitido.', denied: 'Ahora: no permitido.' } }
+  };
+  var bar = null;
+  function txt() { return TXT[pageLanguage() === 'es' ? 'es' : 'en']; }
+  function choose(choice) {
+    try { localStorage.setItem(CONSENT_KEY, JSON.stringify({ v: 1, analytics: choice, ts: Date.now() })); } catch (e) { /* can't remember: stays off */ }
+    var was = consent;
+    consent = choice;
+    showBar(false);
+    if (choice === 'granted' && was !== 'granted') { armGa(); loadGa(); }
+    if (choice === 'denied' && was === 'granted') {
+      // Stop at once: the open page sends nothing more; Google's cookies are removed on this site.
+      document.cookie.split(';').forEach(function (c) { var n = c.split('=')[0].trim(); if (/^_ga/.test(n)) { document.cookie = n + '=; Max-Age=0; path=/; domain=.' + PROD_HOST; document.cookie = n + '=; Max-Age=0; path=/'; } });
+      window['ga-disable-' + GA_MEASUREMENT_ID] = true;
+    }
+  }
+  function showBar(show) {
+    if (!show) { if (bar && bar.parentNode) bar.parentNode.removeChild(bar); bar = null; return; }
+    var t = txt();
+    if (!bar) {
+      bar = document.createElement('div');
+      bar.setAttribute('role', 'region');
+      bar.style.cssText = 'position:fixed;left:12px;right:12px;bottom:12px;z-index:1000;max-width:640px;margin:0 auto;background:#101828;color:#fff;border-radius:14px;padding:14px 16px;font:15px/1.45 -apple-system,"Segoe UI",Roboto,Arial,sans-serif;box-shadow:0 8px 30px rgba(0,0,0,.25);display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center';
+      document.body.appendChild(bar);
+    }
+    bar.setAttribute('aria-label', t.label);
+    bar.innerHTML = '';
+    var p = document.createElement('p'); p.style.cssText = 'margin:0;flex:1 1 260px;color:#fff;font:inherit';
+    p.appendChild(document.createTextNode(t.q + ' ' + (consent ? t.now[consent] + ' ' : '')));
+    var a = document.createElement('a'); a.href = '/privacy.html'; a.textContent = t.more; a.style.color = '#93C5FD'; p.appendChild(a);
+    var b1 = document.createElement('button'), b2 = document.createElement('button');
+    [b1, b2].forEach(function (b) { b.type = 'button'; b.style.cssText = 'min-height:44px;padding:0 18px;border-radius:10px;font:700 15px/1 inherit;cursor:pointer;border:2px solid #fff'; });
+    b1.textContent = t.allow; b1.style.background = '#fff'; b1.style.color = '#101828';
+    b2.textContent = t.deny; b2.style.background = 'transparent'; b2.style.color = '#fff';
+    b1.addEventListener('click', function () { choose('granted'); });
+    b2.addEventListener('click', function () { choose('denied'); });
+    bar.appendChild(p); bar.appendChild(b1); bar.appendChild(b2);
+  }
+  function addFooterLink() {
+    var f = document.querySelector('footer') || document.querySelector('main') || document.body;
+    if (!f || f.querySelector('.te-consent-link')) return;
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'te-consent-link'; b.textContent = txt().footer;
+    b.style.cssText = 'background:none;border:0;padding:8px 0;color:inherit;text-decoration:underline;font:inherit;cursor:pointer';
+    b.addEventListener('click', function () { showBar(true); });
+    f.appendChild(b);
+  }
+  function initConsent() {
+    if (!ENABLED) return;
+    var canStore = false; try { localStorage.setItem('te.t', '1'); localStorage.removeItem('te.t'); canStore = true; } catch (e) { canStore = false; }
+    if (!canStore) return; // can't remember a choice: stay off rather than ask on every page
+    addFooterLink();
+    if (consent === null) showBar(true);
+  }
+
   // ── BOOT ───────────────────────────────────────────────────────────────────
   captureAttribution();
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', wire);
+    document.addEventListener('DOMContentLoaded', function () { wire(); initConsent(); });
   } else {
     wire();
+    initConsent();
   }
 })();
