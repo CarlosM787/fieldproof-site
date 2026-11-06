@@ -5,6 +5,8 @@
 /p         /p/             301
 /privacy   /privacy.html   200
 /terms     /terms.html     200
+/support   /support.html   200
+/delete-account   /delete-account.html   200
 /es        /es.html        200
 # Free tools + guides (EN) and herramientas + guías (ES): extensionless URLs, same 200-rewrite pattern as above.
 /tools/                                      /tools/index.html                                      200

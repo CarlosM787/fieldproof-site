@@ -5,7 +5,7 @@
 import { paintQuantities, laborCost, lineTotal, quoteJob, pricePerUnit, markupToMargin, marginToMarkup, MAX_CENTS } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, clearField, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar, makeErrorReporter,
 } from './tool-ui.js';
 
 const T = {
@@ -142,6 +142,7 @@ const T = {
 }[LANG];
 
 const track = makeTracker('painting_estimate');
+const reportInputError = makeErrorReporter(track);
 const MAX_ROWS = 20;
 let rowSeq = 0;
 
@@ -273,7 +274,7 @@ function compute() {
   syncChips('coat-chips', coats.value, coats.empty);
 
   const anyBad = (walls && walls.bad) || (area && area.bad) || openings.bad || coats.bad || cov.bad || waste.bad || ppg.bad || mat.bad || lab.bad || ohBad || pct.bad;
-  if (anyBad) { revealInvalid(); return renderEmpty(FIX_MSG); }
+  if (anyBad) { revealInvalid(); reportInputError(); return renderEmpty(FIX_MSG); }
 
   // 1. Quantities
   let need = null;
@@ -510,7 +511,7 @@ $('labHelperToggle').addEventListener('click', () => setLaborHelper(!laborHelper
 $('copyBtn').addEventListener('click', doCopy);
 $('printBtn').addEventListener('click', doPrint);
 $('resetBtn').addEventListener('click', () => doReset());
-$('exampleBtn').addEventListener('click', loadExample);
+$('exampleBtn').addEventListener('click', () => { firstTouch(); loadExample(); });
 
 addRow('wall');
 track('tool_view');

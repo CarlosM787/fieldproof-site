@@ -67,13 +67,14 @@ export function parseAmount(raw) {
 }
 
 /** Why typed text can't be used (null = fine, or nothing typed yet).
- *  { kind: 'unclear_thousands', thousands, decimal } for "1.250"; { kind: 'invalid' } otherwise. */
+ *  { kind: 'unclear_thousands', thousands, decimal } for "1.250"; { kind: 'negative' } for "-500"; { kind: 'invalid' } otherwise. */
 export function amountProblem(raw) {
   if (parseAmount(raw) !== null) return null;
   const s = String(raw ?? '').trim().replace(/^\$\s*/, '').replace(/\s*%$/, '').trim();
   if (s === '') return null;
   const m = new RegExp(`^(${NON_ZERO_LEAD_GROUP})\\.(\\d{3})$`).exec(s);
   if (m) return { kind: 'unclear_thousands', thousands: Number(m[1] + m[2]), decimal: Number(s) };
+  if (/^[-−]\s*\$?\s*/.test(s) && parseAmount(s.replace(/^[-−]\s*/, '')) !== null) return { kind: 'negative' };
   return { kind: 'invalid' };
 }
 

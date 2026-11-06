@@ -383,3 +383,9 @@ Deno.test('labor cost per hour: the hourly cost times billable hours is the year
     assert(Math.abs(r.perHourCents * b - r.totalCents) <= b / 2 + 1e-6, `${w}/${b}`);
   }
 });
+
+Deno.test('amountProblem names a minus sign, so the message can say what to fix (WO-20261106-08)', () => {
+  for (const s of ['-500', '-10', '−5', '- $20', '-1,250.50', '-20%']) assertEquals(amountProblem(s), { kind: 'negative' }, s);
+  for (const s of ['-abc', '--5', '5-']) assertEquals(amountProblem(s), { kind: 'invalid' }, s);
+  assertEquals(amountProblem('-1.250'), { kind: 'invalid' });
+});

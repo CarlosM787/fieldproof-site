@@ -15,6 +15,7 @@ const MSG = {
   en: {
     unclear: (a, b) => `Is that ${a} or ${b}? Type it without the dot, or with a comma for thousands.`,
     invalid: 'Use numbers only, like 1250 or 1,250.50.',
+    negative: 'Use a number of 0 or more, without the minus sign.',
     tooBig: 'That amount is larger than this calculator handles.',
     whole: 'Use a whole number.',
     range: (lo, hi) => `Use a number from ${fmtNum(lo)} to ${fmtNum(hi)}.`,
@@ -23,6 +24,7 @@ const MSG = {
   es: {
     unclear: (a, b) => `¿Es ${a} o ${b}? Escríbelo sin el punto, o con coma para los miles.`,
     invalid: 'Usa solo números, como 1250 o 1,250.50.',
+    negative: 'Usa un número de 0 o más, sin el signo de menos.',
     tooBig: 'Esa cantidad es más grande de lo que maneja esta calculadora.',
     whole: 'Usa un número entero.',
     range: (lo, hi) => `Usa un número de ${fmtNum(lo)} a ${fmtNum(hi)}.`,
@@ -54,7 +56,7 @@ export function readMoney(idOrEl) {
   const n = parseAmount(raw);
   if (n === null) {
     const p = amountProblem(raw);
-    return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(money(toCents(p.thousands)), money(toCents(p.decimal))) : MSG.invalid);
+    return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(money(toCents(p.thousands)), money(toCents(p.decimal))) : p && p.kind === 'negative' ? MSG.negative : MSG.invalid);
   }
   const c = toCents(n);
   if (c > MAX_CENTS) return fail(MSG.tooBig);
@@ -72,7 +74,7 @@ export function readNumber(idOrEl, { integer = false, max = Infinity, min = 0 } 
     const p = amountProblem(raw);
     // "33.333" in a field that stops at 1000 can only be 33.333: no need to ask about thousands.
     if (p && p.kind === 'unclear_thousands' && p.thousands > max) n = p.decimal;
-    else return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(fmtNum(p.thousands), fmtNum(p.decimal, 3)) : MSG.invalid);
+    else return fail(p && p.kind === 'unclear_thousands' ? MSG.unclear(fmtNum(p.thousands), fmtNum(p.decimal, 3)) : p && p.kind === 'negative' ? MSG.negative : MSG.invalid);
   }
   if (integer && !Number.isInteger(n)) return fail(MSG.whole);
   if (n > max || n < min) return fail(MSG.range(min, max));
@@ -86,6 +88,23 @@ export function clearField(id) { const el = $(id); if (el) fieldState(el); }
 export function makeTracker(toolName) {
   return (event, params) => {
     try { if (typeof window.teTrack === 'function') window.teTrack(event, Object.assign({ tool_name: toolName }, params || {})); } catch (e) { /* never break the tool */ }
+  };
+}
+
+/** Analytics: one 'tool_input_error' per page view, sent only after the visitor pauses on a red field (1.2 s).
+ *  It carries the field's id (e.g. "mat", "coats"), never what was typed. */
+export function makeErrorReporter(track) {
+  let sent = false; let timer = null;
+  return () => {
+    if (sent) return;
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      const el = document.querySelector('[aria-invalid=true]');
+      if (sent || !el) return;
+      sent = true;
+      const row = el.closest('[id$="Rows"], #walls, #openings');
+      track('tool_input_error', { field_name: el.id || (row ? row.id + '_row' : 'row_field') });
+    }, 1200);
   };
 }
 

@@ -5,7 +5,7 @@
 import { crewLabor, quoteJob, pricePerUnit, markupToMargin, marginToMarkup } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, clearField, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar, makeErrorReporter,
 } from './tool-ui.js';
 
 const T = {
@@ -118,6 +118,7 @@ const T = {
 }[LANG];
 
 const track = makeTracker('labor_quote');
+const reportInputError = makeErrorReporter(track);
 const MAX_ROWS = 8; // one printed page holds 8 crew lines with every other line and a warning
 let rowSeq = 0;
 
@@ -212,7 +213,7 @@ function compute() {
   const pct = readNumber('pct', { max: 1000 });
   syncChips('pct-chips', pct.value, pct.empty);
 
-  if (crew.bad || mat.bad || trav.bad || disp.bad || oth.bad || cont.bad || ohBad || pct.bad) { revealInvalid(); return renderEmpty(FIX_MSG); }
+  if (crew.bad || mat.bad || trav.bad || disp.bad || oth.bad || cont.bad || ohBad || pct.bad) { revealInvalid(); reportInputError(); return renderEmpty(FIX_MSG); }
   if (crew.incomplete) return renderEmpty(T.need.rowIncomplete(crew.incomplete));
   const labor = crewLabor(crew.list);
   if (!labor.ok) return renderEmpty('', 'too_big');
@@ -387,7 +388,7 @@ $('addCrew').addEventListener('click', () => { addRow(true); compute(); });
 $('copyBtn').addEventListener('click', doCopy);
 $('printBtn').addEventListener('click', doPrint);
 $('resetBtn').addEventListener('click', () => doReset());
-$('exampleBtn').addEventListener('click', loadExample);
+$('exampleBtn').addEventListener('click', () => { firstTouch(); loadExample(); });
 
 addRow();
 track('tool_view');

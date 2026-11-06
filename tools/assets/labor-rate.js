@@ -5,7 +5,7 @@
 import { laborHourCost } from './estimate-math.js';
 import {
   LANG, $, money, fmtPct, fmtNum, readMoney, readNumber, makeTracker, syncChips, ln, esc, todayLong,
-  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar,
+  pricebar, copyToClipboard, pageAddress, FIX_MSG, revealInvalid, keepFocusAboveBar, makeErrorReporter,
 } from './tool-ui.js';
 
 const T = {
@@ -92,6 +92,7 @@ const T = {
 }[LANG];
 
 const track = makeTracker('labor_rate');
+const reportInputError = makeErrorReporter(track);
 const setBar = pricebar();
 let last = null;
 let completeSent = false;
@@ -107,7 +108,7 @@ function compute() {
   syncChips('paid-chips', paid.value, paid.empty);
   syncChips('tax-chips', tax.value, tax.empty);
 
-  if (wage.bad || paid.bad || billable.bad || tax.bad || comp.bad || other.bad) { revealInvalid(); return renderEmpty(FIX_MSG); }
+  if (wage.bad || paid.bad || billable.bad || tax.bad || comp.bad || other.bad) { revealInvalid(); reportInputError(); return renderEmpty(FIX_MSG); }
   if (wage.empty) return renderEmpty(T.need.wage);
   if (paid.empty) return renderEmpty(T.need.paid);
   if (billable.empty) return renderEmpty(T.need.billable);
@@ -115,6 +116,7 @@ function compute() {
     // An inline error on the field, like any other bad entry: a cost below the wage would underquote every job.
     $('billable').setAttribute('aria-invalid', 'true');
     $('billable-err').textContent = T.warn.billable_over_paid;
+    reportInputError();
     return renderEmpty(FIX_MSG);
   }
 
@@ -245,7 +247,7 @@ for (const [group, field] of [['paid-chips', 'paid'], ['tax-chips', 'tax']]) {
 $('copyBtn').addEventListener('click', doCopy);
 $('printBtn').addEventListener('click', doPrint);
 $('resetBtn').addEventListener('click', () => doReset());
-$('exampleBtn').addEventListener('click', loadExample);
+$('exampleBtn').addEventListener('click', () => { firstTouch(); loadExample(); });
 
 track('tool_view');
 compute();

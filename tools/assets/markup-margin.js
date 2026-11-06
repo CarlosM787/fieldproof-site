@@ -4,6 +4,7 @@
 import {
   parseAmount, amountProblem, toCents, priceJob, laborCost, markupToMargin, marginToMarkup, pct1, formatMoney, MAX_CENTS,
 } from './estimate-math.js';
+import { makeErrorReporter } from './tool-ui.js';
 
 const LANG = (document.documentElement.lang || 'en').slice(0, 2) === 'es' ? 'es' : 'en';
 const T = {
@@ -14,6 +15,7 @@ const T = {
     subOh: { markup: (p) => `Job costs + overhead + ${p}% markup`, margin: (p) => `Priced to keep ${p}% of the price after overhead` },
     unclear: (a, b) => `Is that ${a} or ${b}? Type it without the dot, or with a comma for thousands.`,
     invalid: 'Use numbers only, like 1250 or 1,250.50.',
+    negative: 'Use a number of 0 or more, without the minus sign.',
     tooBig: 'That amount is larger than this calculator handles.',
     wholeCrew: 'Use a whole number of people.',
     pctMax: 'Use a number from 0 to 1000.',
@@ -55,6 +57,7 @@ const T = {
     subOh: { markup: (p) => `Costos + gastos generales + ${p}% de markup`, margin: (p) => `Precio para quedarte con ${p}% del precio después de gastos generales` },
     unclear: (a, b) => `¿Es ${a} o ${b}? Escríbelo sin el punto, o con coma para los miles.`,
     invalid: 'Usa solo números, como 1250 o 1,250.50.',
+    negative: 'Usa un número de 0 o más, sin el signo de menos.',
     tooBig: 'Esa cantidad es más grande de lo que maneja esta calculadora.',
     wholeCrew: 'Usa un número entero de personas.',
     pctMax: 'Usa un número de 0 a 1000.',
@@ -96,6 +99,7 @@ const money = (c) => formatMoney(c, LANG);
 const fmtPct = (p) => (p === null ? '—' : new Intl.NumberFormat(LANG === 'es' ? 'es-US' : 'en-US', { maximumFractionDigits: 1 }).format(pct1(p)));
 
 const track = (event, params) => { try { if (typeof window.teTrack === 'function') window.teTrack(event, Object.assign({ tool_name: 'markup_margin' }, params || {})); } catch (e) { /* never break the tool */ } };
+const reportInputError = makeErrorReporter(track);
 
 // ── Reading fields ───────────────────────────────────────────────────────────
 /** Reads one field; marks it invalid with a message when it can't be read. Empty = 0 unless required. */
@@ -109,7 +113,7 @@ function readMoney(id) {
   const n = parseAmount(raw);
   if (n === null) {
     const p = amountProblem(raw);
-    return fail(p && p.kind === 'unclear_thousands' ? T.unclear(money(toCents(p.thousands)), money(toCents(p.decimal))) : T.invalid);
+    return fail(p && p.kind === 'unclear_thousands' ? T.unclear(money(toCents(p.thousands)), money(toCents(p.decimal))) : p && p.kind === 'negative' ? T.negative : T.invalid);
   }
   const c = toCents(n);
   if (c > MAX_CENTS) return fail(T.tooBig);
@@ -128,7 +132,7 @@ function readNumber(id, { integer = false, max = Infinity } = {}) {
     const p = amountProblem(raw);
     // "33.333" in a field that stops at 1000 can only be 33.333: no need to ask about thousands.
     if (p && p.kind === 'unclear_thousands' && p.thousands > max) n = p.decimal;
-    else return fail(p && p.kind === 'unclear_thousands' ? T.unclear(String(p.thousands), String(p.decimal)) : T.invalid);
+    else return fail(p && p.kind === 'unclear_thousands' ? T.unclear(String(p.thousands), String(p.decimal)) : p && p.kind === 'negative' ? T.negative : T.invalid);
   }
   if (integer && !Number.isInteger(n)) return fail(T.wholeCrew);
   if (n > max) return fail(T.pctMax);
@@ -183,6 +187,7 @@ function compute() {
   if (anyBad || pct.empty || !anyCost) {
     // A field with an error: say so under the price, and open a collapsed section that hides it.
     if (anyBad) document.querySelectorAll('[aria-invalid=true]').forEach((el) => { const d = el.closest('details'); if (d) d.open = true; });
+    if (anyBad) reportInputError();
     renderEmpty(anyBad ? T.fix : (!anyCost ? T.empty : T.needPct[m]));
     return;
   }
@@ -350,7 +355,7 @@ $('labHelperToggle').addEventListener('click', () => setLaborHelper(!laborHelper
 $('copyBtn').addEventListener('click', doCopy);
 $('printBtn').addEventListener('click', doPrint);
 $('resetBtn').addEventListener('click', doReset);
-$('exampleBtn').addEventListener('click', loadExample);
+$('exampleBtn').addEventListener('click', () => { if (!touched) { touched = true; track('tool_first_interaction'); } loadExample(); });
 
 // Phones: show the price bar whenever the full result is off screen (the live price, or $0.00 while fields are empty).
 let resultVisible = true;
