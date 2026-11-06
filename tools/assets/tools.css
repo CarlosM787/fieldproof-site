@@ -133,6 +133,8 @@ details.more summary { cursor: pointer; font-weight: 700; padding: 10px 0; min-h
 .pricebar { display: none; }
 @media (max-width: 900px) {
   html { scroll-padding-bottom: 96px; }
+  /* the fixed price bar must never cover the footer links (Privacy, Terms, Español, Contact) at the bottom of the page */
+  .tool-page footer.foot-wrap { padding-bottom: 112px; }
   .pricebar { position: fixed; left: 12px; right: 12px; bottom: 12px; z-index: 15; display: flex; justify-content: space-between; align-items: center; gap: 12px;
     background: var(--ink); color: #fff; border-radius: 14px; padding: 12px 16px; text-decoration: none; box-shadow: 0 10px 30px rgba(16,24,40,.35); transform: translateY(150%); transition: transform .2s ease; }
   .pricebar.show { transform: none; }

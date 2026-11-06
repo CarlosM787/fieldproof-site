@@ -53,3 +53,9 @@ Deno.test('the example button counts as the first interaction (funnel: view → 
     assert(/\$\('exampleBtn'\)\.addEventListener\('click', \(\) => \{ (firstTouch\(\);|if \(!touched\) \{ touched = true; track\('tool_first_interaction'\); \}) loadExample\(\); \}\);/.test(js), f);
   }
 });
+
+Deno.test('phones: the fixed price bar never covers the tool-page footer links', () => {
+  const css = read('tools/assets/tools.css');
+  const m = css.match(/@media \(max-width: 900px\) \{([\s\S]*?)\n\}/);
+  assert(m && /\.tool-page footer\.foot-wrap \{ padding-bottom: 112px; \}/.test(m[1]));
+});
