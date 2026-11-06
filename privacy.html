@@ -15,6 +15,7 @@
     h1 { font-size: 32px; } h2 { font-size: 20px; margin-top: 32px; }
     p, li { color: #344054; }
     .updated { color: #475467; font-size: 14px; }
+    hr { border: 0; border-top: 1px solid #EAECF0; margin: 48px 0; }
     a { color: #1D4ED8; }
   </style>
   <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
@@ -24,7 +25,7 @@
 <body>
   <div class="wrap">
     <h1>TalkEstimate Privacy Policy</h1>
-    <p class="updated">Last updated: November 6, 2026</p>
+    <p class="updated">Last updated: November 6, 2026 · <a href="#es">Español</a></p>
 
     <p>TalkEstimate is a mobile estimating tool for contractors. TalkEstimate is operated by <b>Morales Labs LLC</b>, an Arizona limited liability company; in this policy "we" means Morales Labs LLC. This policy
     explains what information the app handles and why. Short version: your
@@ -41,6 +42,18 @@
       <li><b>Voice recordings:</b> jobsite walkthroughs you choose to record.</li>
       <li><b>Photos:</b> jobsite photos you choose to attach.</li>
       <li><b>Estimates:</b> the line items, prices, and proposals you create.</li>
+      <li><b>A contact from your phone (only if you choose):</b> if you tap to
+      pick a customer from your contacts and allow access, the app reads only
+      the one contact you pick (first and last name, one phone number, one
+      email) to fill in the customer form. That customer is saved with the
+      estimate when you continue. Your other contacts are never read or
+      uploaded.</li>
+      <li><b>Price list files (only if you import one):</b> an Excel or CSV
+      price list is read on your phone and never uploaded. Only the prices you
+      confirm in the preview are saved to My Prices.</li>
+      <li><b>Feedback and ratings:</b> what you send from the app's feedback
+      screen, or the one-tap rating after you send an estimate, is stored with
+      your account.</li>
       <li><b>Early-access form (this website):</b> the email address and trade
       you enter, plus how you reached the site (campaign tags, the referring
       site and the first page you visited), so we can contact you about
@@ -72,6 +85,16 @@
       search engines not to index it.</li>
       <li>Login emails are delivered through our email provider (Resend).</li>
     </ul>
+
+    <h2>In-app usage and error reports</h2>
+    <p>The app records which features you use (for example, that an estimate
+    was sent) and the errors it runs into, linked to your account ID, with the
+    app version, your phone's system (Android or iOS) and the app language.
+    Usage records keep only a short list of coarse details: never customer
+    names, addresses, phone numbers, emails, recordings, job text or prices.
+    Error reports keep a shortened error message plus the screen and the step
+    that failed. These records stay in our own database (Supabase); the app
+    uses no third-party analytics, advertising or crash-reporting service.</p>
 
     <h2>Where data lives</h2>
     <p>Data is stored with Supabase (database, file storage, authentication)
@@ -106,16 +129,18 @@
     browser's tracking protection or an analytics blocker will stop it.</p>
 
     <h2>Data deletion</h2>
+    <p>You can email
+    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a> from the
+    address you sign in with to ask us to delete a recording or your whole
+    account; we confirm the request came from you and delete it within 30 days.</p>
     <!-- DEPENDS:delete-account-deploy: true only once the delete-account function is deployed (Carlos line c) -->
-    <p>To delete your whole account, open the app and tap
-    <b>Settings → Delete account</b>: your estimates, recordings, photos,
-    customer records and everything else in it are deleted from TalkEstimate's
-    database and file storage right away, and a subscription is cancelled.
-    You can also email
-    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a> to ask
-    us to delete a recording or your whole account; we delete it within 30
-    days. What OpenAI already received is covered by OpenAI's policy, and our
-    hosting provider may keep backup copies for a period it sets. Details:
+    <p>In the app, <b>Settings → Delete account</b> deletes your whole account
+    at once: your estimates, recordings, photos, customer records and
+    everything else in it are deleted from TalkEstimate's database and file
+    storage, and a subscription is cancelled so you are not charged again.</p>
+    <p>Payment records stay with Stripe under its own retention rules. What
+    OpenAI already received is covered by OpenAI's policy, and our hosting
+    provider may keep backup copies for a period it sets. Details:
     <a href="/delete-account.html">Delete your account or data</a>.</p>
 
     <h2>Contact</h2>
@@ -124,6 +149,147 @@
     <a href="mailto:support@talkestimate.com">support@talkestimate.com</a><br />
     Deletion requests:
     <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a></p>
+
+    <hr />
+
+    <div id="es" lang="es">
+    <h1>Política de privacidad de TalkEstimate</h1>
+    <p class="updated">Última actualización: 6 de noviembre de 2026</p>
+
+    <p>TalkEstimate es una herramienta móvil para hacer estimados, para
+    contratistas. TalkEstimate es operado por <b>Morales Labs LLC</b>, una compañía de responsabilidad limitada de Arizona; en esta política
+    "nosotros" significa Morales Labs LLC. Esta política explica qué
+    información maneja la app y por qué. En corto: tus datos existen para que
+    tus estimados funcionen, nunca se venden, y no hay anuncios ni rastreo
+    entre apps.</p>
+
+    <h2>Información que nos das</h2>
+    <ul>
+      <li><b>Tu cuenta:</b> tu correo (para los códigos de acceso), tu nombre,
+      el nombre de tu negocio, tu teléfono y tus precios (lista de precios,
+      tarifas, ganancia).</li>
+      <li><b>Tus clientes:</b> nombres, teléfonos, correos y direcciones de
+      obra que escribes para hacer estimados. Tú eres responsable de tener el
+      permiso de tus clientes para guardar sus datos.</li>
+      <li><b>Grabaciones de voz:</b> los recorridos de obra que decides grabar.</li>
+      <li><b>Fotos:</b> las fotos de obra que decides agregar.</li>
+      <li><b>Estimados:</b> las partidas, precios y propuestas que creas.</li>
+      <li><b>Un contacto de tu teléfono (solo si lo eliges):</b> si tocas para
+      elegir un cliente de tus contactos y das permiso, la app lee solo el
+      contacto que eliges (nombre y apellido, un teléfono, un correo) para
+      llenar el formulario del cliente. Ese cliente se guarda con el estimado
+      cuando continúas. Tus otros contactos nunca se leen ni se suben.</li>
+      <li><b>Archivos de lista de precios (solo si importas uno):</b> un
+      archivo de Excel o CSV se lee en tu teléfono y nunca se sube. Solo los
+      precios que confirmas en la vista previa se guardan en Mis Precios.</li>
+      <li><b>Comentarios y calificaciones:</b> lo que envías desde la pantalla
+      de comentarios de la app, o la calificación de un toque después de enviar
+      un estimado, se guarda con tu cuenta.</li>
+      <li><b>Formulario de acceso anticipado (este sitio web):</b> el correo y
+      el oficio que escribes, más cómo llegaste al sitio (etiquetas de campaña,
+      el sitio que te refirió y la primera página que visitaste), para poder
+      contactarte sobre el acceso.</li>
+      <li><b>Página de cuenta (este sitio web):</b> si entras en
+      <a href="/es/cuenta/">talkestimate.com/es/cuenta/</a>, tu correo se usa
+      para enviarte un código de acceso (por Supabase, igual que en la app) y
+      tu sesión sigue abierta en ese navegador hasta que salgas.</li>
+      <li><b>Pagos:</b> los planes de pago los procesa Stripe, nuestro
+      procesador de pagos. Stripe recibe los datos de tu tarjeta y de cobro
+      bajo su propia política de privacidad; nosotros nunca vemos ni guardamos
+      el número de tu tarjeta. Stripe nos dice si tu plan está activo, para que
+      la app muestre el plan correcto.</li>
+    </ul>
+
+    <h2>Cómo se usa</h2>
+    <ul>
+      <li>TalkEstimate solo usa lo que grabas al tocar el micrófono, las notas
+      que escribes y las fotos que agregas. Cada grabación se envía a OpenAI
+      (Whisper) para convertir tu voz en texto.</li>
+      <li>Ese texto, tu oficio y los nombres y unidades de tu lista de precios
+      se envían a OpenAI (GPT-4o mini) para listar el trabajo. Las cantidades,
+      tarifas y ganancia guardadas en tu lista de precios nunca se envían. Todo
+      lo que dices o escribes (incluido un precio, un nombre, una dirección o un
+      teléfono) es parte de ese texto. Las fotos no se envían a la IA. <b>La IA
+      nunca pone tus precios.</b></li>
+      <li>Los estimados y las propuestas se guardan para que tú y tus clientes
+      los puedan ver. Los enlaces de propuesta para clientes están protegidos
+      con códigos largos al azar. La página del cliente en talkestimate.com/p/
+      no usa analítica y pide a los buscadores que no la indexen.</li>
+      <li>Los correos de acceso se envían por nuestro proveedor de correo
+      (Resend).</li>
+    </ul>
+
+    <h2>Uso de la app y reportes de errores</h2>
+    <p>La app registra qué funciones usas (por ejemplo, que se envió un
+    estimado) y los errores que encuentra, ligados al ID de tu cuenta, con la
+    versión de la app, el sistema de tu teléfono (Android o iOS) y el idioma de
+    la app. Los registros de uso guardan solo una lista corta de datos
+    generales: nunca nombres, direcciones, teléfonos ni correos de clientes,
+    grabaciones, texto del trabajo ni precios. Los reportes de errores guardan
+    un mensaje de error recortado, la pantalla y el paso que falló. Estos
+    registros se quedan en nuestra propia base de datos (Supabase); la app no
+    usa ningún servicio externo de analítica, publicidad ni reportes de
+    fallas.</p>
+
+    <h2>Dónde se guardan los datos</h2>
+    <p>Los datos se guardan en Supabase (base de datos, almacenamiento de
+    archivos, autenticación) en Estados Unidos, con conexiones cifradas. Los
+    datos de cada contratista están separados: una cuenta nunca puede leer la
+    información de otra. Este sitio web está alojado en Cloudflare.</p>
+
+    <h2>Cuánto tiempo se guardan</h2>
+    <p>Tus grabaciones, notas, fotos y estimados se quedan en tu cuenta hasta
+    que se borran. Nada se borra automáticamente. Cada grabación se quita de
+    tu teléfono cuando termina de subirse.</p>
+
+    <h2>Grabar a otras personas</h2>
+    <p>Graba tus propias notas y pide permiso antes de grabar a un cliente. En
+    algunos estados, como California, todos en la conversación deben estar de
+    acuerdo.</p>
+
+    <h2>Lo que no hacemos</h2>
+    <ul>
+      <li>No vendemos ni rentamos tus datos ni los de tus clientes</li>
+      <li>No hay publicidad ni redes de anuncios</li>
+      <li>No hay rastreo publicitario que te siga en otras apps o sitios web</li>
+      <li>No recolectamos tu ubicación</li>
+    </ul>
+
+    <h2>Analítica del sitio web</h2>
+    <p>Nuestro sitio web (talkestimate.com) usa Google Analytics para contar
+    visitas y ver qué páginas y botones usa la gente, para mejorar el sitio.
+    Registra cosas como páginas vistas, botones tocados y si un registro se
+    completó — <b>nunca tu nombre, correo, teléfono ni nada que escribas en un
+    formulario.</b> Apagamos las señales de publicidad y de personalización
+    entre sitios de Google, y no tenemos anuncios. Si prefieres que no se te
+    cuente, la protección contra rastreo de tu navegador o un bloqueador de
+    analítica lo detiene.</p>
+
+    <h2>Borrar tus datos</h2>
+    <p>Puedes escribir a
+    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a> desde el
+    correo con el que entras para pedirnos borrar una grabación o toda tu
+    cuenta; confirmamos que la solicitud es tuya y lo borramos en un plazo de
+    30 días.</p>
+    <!-- DEPENDS:delete-account-deploy: true only once the delete-account function is deployed (Carlos line c) -->
+    <p>En la app, <b>Ajustes → Eliminar cuenta</b> borra toda tu cuenta de una
+    vez: tus estimados, grabaciones, fotos, registros de clientes y todo lo
+    demás se borran de la base de datos y del almacenamiento de archivos de
+    TalkEstimate, y la suscripción se cancela para que no se te vuelva a
+    cobrar.</p>
+    <p>Los registros de pago se quedan en Stripe según sus propias reglas de
+    retención. Lo que OpenAI ya recibió se rige por la política de OpenAI, y
+    nuestro proveedor de alojamiento puede guardar copias de respaldo por un
+    tiempo que él fija. Detalles:
+    <a href="/delete-account.html#es">Eliminar tu cuenta o tus datos</a>.</p>
+
+    <h2>Contacto</h2>
+    <p>Morales Labs LLC<br />
+    Preguntas:
+    <a href="mailto:support@talkestimate.com">support@talkestimate.com</a><br />
+    Solicitudes de borrado:
+    <a href="mailto:carlos@moraleslabs.com">carlos@moraleslabs.com</a></p>
+    </div>
   </div>
   <script src="/analytics.js" defer></script>
 </body>
