@@ -195,7 +195,7 @@ for (const p of PAGES) {
     release(await answer(200, { ok: true }));
     await pending;
     const sent = t.requests[0];
-    assertEquals(sent.url, 'https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist');
+    assertEquals(sent.url, 'https://api.talkestimate.com/functions/v1/join-waitlist');
     assertEquals(sent.body.email, 'person@gmail.com');
     assertEquals(sent.body.trade, 'Painting' + p.tradeSuffix);
     assertEquals(sent.body.company, '', 'the honeypot field is sent as the browser has it (empty for a person)');

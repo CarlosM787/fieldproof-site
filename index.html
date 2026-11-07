@@ -618,7 +618,7 @@
       }, attribution(), await gaIds());
       if (token) payload.turnstile_token = token;
       try {
-        var res = await fetch('https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/join-waitlist', {
+        var res = await fetch('https://api.talkestimate.com/functions/v1/join-waitlist', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(payload)

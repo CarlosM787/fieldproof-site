@@ -54,7 +54,7 @@
   'use strict';
   // Fixed endpoint. Never read an API address from the URL (that would let a
   // crafted link inject someone else's HTML into this page).
-  var API = 'https://zjggusmqgzvbfxwbvmsu.supabase.co/functions/v1/get-public-proposal';
+  var API = 'https://api.talkestimate.com/functions/v1/get-public-proposal';
   var $ = function (id) { return document.getElementById(id); };
   var token = new URLSearchParams(location.search).get('token') || '';
   var data = null;

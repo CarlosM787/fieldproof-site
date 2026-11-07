@@ -11,6 +11,7 @@ const JS = read('assets/account.js');
 const HEADERS = read('_headers');
 const REDIRECTS = read('_redirects');
 const SUPA = 'https://zjggusmqgzvbfxwbvmsu.supabase.co';
+const API = 'https://api.talkestimate.com'; // te-api-gateway in front of SUPA (WO-20261106-09)
 
 Deno.test('paths are exactly the ones create-checkout / create-portal allow-list (billing-web.ts)', () => {
   // fieldproof supabase/functions/_shared/billing-web.ts: BILLING_RETURN_PATHS = {'/account/', '/es/cuenta/'}
@@ -22,21 +23,21 @@ Deno.test('paths are exactly the ones create-checkout / create-portal allow-list
   assertEquals(ES.match(/<html lang="(\w+)"/)?.[1], 'es');
 });
 
-Deno.test('CSP covers the Supabase origin and nothing third-party; header and meta agree', () => {
+Deno.test('CSP covers our API domain + the Supabase origin and nothing third-party; header and meta agree', () => {
   for (const p of ['/account/', '/account/index.html', '/es/cuenta/', '/es/cuenta/index.html']) {
     const block = HEADERS.split(/\n(?=\S)/).find((b) => b.trim().startsWith(p + '\n'));
     assert(block, `${p} has a headers block`);
-    assert(block.includes(`connect-src 'self' ${SUPA};`), `${p} connect-src`);
+    assert(block.includes(`connect-src 'self' ${API} ${SUPA};`), `${p} connect-src`);
     assert(block.includes("script-src 'self';"), `${p} script-src self only (supabase-js is vendored)`);
     assert(block.includes('X-Robots-Tag: noindex, nofollow') && block.includes('Cache-Control: no-store'), `${p} noindex + no-store`);
   }
   for (const html of [EN, ES]) {
     const meta = html.match(/http-equiv="Content-Security-Policy" content="([^"]+)"/)?.[1] ?? '';
-    assert(meta.includes(`connect-src 'self' ${SUPA};`) && meta.includes("script-src 'self';"));
+    assert(meta.includes(`connect-src 'self' ${API} ${SUPA};`) && meta.includes("script-src 'self';"));
     assertFalse(/<script[^>]+src="https?:/.test(html), 'no third-party script');
     assertFalse(/analytics\.js|googletagmanager/.test(html), 'no analytics on the account page');
   }
-  assert(JS.includes(`var SUPABASE_URL = '${SUPA}';`));
+  assert(JS.includes(`var SUPABASE_URL = '${API}';`), 'the account page talks to api.talkestimate.com');
 });
 
 Deno.test('noindex on both pages, and the account page is not in the sitemap', () => {

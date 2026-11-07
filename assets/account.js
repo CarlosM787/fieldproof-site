@@ -12,7 +12,7 @@
 (function () {
   'use strict';
 
-  var SUPABASE_URL = 'https://zjggusmqgzvbfxwbvmsu.supabase.co';
+  var SUPABASE_URL = 'https://api.talkestimate.com'; // api.talkestimate.com = te-api-gateway → the Supabase project (WO-20261106-09)
   // Public anon key (the same one the app ships); it only allows what row-level security allows.
   var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpqZ2d1c21xZ3p2YmZ4d2J2bXN1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODMzNzU5MTMsImV4cCI6MjA5ODk1MTkxM30.GkfXnqU02-s9QyMb-bihsCV1grZTrraZCzIE1Sv43ZA'; // gitleaks:allow (public anon key, role anon; RLS-limited, same key the app ships)
   var FUNCTIONS = SUPABASE_URL + '/functions/v1/';
