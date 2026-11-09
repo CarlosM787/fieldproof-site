@@ -68,6 +68,13 @@
     $('approved-at').textContent = data.labels.approvedOn + ' ' +
       d.toLocaleString(data.language === 'es' ? 'es-MX' : 'en-US', { dateStyle: 'long', timeStyle: 'short' });
   }
+  function localDates() {
+    var els = $('doc').querySelectorAll('.doc-date[data-iso]');
+    for (var i = 0; i < els.length; i++) {
+      var d = new Date(els[i].getAttribute('data-iso'));
+      if (!isNaN(d.getTime())) els[i].textContent = d.toLocaleDateString(data.language === 'es' ? 'es-MX' : 'en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+    }
+  }
   function render() {
     var L = data.labels;
     document.documentElement.lang = data.language;
@@ -75,6 +82,8 @@
     $('doc-css').textContent = data.css;
     // Rendered and escaped server-side by the same shared core as the PDF.
     $('doc').innerHTML = data.bodyHtml;
+    // The document date in the customer's own clock (the server formats in UTC; S25 run 11/08, D1).
+    localDates();
     show('loading', false); show('actions', true);
     if (data.status === 'approved') {
       $('approved').textContent = L.approvedBanner;
