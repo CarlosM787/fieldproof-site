@@ -68,11 +68,17 @@ Deno.test('the sitemap lists both pages', () => {
   for (const p of PAGES) assert(sm.includes(`<loc>https://talkestimate.com/${p}</loc>`), p);
 });
 
-Deno.test('refund policy option A (Carlos 2026-11-06): no partial-month refunds, mistaken charges reviewed, no guarantee', () => {
+Deno.test('refund policy (Carlos 2026-11-08): no proration or refund for unused portions except law / exception; cancel anytime, keep access, no renewal; EN/ES', () => {
   const norm = (s: string) => s.replace(/\s+/g, ' ');
   const terms = norm(read('terms.html')), support = norm(read('support.html'));
-  assert(terms.includes('Payments are not refunded for partial months. If you think you were charged by mistake, email us within 30 days and we will review it.'));
-  assert(support.includes('Payments are not refunded for partial months.'));
-  assert(support.includes('Los pagos no se reembolsan por meses parciales.'));
+  const flat = (s: string) => s.replace(/\s+/g, ' ');
+  assert(flat(terms).includes('Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception. If you think you were charged by mistake, email us within 30 days and we will review it.'));
+  assert(flat(terms).includes('you are not charged for another renewal'), 'terms: no further renewals');
+  assert(flat(terms).includes('A paid plan stays active until the end of the billing period you already paid for, so you keep access until then'), 'terms: keep access');
+  assert(flat(support).includes('You can cancel anytime. You keep access through the billing period you already paid for, and you are not charged for another renewal after you cancel.'));
+  assert(flat(support).includes('Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.'));
+  assert(flat(support).includes('Puedes cancelar cuando quieras. Conservas el acceso durante el periodo de facturación que ya pagaste y no se te cobra otra renovación después de cancelar.'));
+  assert(flat(support).includes('Los pagos de la suscripción no se prorratean ni se reembolsan por la parte no usada de un mes de facturación, salvo cuando la ley lo exija o aplique una excepción de reembolso.'));
+  assert(!/not refunded for partial months|no se reembolsan por meses parciales/.test(flat(terms) + flat(support)), 'old wording gone');
   for (const page of [terms, support]) assert(!/full refund|money-back|reembolso completo|garant[ií]a de devoluci/i.test(page), 'no refund guarantee');
 });

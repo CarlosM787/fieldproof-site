@@ -72,8 +72,9 @@
       discloseTitle: 'Before you subscribe',
       disclose: [
         'Starter is {price} a month, billed monthly in advance through Stripe. It renews every month until you cancel.',
-        'Cancel any time in Manage subscription. Your plan stays active until the end of the month you already paid for; then your account moves to Free and you are not charged again.',
+        'Cancel anytime in Manage subscription. You keep access through the end of the billing period you already paid for; then your account moves to Free and you are not charged for another renewal.',
         'If you subscribe during your free trial with more than 2 days left, you keep the rest of the trial and your first charge is on the day it ends ({date}). Cancel before then and you are not charged. With 2 days or fewer left, you are charged when you subscribe.',
+        'Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.',
         'Stripe handles the payment; TalkEstimate never sees your card number. For now Stripe’s checkout page and receipts show the merchant name AmplifyWebX LLC. TalkEstimate is operated by Morales Labs LLC.'
       ],
       discloseNoTrial: 'You are charged when you subscribe.',
@@ -125,8 +126,9 @@
       discloseTitle: 'Antes de suscribirte',
       disclose: [
         'Starter cuesta {price} al mes, cobrado por adelantado cada mes por Stripe. Se renueva cada mes hasta que canceles.',
-        'Cancela cuando quieras en Administrar suscripción. Tu plan sigue activo hasta el final del mes que ya pagaste; después tu cuenta pasa a Gratis y no se te vuelve a cobrar.',
+        'Cancela cuando quieras en Administrar suscripción. Conservas el acceso hasta el final del periodo de facturación que ya pagaste; después tu cuenta pasa a Gratis y no se te cobra otra renovación.',
         'Si te suscribes durante tu prueba gratis con más de 2 días restantes, conservas el resto de la prueba y el primer cobro es el día en que termina ({date}). Si cancelas antes, no se te cobra. Con 2 días o menos, se te cobra al suscribirte.',
+        'Los pagos de la suscripción no se prorratean ni se reembolsan por la parte no usada de un mes de facturación, salvo cuando la ley lo exija o aplique una excepción de reembolso.',
         'Stripe procesa el pago; TalkEstimate nunca ve el número de tu tarjeta. Por ahora la página de pago y los recibos de Stripe muestran el nombre del comerciante AmplifyWebX LLC. TalkEstimate es operado por Morales Labs LLC.'
       ],
       discloseNoTrial: 'Se te cobra al suscribirte.',

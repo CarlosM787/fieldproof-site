@@ -89,11 +89,13 @@ Deno.test('every server answer is handled: 409 already_subscribed, plan_not_avai
 Deno.test('disclosure: price, monthly renewal, cancel at period end, trial rule (48 h like the server), merchant', () => {
   for (const s of [
     'Starter is {price} a month, billed monthly in advance through Stripe. It renews every month until you cancel.',
-    'Cancel any time in Manage subscription. Your plan stays active until the end of the month you already paid for; then your account moves to Free and you are not charged again.',
+    'Cancel anytime in Manage subscription. You keep access through the end of the billing period you already paid for; then your account moves to Free and you are not charged for another renewal.',
+    'Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.',
     'If you subscribe during your free trial with more than 2 days left, you keep the rest of the trial and your first charge is on the day it ends ({date}).',
     'Stripe’s checkout page and receipts show the merchant name AmplifyWebX LLC. TalkEstimate is operated by Morales Labs LLC.',
     'Starter cuesta {price} al mes, cobrado por adelantado cada mes por Stripe. Se renueva cada mes hasta que canceles.',
-    'Cancela cuando quieras en Administrar suscripción. Tu plan sigue activo hasta el final del mes que ya pagaste; después tu cuenta pasa a Gratis y no se te vuelve a cobrar.',
+    'Cancela cuando quieras en Administrar suscripción. Conservas el acceso hasta el final del periodo de facturación que ya pagaste; después tu cuenta pasa a Gratis y no se te cobra otra renovación.',
+    'Los pagos de la suscripción no se prorratean ni se reembolsan por la parte no usada de un mes de facturación, salvo cuando la ley lo exija o aplique una excepción de reembolso.',
     'Si te suscribes durante tu prueba gratis con más de 2 días restantes, conservas el resto de la prueba y el primer cobro es el día en que termina ({date}).',
     'los recibos de Stripe muestran el nombre del comerciante AmplifyWebX LLC. TalkEstimate es operado por Morales Labs LLC.',
   ]) assert(JS.includes(s), s);
@@ -105,7 +107,10 @@ Deno.test('disclosure: price, monthly renewal, cancel at period end, trial rule 
   const terms = read('terms.html');
   assert(terms.includes('billed monthly, in advance, through Stripe') && terms.includes('A paid plan stays active until'));
   assert(terms.includes('your first charge is on the') && terms.includes('AmplifyWebX LLC'));
-  assertFalse(/refund/i.test(JS), 'no refund promise');
+  // The only refund wording is Carlos's 2026-11-08 no-proration policy (EN/ES); nothing promises a refund.
+  const rest = JS.replace('Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.', '')
+    .replace('Los pagos de la suscripción no se prorratean ni se reembolsan por la parte no usada de un mes de facturación, salvo cuando la ley lo exija o aplique una excepción de reembolso.', '');
+  assertFalse(/refund|reembols/i.test(rest), 'no refund promise');
 });
 
 Deno.test('resolvePlan in the page matches the server rules', async () => {

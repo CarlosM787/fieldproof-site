@@ -69,8 +69,8 @@ Deno.test('terms describe billing as it is live (since 2026-10-27), with no refu
   assert(t.includes('A paid plan stays active until'), 'cancel at period end (Stripe portal setting)');
   assert(/Deleting your account cancels your subscription and permanently\s+deletes your data\./.test(t), 'account deletion cancels the subscription');
   assert(!/right away/.test(t), 'no timing promise that only the in-app path keeps');
-  // Carlos 2026-11-06 approved refund option A (09_ draft): reviewed, never guaranteed.
-  assert(/not refunded for partial months/.test(t), 'option A refund sentence');
+  // Carlos 2026-11-08 (MCR5 ~22:45 MST): no proration/refund for unused portions, except law or an applicable exception.
+  assert(t.replace(/\s+/g, ' ').includes('Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.'), 'refund policy (Carlos 2026-11-08)');
   assert(!/full refund|money-back|refund guarantee|guaranteed refund/i.test(t), 'no refund guarantee');
-  assertEquals((t.match(/Last updated: November 6, 2026/g) ?? []).length, 1);
+  assertEquals((t.match(/Last updated: November 8, 2026/g) ?? []).length, 1);
 });
