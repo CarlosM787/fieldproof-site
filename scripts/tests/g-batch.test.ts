@@ -301,6 +301,9 @@ Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resa
   for (const p of es) assert(!/rec[aá]mara|\btroca|resan|zoclo|nom[aá]s\b/i.test(read(p)), p);
   assert(read('es.html').includes('La habitación principal, doce por catorce'));
   assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
+  // R3-F2 (Advisor pass 5): "parchar" (Caribbean/informal) -> "reparar", neutral in PR, Mexico and Arizona.
+  for (const p of es) assert(!/parchar/i.test(read(p)), `${p} still says parchar`);
+  assert(read('es.html').includes('Hay tres agujeritos de clavo que reparar.'));
 });
 
 Deno.test('local preview (scripts/dev-server.mjs) serves /.well-known/ like Cloudflare, and still hides other dot paths', () => {
