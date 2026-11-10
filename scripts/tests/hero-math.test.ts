@@ -28,7 +28,7 @@ function priced(card: string, li: string, total: string) {
 for (const [page, quote, unpriced, cta, strip] of [
   ['index.html', 'Master bedroom, twelve by fourteen', 'needs your hours', 'Join the waitlist',
     ['<b>Free</b> $0', '<b>Starter</b> $19.99/mo', '<b>Pro</b> $49.99/mo <i>after launch</i>', '14-day free trial when it opens, no card']],
-  ['es.html', 'La recámara principal, doce por catorce', 'faltan tus horas', 'Únete a la lista de espera',
+  ['es.html', 'La habitación principal, doce por catorce', 'faltan tus horas', 'Únete a la lista de espera',
     ['<b>Gratis</b> $0', '<b>Starter</b> $19.99/mes', '<b>Pro</b> $49.99/mes <i>después del lanzamiento</i>', 'Prueba gratis de 14 días cuando abra, sin tarjeta']],
 ] as const) {
   Deno.test(`${page}: the hero proof card is real text (not hidden), comes with its spoken words, and its math holds`, () => {

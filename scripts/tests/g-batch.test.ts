@@ -291,3 +291,14 @@ Deno.test('W-22: the Idaho workers\' comp rates are labelled as one state\'s exa
   assert(en.includes('An example from one state (Idaho, not Arizona): the <a href="https://iic.idaho.gov/') && en.includes('Use your own state’s rate.'));
   assert(es.includes('Un ejemplo de un solo estado (Idaho, no Arizona): las <a href="https://iic.idaho.gov/') && es.includes('Usa la tarifa de tu propio estado.'));
 });
+
+// ── Neutral Spanish (directive V5: Latin American / Puerto Rico, no Mexico-only words) ──────────────────────────────
+
+Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resanador, zoclo); neutral words of the same gender are used', () => {
+  const es = ['es.html', 'es/herramientas/index.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
+    'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
+    'es/guias/markup-vs-margen.html', 'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html'];
+  for (const p of es) assert(!/rec[aá]mara|\btroca|resan|zoclo|nom[aá]s\b/i.test(read(p)), p);
+  assert(read('es.html').includes('La habitación principal, doce por catorce'));
+  assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
+});
