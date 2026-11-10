@@ -27,6 +27,9 @@ const PAGES = [
   // Contractor hub 2026-11
   { file: 'tools/labor-cost-per-hour-calculator.html', url: '/tools/labor-cost-per-hour-calculator', alt: '/es/herramientas/calculadora-costo-hora-mano-de-obra', lang: 'en' },
   { file: 'es/herramientas/calculadora-costo-hora-mano-de-obra.html', url: '/es/herramientas/calculadora-costo-hora-mano-de-obra', alt: '/tools/labor-cost-per-hour-calculator', lang: 'es' },
+  // SEO guides 2026-11 (the ES-only /es/guias/estimado-en-ingles is checked in seo-guides-2026-11.test.ts: it has no English twin)
+  { file: 'guides/how-to-write-an-estimate.html', url: '/guides/how-to-write-an-estimate', alt: '/es/guias/como-hacer-un-estimado', lang: 'en' },
+  { file: 'es/guias/como-hacer-un-estimado.html', url: '/es/guias/como-hacer-un-estimado', alt: '/guides/how-to-write-an-estimate', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))

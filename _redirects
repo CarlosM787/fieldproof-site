@@ -28,6 +28,10 @@
 /es/guias/como-cobrar-mano-de-obra           /es/guias/como-cobrar-mano-de-obra.html                200
 /tools/labor-cost-per-hour-calculator                    /tools/labor-cost-per-hour-calculator.html                     200
 /es/herramientas/calculadora-costo-hora-mano-de-obra  /es/herramientas/calculadora-costo-hora-mano-de-obra.html  200
+# SEO guides 2026-11 (Growth gaps EN #14 / ES #9 / ES #13)
+/guides/how-to-write-an-estimate                     /guides/how-to-write-an-estimate.html                      200
+/es/guias/como-hacer-un-estimado                     /es/guias/como-hacer-un-estimado.html                      200
+/es/guias/estimado-en-ingles                      /es/guias/estimado-en-ingles.html                       200
 # Account page (sign in, plan, buy Starter, manage): the paths create-checkout / create-portal allow-list (billing-web.ts).
 /account/                                    /account/index.html                                    200
 /account                                     /account/                                              301

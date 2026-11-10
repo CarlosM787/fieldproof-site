@@ -178,7 +178,7 @@ const fileFor = (loc: string) => {
 };
 
 Deno.test('W-09: every sitemap page has a title of at most 60 characters and a description of at most 160', () => {
-  assertEquals(urls.length, 22);
+  assertEquals(urls.length, 25); // +3 SEO guides 2026-11 (write an estimate EN/ES, estimado en inglés)
   for (const { loc } of urls) {
     const h = read(fileFor(loc));
     const t = decode(/<title>([^<]+)<\/title>/.exec(h)![1]);
@@ -299,7 +299,8 @@ Deno.test('W-22: the Idaho workers\' comp rates are labelled as one state\'s exa
 Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resanador, zoclo); neutral words of the same gender are used', () => {
   const es = ['es.html', 'es/herramientas/index.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
     'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
-    'es/guias/markup-vs-margen.html', 'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html'];
+    'es/guias/markup-vs-margen.html', 'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html',
+    'es/guias/como-hacer-un-estimado.html', 'es/guias/estimado-en-ingles.html'];
   for (const p of es) assert(!/rec[aá]mara|\btroca|resan|zoclo|nom[aá]s\b/i.test(read(p)), p);
   assert(read('es.html').includes('La habitación principal, doce por catorce'));
   assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
@@ -325,7 +326,7 @@ Deno.test('CLS: every page that loads analytics.js reserves the band space in <h
     if (e.isDirectory) { if (!['scripts', 'node_modules', '.git', '.cf-dist', '.wrangler', '.well-known'].includes(e.name)) walk(p); } else if (p.endsWith('.html')) pages.push(p); } };
   walk('');
   const withGa = pages.filter((p) => read(p).includes('src="/analytics.js"'));
-  assertEquals(withGa.length, 23);
+  assertEquals(withGa.length, 26); // +3 SEO guides 2026-11
   for (const p of withGa) {
     const h = read(p);
     const i = h.indexOf("document.documentElement.classList.add('te-ask')");
