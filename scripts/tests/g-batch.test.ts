@@ -67,3 +67,58 @@ Deno.test('W-19: the home pages use few em dashes in visible text (was 32 each);
     assert(n <= 8, `${p}: ${n} em dashes in visible text`);
   }
 });
+
+// ── 404, redirects, analytics settings link (W-01, W-13, W-18) ───────────────────────────────────────────────────────
+
+Deno.test('W-13: /es/ redirects (301) to the Spanish home instead of a 404; /es still rewrites', () => {
+  const rules = read('_redirects').split('\n').map((l) => l.trim().split(/\s+/));
+  assert(rules.some(([f, t, c]) => f === '/es/' && t === '/es.html' && c === '301'), '/es/ -> /es.html 301');
+  assert(rules.some(([f, t, c]) => f === '/es' && t === '/es.html' && c === '200'), '/es kept');
+});
+
+Deno.test('W-01: the 404 body is a column (the analytics band stacks above the card), the card is in <main>, a footer hosts the settings link', () => {
+  const h = read('404.html');
+  const body = /body \{([^}]*)\}/.exec(h)![1];
+  assert(/flex-direction: column/.test(body) && !/justify-content: center/.test(body), 'body is a column, not a centred row');
+  assert(/<main>\s*<div class="card">[\s\S]*<\/main>\s*<footer><div class="foot"><div>/.test(h));
+  assert(h.includes('href="/apple-touch-icon.png"'), 'absolute icon path works at any 404 depth');
+});
+
+type N = { tag: string; kids: N[]; text: string; cls?: string; parentNode: N | null; on: Record<string, () => void>; style: { cssText: string }; attrs: Record<string, string>; appendChild: (c: N) => N; [k: string]: unknown };
+function node(tag: string): N {
+  const n = { tag, kids: [], text: '', parentNode: null, on: {}, style: { cssText: '' }, attrs: {} } as unknown as N;
+  Object.assign(n, {
+    appendChild(c: N) { c.parentNode = n; n.kids.push(c); return c; },
+    insertBefore(c: N, ref: N | null) { c.parentNode = n; const i = ref ? n.kids.indexOf(ref) : -1; if (i < 0) n.kids.push(c); else n.kids.splice(i, 0, c); return c; },
+    removeChild(c: N) { n.kids = n.kids.filter((x) => x !== c); c.parentNode = null; },
+    setAttribute(k: string, v: string) { n.attrs[k] = v; }, addEventListener(t: string, f: () => void) { n.on[t] = f; }, focus() {},
+    querySelector: (q: string) => (q === '.te-consent-link' ? n.kids.find((k) => k.className === 'te-consent-link') ?? null : null),
+  });
+  Object.defineProperty(n, 'textContent', { get: () => n.text, set: (v: string) => { n.text = v; } });
+  return n;
+}
+
+Deno.test('W-18: "Analytics settings" joins the footer link line; reopened, the band sits above the footer row; GA still waits for Allow', () => {
+  const body = node('body'), footer = node('footer'), row = node('div'), brand = node('div'), links = node('div');
+  footer.appendChild(row); row.appendChild(brand); row.appendChild(links); body.appendChild(footer);
+  const loaded: string[] = [];
+  const document = {
+    readyState: 'complete', referrer: '', documentElement: { lang: 'en' }, cookie: '', body,
+    head: { appendChild: (e: { src?: string }) => { if (e.src) loaded.push(e.src); } },
+    createElement: (t: string) => node(t), createTextNode: (t: string) => ({ tag: '#text', text: t, kids: [] }),
+    querySelector: (q: string) => (q === 'footer .foot > div:last-child' ? links : q === 'footer' ? footer : null), querySelectorAll: () => [], addEventListener() {},
+  };
+  const mem: Record<string, string> = { 'te.consent.v1': JSON.stringify({ v: 1, analytics: 'denied' }) };
+  const localStorage = { getItem: (k: string) => mem[k] ?? null, setItem: (k: string, v: string) => { mem[k] = v; }, removeItem: (k: string) => { delete mem[k]; } };
+  const win = { addEventListener() {}, removeEventListener() {} };
+  new Function('window', 'document', 'location', 'localStorage', read('analytics.js'))(win, document, { hostname: 'talkestimate.com', pathname: '/', search: '' }, localStorage);
+  const btn = links.kids.find((k) => k.className === 'te-consent-link')!;
+  assert(btn && btn.text === 'Analytics settings', 'button inside the link line');
+  assert(links.kids.some((k) => k.className === 'te-consent-sep' && k.text === ' · '), 'separated like the other links');
+  assertEquals(footer.kids.length, 1, 'nothing appended after the footer row');
+  btn.on.click();
+  const i = footer.kids.findIndex((k) => k.attrs.role === 'region');
+  assert(i >= 0 && footer.kids[i + 1] === row, 'reopened band sits right above the footer row, full width');
+  assertEquals(loaded, [], 'reopening never loads GA');
+  assert(read('analytics.js').includes('.te-consent,.te-consent-link,.te-consent-sep{display:none!important}'), 'print hides it');
+});

@@ -6,14 +6,16 @@
   <title>Page not found — TalkEstimate</title>
   <meta name="robots" content="noindex" />
   <meta name="theme-color" content="#1D4ED8" />
-  <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <style>
     :root { --blue: #1D4ED8; --blue-dark: #1E40AF; --ink: #101828; --muted: #475467; }
     * { box-sizing: border-box; margin: 0; }
     body { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; color: var(--ink);
-      min-height: 100vh; display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(180deg, #EFF6FF 0%, #fff 90%); padding: 24px; text-align: center; }
-    .card { max-width: 460px; }
+      min-height: 100vh; display: flex; flex-direction: column;
+      background: linear-gradient(180deg, #EFF6FF 0%, #fff 90%); text-align: center; }
+    main { flex: 1 0 auto; display: flex; align-items: center; justify-content: center; padding: 24px; }
+    .card { max-width: 460px; width: 100%; }
+    footer { padding: 12px 24px 20px; color: var(--muted); font-size: 13px; }
     .code { font-size: 72px; font-weight: 800; color: var(--blue); letter-spacing: -2px; }
     h1 { font-size: 26px; font-weight: 800; margin-top: 8px; }
     p { color: var(--muted); font-size: 17px; margin-top: 12px; line-height: 1.6; }
@@ -28,6 +30,7 @@
   <link rel="stylesheet" href="/assets/brand/brand.css" />
 </head>
 <body>
+  <main>
   <div class="card">
     <div class="code">404</div>
     <h1>That page isn't here.</h1>
@@ -35,6 +38,8 @@
     <a class="btn" href="/">Back to TalkEstimate</a>
     <div class="sub"><a href="/es.html">Español</a> · <a href="mailto:support@talkestimate.com">Contact support</a></div>
   </div>
+  </main>
+  <footer><div class="foot"><div>© 2026 Morales Labs LLC</div></div></footer>
   <script src="/analytics.js" defer></script>
 </body>
 </html>

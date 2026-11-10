@@ -276,19 +276,23 @@
     document.body.insertBefore(bar, anchor || null);
   }
   function addFooterLink() {
-    var f = document.querySelector('footer') || document.querySelector('main') || document.body;
+    // Preferred: the footer's own link line (".foot" > last block), so it reads as one more footer link.
+    var links = document.querySelector('footer .foot > div:last-child');
+    var f = links || document.querySelector('footer') || document.querySelector('main') || document.body;
     if (!f || f.querySelector('.te-consent-link')) return;
     var b = document.createElement('button');
     b.type = 'button'; b.className = 'te-consent-link'; b.textContent = txt().footer;
     b.style.cssText = 'background:none;border:0;padding:8px 0;min-height:44px;color:inherit;text-decoration:underline;font:inherit;cursor:pointer';
-    b.addEventListener('click', function () { showBar(true, b); });
+    var row = links ? links.parentNode : null; // reopened band goes above the footer row, full width
+    b.addEventListener('click', function () { showBar(true, row || b); });
+    if (links) { var sep = document.createElement('span'); sep.className = 'te-consent-sep'; sep.textContent = ' · '; links.appendChild(sep); }
     f.appendChild(b);
   }
   function initConsent() {
     if (!ENABLED) return;
     var canStore = false; try { localStorage.setItem('te.t', '1'); localStorage.removeItem('te.t'); canStore = true; } catch (e) { canStore = false; }
     if (!canStore) return; // can't remember a choice: stay off rather than ask on every page
-    try { var st = document.createElement('style'); st.textContent = '@media print{.te-consent,.te-consent-link{display:none!important}}'; document.head.appendChild(st); } catch (e) { /* cosmetic */ }
+    try { var st = document.createElement('style'); st.textContent = '@media print{.te-consent,.te-consent-link,.te-consent-sep{display:none!important}}'; document.head.appendChild(st); } catch (e) { /* cosmetic */ }
     addFooterLink();
     if (consent === null) showBar(true);
   }
