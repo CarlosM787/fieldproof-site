@@ -133,13 +133,6 @@
     .feature .ic { font-size: 22px; }
     .feature b { display: block; margin-bottom: 3px; }
     .feature span { color: var(--muted); font-size: 15px; }
-    .pain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin-top: 44px; }
-    .pain-card { background: #fff; border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; text-align: left; box-shadow: 0 2px 8px rgba(16,24,40,.04); }
-    .pain-card .q { font-size: 16px; font-style: italic; color: var(--ink); line-height: 1.6; }
-    .pain-card .src { margin-top: 14px; font-size: 13px; color: var(--muted); font-weight: 600; }
-    .pain-card.you { border: 2px dashed var(--blue); background: var(--blue-soft); display: flex; flex-direction: column; justify-content: center; text-align: center; }
-    .pain-card.you .q { font-style: normal; font-weight: 800; color: var(--blue); }
-    .pain-card.you a { color: var(--blue); font-weight: 700; font-size: 14px; margin-top: 10px; display: inline-block; }
     .founder { display: flex; gap: 24px; align-items: center; max-width: 640px; margin: 44px auto 0; background: #fff; border: 1px solid var(--border); border-radius: 20px; padding: 28px; box-shadow: 0 4px 16px rgba(16,24,40,.06); text-align: left; }
     .founder img { width: 96px; height: 96px; border-radius: 48px; object-fit: cover; border: 3px solid var(--blue-soft); flex-shrink: 0; }
     .founder .fname { font-weight: 800; font-size: 17px; }
@@ -304,7 +297,7 @@
 <section class="alt" id="demo">
   <div class="wrap center">
     <h2>Dilo. Míralo convertirse en estimado.</h2>
-    <p class="lead">Otro recorrido real, tal como se habló:</p>
+    <p class="lead">Un recorrido de ejemplo:</p>
     <div class="demo-grid" style="text-align:left">
       <div class="demo-card">
         <div class="demo-tag">🎙 UN TRABAJO DE HANDYMAN</div>
@@ -357,8 +350,8 @@
       <div class="feature"><div class="ic">🧾</div><div><b>Chequeo de costos olvidados</b><span>Preparación, masking, gasolina, limpieza, tiradero, materiales menudos — te los sugiere antes de enviar, con tus precios.</span></div></div>
       <div class="feature"><div class="ic">📊</div><div><b>Margen en vivo</b><span>Verde, amarillo o rojo en cada trabajo — antes de que el cliente vea un número.</span></div></div>
       <div class="feature"><div class="ic">📄</div><div><b>Propuestas profesionales</b><span>Precios partida por partida, con el nombre de tu negocio, y PDF limpio.</span></div></div>
-      <div class="feature"><div class="ic">✍️</div><div><b>Aprobación con fecha y hora</b><span>La aprobación del cliente queda registrada. Se acabó el "yo nunca acepté eso."</span></div></div>
-      <div class="feature"><div class="ic">🧤</div><div><b>Hecho para la obra</b><span>Botones grandes para manos con guantes, alto contraste para el sol, y si grabas sin señal, la grabación se queda en tu teléfono hasta que tengas línea otra vez.</span></div></div>
+      <div class="feature"><div class="ic">✍️</div><div><b>Aprobación con fecha y hora</b><span>La aprobación de tu cliente queda registrada con fecha y hora, así puedes mostrar qué aprobó y cuándo.</span></div></div>
+      <div class="feature"><div class="ic">📱</div><div><b>Hecho para la obra</b><span>Botones grandes, pantallas de alto contraste, y si grabas sin señal, la grabación se queda en tu teléfono hasta que tengas línea otra vez.</span></div></div>
       <div class="feature"><div class="ic">📋</div><div><b>Tu lista de precios, precargada</b><span>Empieza con plantillas de handyman, pintura, drywall o general — y haz tuyo cada precio.</span></div></div>
     </div>
   </div>
@@ -366,19 +359,8 @@
 
 <section id="why-switch">
   <div class="wrap center">
-    <h2>Por qué los contratistas buscan algo mejor</h2>
-    <p class="lead">Estas son las quejas más comunes en reseñas públicas de las plataformas grandes — exactamente los problemas que TalkEstimate vino a terminar.</p>
-    <div class="pain-grid">
-      <div class="pain-card">
-        <div class="q">"Es todo un sistema de oficina que hay que aprender, cuando yo nomás quiero mandar el número antes que el otro."</div>
-        <div class="src">La queja más común de todas · TalkEstimate es un solo flujo, cuatro pasos</div>
-      </div>
-      <div class="pain-card you">
-        <div class="q">Aquí va tu frase.</div>
-        <div>Solo publicamos palabras reales de contratistas reales — así trabajamos.</div>
-        <a href="#pricing">Sé de los primeros →</a>
-      </div>
-    </div>
+    <h2>Un solo flujo, no un sistema de oficina</h2>
+    <p class="lead">Las plataformas grandes de servicio de campo cubren agenda, despacho, CRM y marketing. TalkEstimate es un solo flujo, cuatro pasos: de la obra a un estimado aprobado.</p>
 
     <div class="founder">
       <img src="founder.jpg" width="96" height="96" loading="lazy" alt="Carlos, fundador de TalkEstimate" onerror="this.style.display='none'" />
@@ -478,7 +460,7 @@
   <div class="wrap center">
     <h2>Lo que los contratistas de verdad preguntan</h2>
     <div class="faq" style="text-align:left">
-      <details><summary>¿Puedo hablar en español?</summary><p>Sí — todo. Di el recorrido en español, en inglés, o mezclado ("hay que parchar el drywall del clóset") y lo entiende perfectamente. Y la app misma también habla español: menús, botones, estimados, facturas y recibos. Eliges tu idioma al entrar y lo cambias cuando quieras.</p></details>
+      <details><summary>¿Puedo hablar en español?</summary><p>Sí, entiende español. Di el recorrido en español, en inglés o mezclado ("hay que parchar el drywall del clóset"). Si algo no se oye bien, lo corriges en la pantalla de revisión antes de enviar. Y la app también está en español: menús, botones y estimados. Eliges tu idioma al entrar y lo cambias cuando quieras.</p></details>
       <details><summary>¿La IA pone mis precios?</summary><p>No — y nunca lo hará. La IA solamente convierte lo que dijiste en una lista de trabajos. Cada precio sale de tu propia lista: tu tarifa por hora, tus costos de material, tu aumento sobre el costo. Cada línea muestra exactamente de dónde salió el número.</p></details>
       <details><summary>¿Y si me escucha mal?</summary><p>Ves todo lo que escuchó antes de que se ponga un solo precio, en una pantalla de revisión. Corriges una cantidad, borras una línea, agregas lo que falte — en segundos. Y si no dijiste una medida, se queda en blanco hasta que tú la pongas. Nunca adivina.</p></details>
       <details><summary>¿Funciona sin señal?</summary><p>En parte. Si ya tienes un estimado abierto en tu teléfono cuando se va la señal, puedes grabar el recorrido: la grabación se queda en tu teléfono, aunque se cierre la app, y se sube cuando tengas línea otra vez y toques “Reintentar Subidas.” Tus estimados se guardan en tu cuenta, así que una zona muerta no los borra. Para empezar un estimado nuevo, abrir los que ya guardaste, convertir el recorrido en estimado y mandarlo sí se necesita señal — así que en un sótano o en un rancho bien retirado, empieza el estimado antes de entrar y déjalo abierto, graba ahí y termínalo en cuanto tengas línea otra vez.</p></details>
