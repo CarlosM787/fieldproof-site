@@ -47,8 +47,8 @@ Deno.test('W-04: the Spanish FAQ makes no "perfectly" accuracy claim and claims 
 
 Deno.test('W-02: support says the app is not public yet before it points app users at the account page (EN+ES)', () => {
   const s = read('support.html').replace(/\s+/g, ' ');
-  const en = s.indexOf('TalkEstimate is not released to the public yet.');
-  const es = s.indexOf('TalkEstimate todavía no está disponible al público.');
+  const en = s.indexOf('TalkEstimate: Not released yet — Android coming soon.');
+  const es = s.indexOf('TalkEstimate: Todavía no disponible — pronto en Android.');
   assert(en > 0 && en < s.indexOf('<a href="/account/">account page</a>'), 'EN status before the account link');
   assert(es > 0 && es < s.indexOf('<a href="/es/cuenta/">página de cuenta</a>'), 'ES status before the account link');
   // Public state B (D03): plans open at launch; testers see their plan on the account page.
@@ -64,7 +64,8 @@ Deno.test('W-19: the home pages use few em dashes in visible text (was 32 each);
   for (const p of HOME) {
     const html = read(p);
     const text = html.slice(html.indexOf('<body')).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ');
-    const n = (text.match(/—/g) ?? []).length;
+    // Carlos's approved public-state phrase (11/10) keeps its dash and is not counted.
+    const n = (text.replace(/Not released yet — Android coming soon|Todavía no disponible — pronto en Android/g, '').match(/—/g) ?? []).length;
     assert(n <= 8, `${p}: ${n} em dashes in visible text`);
   }
 });

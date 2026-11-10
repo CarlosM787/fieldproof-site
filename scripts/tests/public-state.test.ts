@@ -6,8 +6,12 @@ const raw = (p: string) => Deno.readTextFileSync(new URL(`../../${p}`, import.me
 const read = (p: string) => raw(p).replace(/\n\s*/g, ' ');
 
 Deno.test('option B: Home says not released; Support says plans open at launch; Account shows the plan only (EN + ES)', () => {
-  assert(read('index.html').includes('not released yet'));
-  assert(read('es.html').includes('todavía sin lanzar'));
+  // Carlos 11/10 (MCR5, 08:56): "Not released yet — Android coming soon", the same on home, account and support, EN and ES.
+  for (const p of ['index.html', 'support.html', 'account/index.html']) assert((read(p).match(/Not released yet — Android coming soon/g) ?? []).length >= 1, p);
+  for (const p of ['es.html', 'support.html', 'es/cuenta/index.html']) assert((read(p).match(/Todavía no disponible — pronto en Android/g) ?? []).length >= 1, p);
+  for (const p of ['index.html', 'es.html', 'support.html', 'account/index.html', 'es/cuenta/index.html']) {
+    assert(!/early access|acceso anticipado|on Google Play|en Google Play|App Store/i.test(read(p)), `${p}: no early access or store release`);
+  }
   const sup = read('support.html');
   assert(sup.includes("Plans open at launch. If you're testing TalkEstimate, your <a href=\"/account/\">account page</a> shows your plan"));
   assert(sup.includes('Los planes abren en el lanzamiento. Si estás probando TalkEstimate, tu <a href="/es/cuenta/">página de cuenta</a> muestra tu plan'));
