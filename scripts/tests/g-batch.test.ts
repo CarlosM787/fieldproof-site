@@ -279,3 +279,15 @@ Deno.test('W-20: the no-token approval page sets its own font at zero specificit
   assert(p.includes("var API = 'https://api.talkestimate.com/functions/v1/get-public-proposal';"), 'same endpoint');
   assert(!/googletagmanager|analytics\.js/.test(p), 'still no analytics on a page with a secret token');
 });
+
+// ── Tools hub and calculator sources (W-21, W-22) ────────────────────────────────────────────────────────────────────
+
+Deno.test('W-21: neither tools hub advertises the unshipped estimate template (tools-pages.test.ts pins the cards)', () => {
+  for (const p of ['tools/index.html', 'es/herramientas/index.html']) assert(!/Coming next|Lo que viene|card soon|estimate template|Plantilla de estimado/i.test(read(p)), p);
+});
+
+Deno.test('W-22: the Idaho workers\' comp rates are labelled as one state\'s example, not Arizona\'s, in EN and ES', () => {
+  const en = read('tools/labor-cost-per-hour-calculator.html'), es = read('es/herramientas/calculadora-costo-hora-mano-de-obra.html');
+  assert(en.includes('An example from one state (Idaho, not Arizona): the <a href="https://iic.idaho.gov/') && en.includes('Use your own state’s rate.'));
+  assert(es.includes('Un ejemplo de un solo estado (Idaho, no Arizona): las <a href="https://iic.idaho.gov/') && es.includes('Usa la tarifa de tu propio estado.'));
+});

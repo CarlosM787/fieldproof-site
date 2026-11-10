@@ -175,16 +175,16 @@ Deno.test('painting pages: no coverage or paint price is pre-filled or claimed a
   }
 });
 
-Deno.test('directories: the two Release B tools are live cards; the estimate template stays "coming next"', () => {
+// G W-21 (2026-11-10): the undated "Coming next: Free estimate template" card is removed until the template ships.
+Deno.test('directories: the two Release B tools are live cards; no permanent "coming next" card', () => {
   for (const [f, links, soon] of [
     ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor', '/tools/labor-cost-per-hour-calculator'], 'Free estimate template'],
     ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra', '/es/herramientas/calculadora-costo-hora-mano-de-obra'], 'Plantilla de estimado gratis'],
   ] as const) {
     const html = read(f);
     for (const l of links) assert(html.includes(`<a class="card" href="${l}"`), `${f}: no live card for ${l}`);
-    const soonCards = html.split(/\r?\n/).filter((line) => line.includes('class="card soon"'));
-    assertEquals(soonCards.length, 1, `${f}: one coming-next card`);
-    assert(soonCards[0].includes(soon));
+    assert(!html.includes('class="card soon"'), `${f}: no coming-next card`);
+    assert(!html.includes(soon), `${f}: the unshipped template is not advertised`);
   }
 });
 
