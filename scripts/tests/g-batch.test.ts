@@ -158,3 +158,77 @@ Deno.test('W-12 (part): one H1 per bilingual legal page; the Spanish title is an
     assert(read(p).includes(`<div id="es" lang="es">\n      <h2 class="es-title">${t}</h2>`) || read(p).includes(`<h2 class="es-title">${t}</h2>`), p);
   }
 });
+
+// ── SEO metadata (W-08 sitemap lastmod, W-09 titles/descriptions, W-10 FAQPage + logo; canonicals and hreflang) ─────
+
+const decode = (s: string) => s.replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&nbsp;/g, ' ').replace(/&lt;/g, '<').replace(/&gt;/g, '>');
+const sitemap = read('sitemap.xml');
+const urls = [...sitemap.matchAll(/<url>([\s\S]*?)<\/url>/g)].map(([, u]) => ({
+  loc: /<loc>([^<]+)<\/loc>/.exec(u)![1], lastmod: /<lastmod>([^<]+)<\/lastmod>/.exec(u)?.[1] ?? '',
+  alts: [...u.matchAll(/hreflang="([^"]+)" href="([^"]+)"/g)].map(([, l, h]) => [l, h]),
+}));
+const fileFor = (loc: string) => {
+  const p = new URL(loc).pathname;
+  for (const c of p.endsWith('/') ? [p + 'index.html'] : [p, p + '.html']) {
+    try { if (Deno.statSync(new URL(c.slice(1), root)).isFile) return c.slice(1); } catch { /* next */ }
+  }
+  throw new Error(`no file for ${loc}`);
+};
+
+Deno.test('W-09: every sitemap page has a title of at most 60 characters and a description of at most 160', () => {
+  assertEquals(urls.length, 22);
+  for (const { loc } of urls) {
+    const h = read(fileFor(loc));
+    const t = decode(/<title>([^<]+)<\/title>/.exec(h)![1]);
+    const d = decode(/<meta name="description" content="([^"]+)"/.exec(h)![1]);
+    assert([...t].length <= 60, `${loc}: title ${[...t].length}`);
+    assert([...d].length <= 160, `${loc}: description ${[...d].length}`);
+  }
+});
+
+Deno.test('canonicals and hreflang: each sitemap page is self-canonical and its hreflang links match the sitemap pairs', () => {
+  for (const { loc, alts } of urls) {
+    const h = read(fileFor(loc));
+    assert(h.includes(`<link rel="canonical" href="${loc}" />`), `${loc}: canonical`);
+    for (const [lang, href] of alts) assert(h.includes(`<link rel="alternate" hreflang="${lang}" href="${href}" />`), `${loc}: hreflang ${lang}`);
+  }
+});
+
+Deno.test('W-08: every lastmod is a real date, not in the future, and not older than the page\'s own "Last updated" line', () => {
+  const now = new Date().toISOString().slice(0, 10);
+  const months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+  for (const { loc, lastmod } of urls) {
+    assert(/^\d{4}-\d{2}-\d{2}$/.test(lastmod) && !isNaN(Date.parse(lastmod)), `${loc}: ${lastmod}`);
+    assert(lastmod <= now || lastmod <= new Date(Date.now() + 14 * 3600e3).toISOString().slice(0, 10), `${loc}: future ${lastmod}`);
+    const m = /Last updated: (\w+) (\d+), (\d{4})/.exec(read(fileFor(loc)));
+    if (m) {
+      const shown = `${m[3]}-${String(months.indexOf(m[1]) + 1).padStart(2, '0')}-${m[2].padStart(2, '0')}`;
+      assert(lastmod >= shown, `${loc}: lastmod ${lastmod} older than "Last updated" ${shown}`);
+    }
+  }
+  assert(!sitemap.includes('2026-07-12'), 'the July dates are gone');
+});
+
+const PLAN_PRICE = /\$\s?\d[\d.,]*\s?\/\s?(mo|month|mes)\b/i;
+const plain = (s: string) => decode(s.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
+const FAQ_PAGES = ['index.html', 'es.html', 'tools/markup-margin-calculator.html', 'tools/painting-estimate-calculator.html', 'tools/labor-job-quote-calculator.html',
+  'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
+  'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html'];
+
+Deno.test('W-10: FAQPage data on the home and calculator pages says exactly what the visible FAQ says, never a plan price', () => {
+  for (const p of FAQ_PAGES) {
+    const h = read(p);
+    const ld = /<script type="application\/ld\+json" id="faq-ld">([\s\S]*?)<\/script>/.exec(h);
+    assert(ld, `${p}: FAQPage block`);
+    const data = JSON.parse(ld[1]);
+    assertEquals(data['@type'], 'FAQPage');
+    const faq = h.slice(h.indexOf('<div class="faq"'));
+    const visible = [...faq.matchAll(/<details><summary>([\s\S]*?)<\/summary>([\s\S]*?)<\/details>/g)].map(([, q, a]) => [plain(q), plain(a)])
+      .filter(([, a]) => !PLAN_PRICE.test(a));
+    const marked = data.mainEntity.map((x: { name: string; acceptedAnswer: { text: string } }) => [x.name, x.acceptedAnswer.text]);
+    assertEquals(marked, visible, `${p}: FAQPage == visible FAQ`);
+    assert(marked.length >= 5, `${p}: ${marked.length} questions`);
+    for (const [, a] of marked) assert(!PLAN_PRICE.test(a), `${p}: plan price in FAQPage`);
+  }
+  for (const p of HOME) assert(read(p).includes('"logo": "https://talkestimate.com/assets/brand/icon-512.png"'), `${p}: square logo`);
+});
