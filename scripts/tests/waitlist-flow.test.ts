@@ -334,9 +334,10 @@ Deno.test('the public form text, the privacy line and the visible layout are unt
 
 Deno.test('the page needs no change to Cloudflare headers: there is no Content-Security-Policy to extend, and Turnstile is not preloaded', () => {
   const headers = Deno.readTextFileSync(new URL('../../_headers', import.meta.url));
-  // The only Content-Security-Policy is on the account page (WO-20261106-03); the waitlist pages have none.
+  // Content-Security-Policy only on the account page (WO-20261106-03) and the customer approval page /p/ (V5-D06, 2026-11-10);
+  // the waitlist pages have none.
   const cspBlocks = headers.split(/\n(?=\S)/).filter((b) => /content-security-policy/i.test(b));
-  for (const b of cspBlocks) assertFalse(!/^\/(account|es\/cuenta)\//.test(b.trim()), `CSP only on the account page, not: ${b.split('\n')[0]}`);
+  for (const b of cspBlocks) assertFalse(!/^\/(account|es\/cuenta|p)\//.test(b.trim()), `CSP only on the account and /p/ pages, not: ${b.split('\n')[0]}`);
   assertFalse(/^\/\*[^\n]*\n(?:  [^\n]*\n)*  Content-Security-Policy/m.test(headers), 'no site-wide CSP');
   for (const p of PAGES) {
     const html = Deno.readTextFileSync(new URL(p.file, import.meta.url));

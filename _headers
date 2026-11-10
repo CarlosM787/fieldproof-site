@@ -7,11 +7,15 @@
   Strict-Transport-Security: max-age=15552000
 
 # Customer approval links: never indexed, never cached by shared caches.
+# CSP (Advisor V5-D06): only the page's one inline script (sha256 of its LF and CRLF forms; re-hash if it changes,
+# g-batch.test.ts fails until you do), the proposal's own CSS, https/data images (the contractor's logo), and the two
+# API origins the page fetches (get-public-proposal and the approveUrl the server returns). No third-party script.
 /p/*
   ! Referrer-Policy
   X-Robots-Tag: noindex, nofollow
   Cache-Control: no-store
   Referrer-Policy: no-referrer
+  Content-Security-Policy: default-src 'none'; script-src 'sha256-kBTIBpHiVJJC2d1iJy44VkkOwURNydpjtQwQZcWBTQ4=' 'sha256-RStRy5yTiKlLMAd5Yhsw6lEKuwnGlz/VQNJyeGUnoKs='; style-src 'unsafe-inline'; img-src 'self' https: data:; connect-src https://api.talkestimate.com https://zjggusmqgzvbfxwbvmsu.supabase.co; base-uri 'none'; form-action 'none'; frame-ancestors 'self'
 
 # Account page: Supabase sign-in + plan; Stripe Checkout/Portal are navigations (not CSP). Never indexed or cached.
 /account/

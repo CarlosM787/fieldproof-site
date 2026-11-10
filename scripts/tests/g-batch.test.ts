@@ -367,3 +367,28 @@ Deno.test('support.html is linked from every shared footer (EN -> /support.html,
     assert(foot.includes(es ? '<a href="/support.html#es">Soporte</a>' : '<a href="/support.html">Support</a>'), p);
   }
 });
+
+// ── /p/ CSP (Advisor V5-D06) ─────────────────────────────────────────────────────────────────────────────────────────
+
+async function sha256b64(s: string) {
+  const d = new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(s)));
+  return btoa(String.fromCharCode(...d));
+}
+
+Deno.test('V5-D06: /p/ has a CSP that allows exactly its one inline script (LF and CRLF hashes), its API origins and logo images, nothing third-party', async () => {
+  const headers = read('_headers');
+  const block = headers.slice(headers.indexOf('\n/p/*\n'), headers.indexOf('\n/account/\n'));
+  const csp = /Content-Security-Policy: ([^\n]+)/.exec(block)?.[1] ?? '';
+  assert(csp, '/p/* sends a CSP');
+  const scripts = [...read('p/index.html').matchAll(/<script>([\s\S]*?)<\/script>/g)].map((m) => m[1]);
+  assertEquals(scripts.length, 1, 'one inline script, no external script');
+  const lf = scripts[0];
+  for (const h of [await sha256b64(lf), await sha256b64(lf.replace(/\n/g, '\r\n'))]) assert(csp.includes(`'sha256-${h}'`), `script hash ${h} listed`);
+  const dir = (n: string) => (new RegExp(`(?:^|; )${n} ([^;]+)`).exec(csp)?.[1] ?? '').split(' ');
+  assertEquals(dir('default-src'), ["'none'"]);
+  assert(!dir('script-src').includes("'unsafe-inline'") && dir('script-src').every((s) => s.startsWith("'sha256-")), 'script-src is hashes only');
+  assertEquals(dir('connect-src').sort(), ['https://api.talkestimate.com', 'https://zjggusmqgzvbfxwbvmsu.supabase.co']);
+  assertEquals(dir('img-src'), ["'self'", 'https:', 'data:']);
+  assertEquals(dir('frame-ancestors'), ["'self'"], 'same as the site-wide X-Frame-Options: SAMEORIGIN');
+  assert(block.includes('Referrer-Policy: no-referrer') && block.includes('X-Robots-Tag: noindex, nofollow') && block.includes('Cache-Control: no-store'), 'existing /p/ headers kept');
+});
