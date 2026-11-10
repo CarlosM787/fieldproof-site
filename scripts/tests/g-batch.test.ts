@@ -232,3 +232,29 @@ Deno.test('W-10: FAQPage data on the home and calculator pages says exactly what
   }
   for (const p of HOME) assert(read(p).includes('"logo": "https://talkestimate.com/assets/brand/icon-512.png"'), `${p}: square logo`);
 });
+
+// ── security.txt and IndexNow (W-17 part, W-11) ───────────────────────────────────────────────────────────────────────
+
+Deno.test('W-17 (part): /.well-known/security.txt (RFC 9116) names the public support inbox and expires within a year', () => {
+  const s = read('.well-known/security.txt');
+  assert(/^Contact: mailto:support@talkestimate\.com$/m.test(s));
+  assert(/^Canonical: https:\/\/talkestimate\.com\/\.well-known\/security\.txt$/m.test(s));
+  assert(/^Preferred-Languages: en, es$/m.test(s));
+  const exp = Date.parse(/^Expires: (\S+)$/m.exec(s)![1]);
+  assert(exp > Date.now(), 'not expired (renew before it lapses)');
+  assert(exp < Date.UTC(2027, 11, 31), 'less than about a year ahead');
+  // cf-assets copies every root entry except its SKIP list, so .well-known ships; wrangler only skips _headers/_redirects/.assetsignore.
+  assert(!/'\.well-known'/.test(read('scripts/cf-assets.mjs')), '.well-known is not skipped');
+});
+
+Deno.test('W-11: an IndexNow key is served at /<key>.txt by the prod build only; the raw key file and the plan file never ship', () => {
+  const key = read('indexnow-key.txt').trim();
+  assert(/^[a-f0-9]{32,128}$/.test(key));
+  const cf = read('scripts/cf-assets.mjs');
+  assert(cf.includes("'indexnow-key.txt', '.indexnow-plan.json']"), 'skipped as files');
+  assert(cf.includes("if (mode === 'prod' && existsSync('indexnow-key.txt'))") && cf.includes('writeFileSync(path.join(OUT, `${indexNowKey}.txt`), indexNowKey);'));
+  assert(read('.gitignore').includes('.indexnow-plan.json'));
+  const tool = read('scripts/indexnow.mjs');
+  assert(tool.includes("const key = readFileSync('indexnow-key.txt', 'utf8').trim();") && tool.includes('https://api.indexnow.org/indexnow'));
+  assert(tool.includes("if (cmd === 'plan')") && tool.includes('--dry-run'), 'plan before deploy, send only after (owner-run)');
+});
