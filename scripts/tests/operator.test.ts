@@ -27,7 +27,8 @@ Deno.test('every legal and store page names the operator (EN, plus ES where the 
   for (const p of ['terms.html', 'privacy.html', 'support.html', 'delete-account.html']) {
     const html = read(p);
     assert(html.includes(EN), `${p} EN`);
-    if (html.includes('lang="es"')) assert(html.includes(ES), `${p} ES`);
+    // A Spanish section (not just a Spanish-labelled link in the site bar or footer) needs the Spanish operator line.
+    if (html.includes('<div id="es" lang="es">')) assert(html.includes(ES), `${p} ES`);
   }
   assert(read('terms.html').includes('("we", "us")'), 'terms say who "we" are');
   assert(read('privacy.html').includes('"we" means Morales Labs LLC'), 'privacy says who "we" are');

@@ -122,3 +122,39 @@ Deno.test('W-18: "Analytics settings" joins the footer link line; reopened, the 
   assertEquals(loaded, [], 'reopening never loads GA');
   assert(read('analytics.js').includes('.te-consent,.te-consent-link,.te-consent-sep{display:none!important}'), 'print hides it');
 });
+
+// ── Structure (W-12 one H1, W-14 legal-page navigation, W-15 <main>) ────────────────────────────────────────────────
+
+const LEGAL = ['support.html', 'privacy.html', 'delete-account.html', 'terms.html'];
+
+Deno.test('W-15: home EN/ES, support, privacy, delete-account and terms each have exactly one <main>, with nav and footer outside it', () => {
+  for (const p of [...HOME, ...LEGAL]) {
+    const h = read(p);
+    assertEquals((h.match(/<main[\s>]/g) ?? []).length, 1, `${p}: one <main>`);
+    const main = h.slice(h.indexOf('<main'), h.indexOf('</main>'));
+    assert(!/<nav[\s>]/.test(main) && !/<footer[\s>]/.test(main), `${p}: nav/footer outside <main>`);
+    assert(h.indexOf('<footer') > h.indexOf('</main>'), `${p}: footer after main`);
+  }
+  for (const p of HOME) assert(/<main id="main">\s*<header class="hero">/.test(read(p)), `${p}: main starts at the hero`);
+});
+
+Deno.test('W-14: every legal/support page has a way home (logo + Home/Inicio) and the site footer; every footer link resolves', () => {
+  for (const p of LEGAL) {
+    const h = read(p);
+    assert(h.includes('<nav class="site-top" aria-label="Main">'), `${p}: top bar`);
+    assert(h.includes('<a class="logo" href="/" aria-label="TalkEstimate home">'), `${p}: logo links home`);
+    assert(h.includes('<a href="/es.html" lang="es" hreflang="es">Inicio</a>'), `${p}: Spanish home`);
+    assert(h.includes('<footer class="site-foot">') && h.includes('© 2026 Morales Labs LLC'), `${p}: footer`);
+    for (const [, href] of h.matchAll(/href="\/([a-z0-9-]+\.html)"/g)) {
+      try { Deno.statSync(new URL(href, root)); } catch { throw new Error(`${p} -> ${href} missing`); }
+    }
+  }
+  assert(read('assets/brand/brand.css').includes('.site-top {') && read('assets/brand/brand.css').includes('.site-foot .foot {'));
+});
+
+Deno.test('W-12 (part): one H1 per bilingual legal page; the Spanish title is an h2 styled like it, sections unchanged', () => {
+  for (const p of LEGAL) assertEquals((read(p).match(/<h1[\s>]/g) ?? []).length, 1, p);
+  for (const [p, t] of [['support.html', 'Soporte de TalkEstimate'], ['privacy.html', 'Política de privacidad de TalkEstimate'], ['delete-account.html', 'Eliminar tu cuenta o tus datos de TalkEstimate']]) {
+    assert(read(p).includes(`<div id="es" lang="es">\n      <h2 class="es-title">${t}</h2>`) || read(p).includes(`<h2 class="es-title">${t}</h2>`), p);
+  }
+});
