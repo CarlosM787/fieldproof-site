@@ -51,8 +51,9 @@ Deno.test('W-02: support says the app is not public yet before it points app use
   const es = s.indexOf('TalkEstimate todavía no está disponible al público.');
   assert(en > 0 && en < s.indexOf('<a href="/account/">account page</a>'), 'EN status before the account link');
   assert(es > 0 && es < s.indexOf('<a href="/es/cuenta/">página de cuenta</a>'), 'ES status before the account link');
-  assert(s.includes('If you already use the app, sign in on your <a href="/account/">account page</a>'));
-  assert(s.includes('Si ya usas la app, entra a tu <a href="/es/cuenta/">página de cuenta</a>'));
+  // Public state B (D03): plans open at launch; testers see their plan on the account page.
+  assert(s.includes('Plans open at launch. If you\'re testing TalkEstimate, your <a href="/account/">account page</a> shows your plan'));
+  assert(s.includes('Los planes abren en el lanzamiento. Si estás probando TalkEstimate, tu <a href="/es/cuenta/">página de cuenta</a> muestra tu plan'));
   assert(!/To buy Starter|Para comprar Starter/.test(s), 'no unconditional "buy Starter" instruction');
   assertEquals((s.match(/Last updated: November 10, 2026/g) ?? []).length, 1);
 });

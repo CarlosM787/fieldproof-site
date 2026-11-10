@@ -70,7 +70,9 @@ Deno.test('Starter only: no Pro button, Pro never requested', () => {
   assert(JS.includes("callFunction('create-checkout', { plan: 'starter', returnPath: RETURN_PATH })"));
   assertFalse(/plan:\s*'pro'/.test(JS), 'never asks for Pro');
   for (const html of [EN, ES]) assertFalse(/\bPro\b/.test(html.replace(/<[^>]+>/g, ' ')), 'no Pro on the page');
-  assert(JS.includes("var canBuy = p.source === 'free' || p.source === 'trial';"), 'paid/founding accounts get no buy button');
+  // Public state B (D03): no plan is sold before launch; the flag hides the button, paid/founding never get it.
+  assert(JS.includes("var canBuy = STARTER_PURCHASE_OPEN && (p.source === 'free' || p.source === 'trial');"), 'paid/founding accounts get no buy button');
+  assert(JS.includes('var STARTER_PURCHASE_OPEN = false;'), 'state B: purchase closed until launch');
 });
 
 Deno.test('every server answer is handled: 409 already_subscribed, plan_not_available, 401, 404 portal, network', () => {

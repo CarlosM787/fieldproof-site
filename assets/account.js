@@ -22,6 +22,9 @@
 
   // Plan facts, same numbers as plans.ts PLAN_LIMITS and billing-config.ts display prices.
   var STARTER_PRICE = '$20';
+  // Public state B (Carlos's D03 pick, V5): no plan is sold until launch. Flip to true at launch; the server still
+  // decides everything (create-checkout / webhook), this only hides the button.
+  var STARTER_PURCHASE_OPEN = false;
   var LEGACY_PRICE = '$29';
   var AI = { free: 3, starter: 40, pro: 150 };
 
@@ -58,6 +61,7 @@
       starterAi: 'AI organizes {n} jobs a month',
       starterManual: 'Unlimited estimates you type or add yourself, My Prices, proposals, approvals, change orders and invoices',
       startStarter: 'Start Starter — {price}/month',
+      plansAtLaunch: 'Plans open at launch. Your plan is shown above.',
       manage: 'Manage subscription',
       updatePayment: 'Update payment',
       checkoutFailed: 'Couldn’t open checkout. Check your connection and try again.',
@@ -112,6 +116,7 @@
       starterAi: 'La IA organiza {n} trabajos al mes',
       starterManual: 'Estimados ilimitados que escribes o agregas tú, Mis Precios, propuestas, aprobaciones, órdenes de cambio y facturas',
       startStarter: 'Empezar Starter — {price} al mes',
+      plansAtLaunch: 'Los planes abren en el lanzamiento. Tu plan aparece arriba.',
       manage: 'Administrar suscripción',
       updatePayment: 'Actualizar pago',
       checkoutFailed: 'No se pudo abrir el pago. Revisa tu conexión e inténtalo de nuevo.',
@@ -313,7 +318,8 @@
     setMsg('pay-msg', p.paymentProblem ? T.pastDue : '', p.paymentProblem ? 'warn' : '');
 
     // Buttons: Starter only for Free / trial (never Pro); Manage for anyone with a billing account.
-    var canBuy = p.source === 'free' || p.source === 'trial';
+    var canBuy = STARTER_PURCHASE_OPEN && (p.source === 'free' || p.source === 'trial');
+    if (!STARTER_PURCHASE_OPEN && (p.source === 'free' || p.source === 'trial')) setMsg('plan-msg', T.plansAtLaunch);
     show('starter-box', canBuy);
     if (canBuy) {
       el('starter-title').textContent = fmt(T.starterTitle, { price: STARTER_PRICE });
