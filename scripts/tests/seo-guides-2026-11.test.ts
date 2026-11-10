@@ -87,3 +87,21 @@ Deno.test('the tools hubs list the new guides', () => {
   const es = read('es/herramientas/index.html');
   assert(es.includes('<a class="card" href="/es/guias/como-hacer-un-estimado"') && es.includes('<a class="card" href="/es/guias/estimado-en-ingles"'));
 });
+
+// R-10b (Advisor pass 20).
+Deno.test('R10-F1: the wedge headline promises only what the app does (you pick the document language)', () => {
+  const w = read('es/guias/estimado-en-ingles.html');
+  assert(w.includes('<h2>Explica el trabajo en español; elige el idioma del estimado</h2>'));
+  assert(!w.includes('tu cliente lo recibe en inglés'), 'typed lines and your own price names are not translated');
+});
+
+Deno.test('R10-F2/F3/F4: ES pages use the ES card, "encintar", and descriptions of at most 155 characters', () => {
+  for (const pg of PAGES.filter((p) => p.lang === 'es')) {
+    const h = read(pg.file);
+    assert(!h.includes('og-tools-en.png') && h.includes(`content="${SITE}/assets/og/og-tools-es.png"`), `${pg.url}: ES OG image`);
+    assert(!/enmascar/i.test(h), `${pg.url}: encintar, as in the labor guide`);
+    const d = h.match(/<meta name="description" content="([^"]*)"/)?.[1] ?? '';
+    assert(d.length > 0 && d.length <= 155, `${pg.url}: description ${d.length}`);
+  }
+  Deno.statSync(new URL('assets/og/og-tools-es.png', ROOT));
+});
