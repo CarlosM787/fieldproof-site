@@ -354,3 +354,16 @@ Deno.test('CLS: analytics.js clears the reserved space in the same task it inser
     if (expectBar) assertEquals(clsWhenBarInserted, true, 'band inserted while the space is still reserved (same task, one frame)');
   }
 });
+
+Deno.test('support.html is linked from every shared footer (EN -> /support.html, ES -> /support.html#es); Google saw 1 inlink', () => {
+  const pages = ['index.html', 'es.html', 'tools/index.html', 'es/herramientas/index.html', 'tools/markup-margin-calculator.html', 'tools/painting-estimate-calculator.html',
+    'tools/labor-job-quote-calculator.html', 'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html',
+    'es/herramientas/calculadora-estimado-pintura.html', 'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
+    'guides/markup-vs-margin.html', 'guides/how-to-estimate-a-paint-job.html', 'guides/how-to-price-labor.html', 'es/guias/markup-vs-margen.html',
+    'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html', ...LEGAL];
+  for (const p of pages) {
+    const h = read(p); const foot = h.slice(h.indexOf('<footer'), h.indexOf('</footer>'));
+    const es = h.includes('<html lang="es"');
+    assert(foot.includes(es ? '<a href="/support.html#es">Soporte</a>' : '<a href="/support.html">Support</a>'), p);
+  }
+});
