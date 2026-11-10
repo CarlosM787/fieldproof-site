@@ -21,7 +21,8 @@ createServer((req, res) => {
   if (rule && rule.code !== 200) { res.writeHead(rule.code, { Location: rule.to }); res.end(); return; }
   if (rule) p = rule.to;
   const file = path.join(ROOT, p);
-  if (!file.startsWith(ROOT) || /[\\/]\.|[\\/](scripts|node_modules)[\\/]/.test(file.slice(ROOT.length))) { res.writeHead(404); res.end('not found'); return; }
+  // Hidden paths stay private, except /.well-known/ (security.txt), which Cloudflare serves too.
+  if (!file.startsWith(ROOT) || /[\\/]\.(?!well-known[\\/])|[\\/](scripts|node_modules)[\\/]/.test(file.slice(ROOT.length))) { res.writeHead(404); res.end('not found'); return; }
   try {
     if (!statSync(file).isFile()) throw new Error('dir');
     res.writeHead(200, { 'Content-Type': TYPES[path.extname(file)] || 'application/octet-stream', 'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff' });

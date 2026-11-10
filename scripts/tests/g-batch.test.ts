@@ -302,3 +302,12 @@ Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resa
   assert(read('es.html').includes('La habitación principal, doce por catorce'));
   assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
 });
+
+Deno.test('local preview (scripts/dev-server.mjs) serves /.well-known/ like Cloudflare, and still hides other dot paths', () => {
+  const src = read('scripts/dev-server.mjs');
+  // Pull the guard regex literal out of the server source and exercise it.
+  const lit = /\.test\(file\.slice\(ROOT\.length\)\)/.test(src) ? /\/(\[\\\\\/\][^\n]*?)\/\.test\(file\.slice/.exec(src)![1] : '';
+  const guard = new RegExp(lit);
+  assert(lit.includes('(?!well-known'), 'well-known exception present');
+  assert(guard.test('/.git/config') && guard.test('/.wrangler/x') && guard.test('/scripts/x.mjs') && !guard.test('/.well-known/security.txt') && !guard.test('/es/herramientas/'), 'guard behaviour');
+});
