@@ -311,3 +311,46 @@ Deno.test('local preview (scripts/dev-server.mjs) serves /.well-known/ like Clou
   assert(lit.includes('(?!well-known'), 'well-known exception present');
   assert(guard.test('/.git/config') && guard.test('/.wrangler/x') && guard.test('/scripts/x.mjs') && !guard.test('/.well-known/security.txt') && !guard.test('/es/herramientas/'), 'guard behaviour');
 });
+
+// ── CLS: the analytics band never pushes the page down (Growth 2026-11-10: CLS 0.149 on /es/herramientas/calculadora-markup-margen) ──
+
+Deno.test('CLS: every page that loads analytics.js reserves the band space in <head>, before first paint, on the prod host only', () => {
+  const pages: string[] = [];
+  const walk = (d: string) => { for (const e of Deno.readDirSync(new URL(d || '.', root))) { const p = d ? `${d}/${e.name}` : e.name;
+    if (e.isDirectory) { if (!['scripts', 'node_modules', '.git', '.cf-dist', '.wrangler', '.well-known'].includes(e.name)) walk(p); } else if (p.endsWith('.html')) pages.push(p); } };
+  walk('');
+  const withGa = pages.filter((p) => read(p).includes('src="/analytics.js"'));
+  assertEquals(withGa.length, 23);
+  for (const p of withGa) {
+    const h = read(p);
+    const i = h.indexOf("document.documentElement.classList.add('te-ask')");
+    assert(i > 0 && i < h.indexOf('</head>'), `${p}: reserve line in head`);
+    assert(h.includes(String.raw`/^(www\.)?talkestimate\.com$/.test(location.hostname)&&localStorage.getItem('te.consent.v1')===null`), `${p}: same conditions as analytics.js`);
+    assert(h.includes("setTimeout(function(){document.documentElement.classList.remove('te-ask')},6000)"), `${p}: never stuck if analytics.js is blocked`);
+  }
+  const css = read('assets/brand/brand.css');
+  assert(css.includes('html.te-ask body::before { content: ""; display: block; height: 153px; background: #101828; }'));
+  assert(css.includes('@media (min-width: 768px) { html.te-ask body::before { height: 64px; } html.te-ask[lang="es"] body::before { height: 81px; } }'));
+});
+
+Deno.test('CLS: analytics.js clears the reserved space in the same task it inserts the band, and also when it will not ask', () => {
+  for (const [stored, host, expectBar] of [[null, 'talkestimate.com', true], ['granted', 'talkestimate.com', false], [null, 'localhost', false]] as const) {
+    const cls = new Set(['te-ask']);
+    const body = node('body'), footer = node('footer');
+    body.appendChild(footer);
+    let clsWhenBarInserted: boolean | null = null;
+    const ins = body.insertBefore as (c: N, r: N | null) => N;
+    body.insertBefore = (c: N, r: N | null) => { const out = ins(c, r); if (c.attrs.role === 'region') clsWhenBarInserted = cls.has('te-ask'); return out; };
+    const document = {
+      readyState: 'complete', referrer: '', documentElement: { lang: 'es', classList: { remove: (c: string) => cls.delete(c), add: (c: string) => cls.add(c) } }, cookie: '', body,
+      head: { appendChild: () => {} }, createElement: (t: string) => node(t), createTextNode: (t: string) => ({ tag: '#text', text: t, kids: [] }),
+      querySelector: (q: string) => (q === 'footer' ? footer : null), querySelectorAll: () => [], addEventListener() {},
+    };
+    const mem: Record<string, string> = stored ? { 'te.consent.v1': JSON.stringify({ v: 1, analytics: stored }) } : {};
+    const localStorage = { getItem: (k: string) => mem[k] ?? null, setItem: (k: string, v: string) => { mem[k] = v; }, removeItem: (k: string) => { delete mem[k]; } };
+    new Function('window', 'document', 'location', 'localStorage', read('analytics.js'))({ addEventListener() {}, removeEventListener() {} }, document, { hostname: host, pathname: '/', search: '' }, localStorage);
+    assertEquals(cls.has('te-ask'), false, `${stored}/${host}: reserve cleared`);
+    assertEquals(clsWhenBarInserted !== null, expectBar, `${stored}/${host}: band shown?`);
+    if (expectBar) assertEquals(clsWhenBarInserted, true, 'band inserted while the space is still reserved (same task, one frame)');
+  }
+});

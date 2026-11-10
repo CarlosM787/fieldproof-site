@@ -288,13 +288,18 @@
     if (links) { var sep = document.createElement('span'); sep.className = 'te-consent-sep'; sep.textContent = ' · '; links.appendChild(sep); }
     f.appendChild(b);
   }
+  // Each page's inline head line reserves the band's height before first paint (html.te-ask, sized in brand.css). The band
+  // takes that space in the same frame, so nothing below it moves even when this deferred script runs after first paint
+  // (that race measured CLS 0.149 on the calculators, Growth 2026-11-10). Same band, same place, same choice logic.
+  function clearReserve() { try { document.documentElement.classList.remove('te-ask'); } catch (e) { /* old browser */ } }
   function initConsent() {
-    if (!ENABLED) return;
+    if (!ENABLED) { clearReserve(); return; }
     var canStore = false; try { localStorage.setItem('te.t', '1'); localStorage.removeItem('te.t'); canStore = true; } catch (e) { canStore = false; }
-    if (!canStore) return; // can't remember a choice: stay off rather than ask on every page
+    if (!canStore) { clearReserve(); return; } // can't remember a choice: stay off rather than ask on every page
     try { var st = document.createElement('style'); st.textContent = '@media print{.te-consent,.te-consent-link,.te-consent-sep{display:none!important}}'; document.head.appendChild(st); } catch (e) { /* cosmetic */ }
     addFooterLink();
     if (consent === null) showBar(true);
+    clearReserve();
   }
 
   // ── BOOT ───────────────────────────────────────────────────────────────────
