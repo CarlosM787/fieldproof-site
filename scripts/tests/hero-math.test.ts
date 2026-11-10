@@ -27,9 +27,9 @@ function priced(card: string, li: string, total: string) {
 
 for (const [page, quote, unpriced, cta, strip] of [
   ['index.html', 'Master bedroom, twelve by fourteen', 'needs your hours', 'Join the waitlist',
-    ['<b>Free</b> $0', '<b>Starter</b> $19.99/mo', '<b>Pro</b> $49.99/mo <i>after launch</i>', '14-day free trial when it opens, no card']],
+    ['<b>Free</b> $0', '<b>Starter</b> $20/mo', '<b>Pro</b> $35/mo <i>after launch</i>', '14-day free trial when it opens, no card']],
   ['es.html', 'La recámara principal, doce por catorce', 'faltan tus horas', 'Únete a la lista de espera',
-    ['<b>Gratis</b> $0', '<b>Starter</b> $19.99/mes', '<b>Pro</b> $49.99/mes <i>después del lanzamiento</i>', 'Prueba gratis de 14 días cuando abra, sin tarjeta']],
+    ['<b>Gratis</b> $0', '<b>Starter</b> $20/mes', '<b>Pro</b> $35/mes <i>después del lanzamiento</i>', 'Prueba gratis de 14 días cuando abra, sin tarjeta']],
 ] as const) {
   Deno.test(`${page}: the hero proof card is real text (not hidden), comes with its spoken words, and its math holds`, () => {
     const html = read(page);
@@ -65,7 +65,7 @@ for (const [page, quote, unpriced, cta, strip] of [
     const s = block(html, '<div class="price-strip"', '</div>');
     for (const part of strip) assert(s.includes(part), part);
     const pricing = block(html, '<section id="pricing"', '</section>');
-    for (const amount of ['$0', '$19.99', '$49.99']) assert(pricing.includes(`<div class="p-price">${amount}`), amount);
+    for (const amount of ['$0', '$20', '$35']) assert(pricing.includes(`<div class="p-price">${amount}`), amount);
     assert(/14 d(ays|ías)/.test(pricing), 'the 14-day trial is in the pricing section too');
     assert(s.includes('href="#pricing"'));
   });

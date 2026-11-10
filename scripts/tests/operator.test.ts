@@ -73,5 +73,5 @@ Deno.test('terms describe billing as it is live (since 2026-10-27), with no refu
   // Carlos 2026-11-08 (MCR5 ~22:45 MST): no proration/refund for unused portions, except law or an applicable exception.
   assert(t.replace(/\s+/g, ' ').includes('Subscription payments are not prorated or refunded for unused portions of a billing month, except where required by law or under an applicable refund exception.'), 'refund policy (Carlos 2026-11-08)');
   assert(!/full refund|money-back|refund guarantee|guaranteed refund/i.test(t), 'no refund guarantee');
-  assertEquals((t.match(/Last updated: November 8, 2026/g) ?? []).length, 1);
+  assertEquals((t.match(/Last updated: November 10, 2026/g) ?? []).length, 1);
 });
