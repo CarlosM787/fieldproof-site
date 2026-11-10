@@ -100,7 +100,7 @@ Deno.test('disclosure: price, monthly renewal, cancel at period end, trial rule 
     'los recibos de Stripe muestran el nombre del comerciante AmplifyWebX LLC. TalkEstimate es operado por Morales Labs LLC.',
   ]) assert(JS.includes(s), s);
   // Same numbers as the server and the live pricing strip.
-  assert(JS.includes("var STARTER_PRICE = '$19.99';") && read('index.html').includes('<b>Starter</b> $19.99/mo'));
+  assert(JS.includes("var STARTER_PRICE = '$20';") && read('index.html').includes('<b>Starter</b> $20/mo'));
   assert(JS.includes('var MIN_TRIAL_MS = (48 * 60 + 5) * 60 * 1000;'), 'checkout-trial.ts: 48 h + 5 min');
   assert(JS.includes('var AI = { free: 3, starter: 40, pro: 150 };'), 'plans.ts PLAN_LIMITS');
   // Same billing facts as the terms.

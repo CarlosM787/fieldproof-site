@@ -21,7 +21,7 @@
   var RETURN_PATH = LANG === 'es' ? '/es/cuenta/' : '/account/';
 
   // Plan facts, same numbers as plans.ts PLAN_LIMITS and billing-config.ts display prices.
-  var STARTER_PRICE = '$19.99';
+  var STARTER_PRICE = '$20';
   var LEGACY_PRICE = '$29';
   var AI = { free: 3, starter: 40, pro: 150 };
 
