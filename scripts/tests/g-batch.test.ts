@@ -258,3 +258,24 @@ Deno.test('W-11: an IndexNow key is served at /<key>.txt by the prod build only;
   assert(tool.includes("const key = readFileSync('indexnow-key.txt', 'utf8').trim();") && tool.includes('https://api.indexnow.org/indexnow'));
   assert(tool.includes("if (cmd === 'plan')") && tool.includes('--dry-run'), 'plan before deploy, send only after (owner-run)');
 });
+
+// ── Assets and the approval page (W-16, W-20) ─────────────────────────────────────────────────────────────────────────
+
+Deno.test('W-16: founder.jpg is a small square image for the 96 px circle (was 400,152 bytes, 1187x1200)', () => {
+  const b = Deno.readFileSync(new URL('founder.jpg', root));
+  assert(b.length < 20000, `${b.length} bytes`);
+  // JPEG SOFn frame header: height and width (big-endian) follow the 0xFFC0/0xFFC2 marker.
+  let i = 2; let w = 0, h = 0;
+  while (i < b.length) { const m = b[i + 1]; const len = (b[i + 2] << 8) | b[i + 3]; if (m === 0xc0 || m === 0xc2) { h = (b[i + 5] << 8) | b[i + 6]; w = (b[i + 7] << 8) | b[i + 8]; break; } i += 2 + len; }
+  assertEquals([w, h], [192, 192]);
+  for (const p of HOME) assert(read(p).includes('<img src="founder.jpg" width="96" height="96" loading="lazy"'), `${p}: same 96 px slot`);
+});
+
+Deno.test('W-20: the no-token approval page sets its own font at zero specificity and has a favicon; the approval script is untouched', () => {
+  const p = read('p/index.html');
+  assert(p.includes(":where(html) { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }"));
+  assert(p.indexOf('<style id="doc-css"></style>') < p.indexOf(':where(html)'), 'after doc-css in source, but :where() keeps the proposal CSS in charge');
+  assert(p.includes('<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">'));
+  assert(p.includes("var API = 'https://api.talkestimate.com/functions/v1/get-public-proposal';"), 'same endpoint');
+  assert(!/googletagmanager|analytics\.js/.test(p), 'still no analytics on a page with a secret token');
+});

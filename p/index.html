@@ -10,9 +10,12 @@
 <meta name="robots" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <title>Estimate · TalkEstimate</title>
+<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png">
 <style id="doc-css"></style>
 <style>
   body { background: #fff; }
+  /* G W-20: the page's own text never falls back to Times. Zero specificity (:where), so the proposal's CSS (doc-css) still wins. */
+  :where(html) { font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   .approve-box { max-width: 640px; margin: 0 auto; padding: 0 22px 48px; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
   .approve-btn { display: block; width: 100%; padding: 18px; border: 0; border-radius: 12px; background: #15803D; color: #fff; font-size: 17px; font-weight: 800; cursor: pointer; }
   .approve-btn:disabled { opacity: .6; }
