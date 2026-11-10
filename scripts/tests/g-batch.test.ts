@@ -56,3 +56,14 @@ Deno.test('W-02: support says the app is not public yet before it points app use
   assert(!/To buy Starter|Para comprar Starter/.test(s), 'no unconditional "buy Starter" instruction');
   assertEquals((s.match(/Last updated: November 10, 2026/g) ?? []).length, 1);
 });
+
+// ── Style (W-19) ──────────────────────────────────────────────────────────────────────────────────────────────────────
+
+Deno.test('W-19: the home pages use few em dashes in visible text (was 32 each); the rest sit on price-coordinated lines', () => {
+  for (const p of HOME) {
+    const html = read(p);
+    const text = html.slice(html.indexOf('<body')).replace(/<script[\s\S]*?<\/script>/g, '').replace(/<!--[\s\S]*?-->/g, '').replace(/<[^>]+>/g, ' ');
+    const n = (text.match(/—/g) ?? []).length;
+    assert(n <= 8, `${p}: ${n} em dashes in visible text`);
+  }
+});
