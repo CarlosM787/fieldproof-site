@@ -31,3 +31,11 @@ Deno.test('option B: the account page never shows the Start Starter button while
   // The manage button still works for anyone who already has billing (none today).
   assert(js.includes("show('manage', hasBilling && !p.paymentProblem);"));
 });
+
+Deno.test('option B labels (Advisor pass 12): Terms and Privacy carry no early-access label; no obligation text changed', () => {
+  const terms = read('terms.html'), privacy = read('privacy.html');
+  assert(terms.includes('Last updated: November 10, 2026 · Before launch') && terms.includes('<h2>Pricing before launch</h2>'));
+  assert(privacy.includes('<b>Formulario de la lista de espera (este sitio web):</b>'));
+  for (const [p, h] of [['terms.html', terms], ['privacy.html', privacy]] as const) assert(!/early access|acceso anticipado/i.test(h), p);
+});
+
