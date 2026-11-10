@@ -32,7 +32,9 @@ Deno.test('no public page shows an old price ($19.99, $49.99 or $29), outside th
     const m = html.match(OLD);
     assert(!m, `${p} still shows ${m?.[0]}`);
   }
-  assert(!OLD.test(read('assets/account.js').replace(/var LEGACY_PRICE = '\$29';/, '')), 'account.js shows an old price');
+  // Doc 35 §E row 4 (post-cutover batch): no exception any more; the legacy-plan message names no price.
+  assert(!OLD.test(read('assets/account.js')), 'account.js shows an old price');
+  assert(!/LEGACY_PRICE/.test(read('assets/account.js')), 'LEGACY_PRICE is gone');
 });
 
 Deno.test('home pages EN and ES show $20 Starter and $35 Pro in the strip, the plan cards and the closing line', () => {

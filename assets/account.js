@@ -25,7 +25,6 @@
   // Public state B (Carlos's D03 pick, V5): no plan is sold until launch. Flip to true at launch; the server still
   // decides everything (create-checkout / webhook), this only hides the button.
   var STARTER_PURCHASE_OPEN = false;
-  var LEGACY_PRICE = '$29';
   var AI = { free: 3, starter: 40, pro: 150 };
 
   var T = {
@@ -54,7 +53,7 @@
       subscribedBody: 'Thanks for subscribing! It renews every month until you cancel.',
       subscribedTrial: 'You’re subscribed. Your free trial continues until {date}.',
       legacy: 'Your original plan — active',
-      legacyBody: 'You’re on the plan you signed up for, at {price}/month.',
+      legacyBody: 'You’re on the plan you signed up for. Nothing changes for you.',
       pastDue: 'There’s a problem with your plan’s payment. Your work is safe and nothing is blocked yet. Update your card in Update payment.',
       founding: 'Owner account — no charge',
       starterTitle: 'Starter — {price}/month',
@@ -109,7 +108,7 @@
       subscribedBody: '¡Gracias por suscribirte! Se renueva cada mes hasta que canceles.',
       subscribedTrial: 'Ya estás suscrito. Tu prueba gratis sigue hasta el {date}.',
       legacy: 'Tu plan original — activo',
-      legacyBody: 'Estás en el plan con el que te suscribiste, a {price} al mes.',
+      legacyBody: 'Estás en el plan con el que te suscribiste. Para ti no cambia nada.',
       pastDue: 'Hay un problema con el pago de tu plan. Tu trabajo está seguro y nada está bloqueado todavía. Actualiza tu tarjeta en Actualizar pago.',
       founding: 'Cuenta del dueño — sin cargo',
       starterTitle: 'Starter — {price} al mes',
@@ -306,7 +305,7 @@
     show('plan-box', true);
     var title = '', body = '';
     if (p.source === 'founding') { title = T.founding; }
-    else if (p.source === 'legacy') { title = T.legacy; body = fmt(T.legacyBody, { price: LEGACY_PRICE }); }
+    else if (p.source === 'legacy') { title = T.legacy; body = T.legacyBody; }
     else if (p.source === 'subscription') {
       title = fmt(T.subscribed, { plan: p.plan === 'pro' ? 'Pro' : 'Starter' });
       body = trialDays(prof.trial_ends_at, now) > 0 ? fmt(T.subscribedTrial, { date: longDate(new Date(Date.parse(prof.trial_ends_at))) }) : T.subscribedBody;
