@@ -48,6 +48,7 @@
       free: 'You’re on Free',
       freeBody: 'Your estimates, prices and records are all here. Manual work is free for good; the AI organizes {n} jobs a month.',
       preview: 'Free trial — {n} days left',
+      previewOne: 'Free trial — {n} day left',
       previewBody: 'Everything is unlocked, including {ai} AI jobs this month. Then you move to Free on your own: no card, no charge.',
       subscribed: '{plan} — active',
       subscribedBody: 'Thanks for subscribing! It renews every month until you cancel.',
@@ -103,6 +104,7 @@
       free: 'Estás en Gratis',
       freeBody: 'Tus estimados, precios y registros están aquí. El trabajo manual es gratis para siempre; la IA organiza {n} trabajos al mes.',
       preview: 'Prueba gratis — te quedan {n} días',
+      previewOne: 'Prueba gratis — te queda {n} día',
       previewBody: 'Todo está abierto, incluidos {ai} trabajos con IA este mes. Después pasas a Gratis solo: sin tarjeta, sin cobro.',
       subscribed: '{plan} — activo',
       subscribedBody: '¡Gracias por suscribirte! Se renueva cada mes hasta que canceles.',
@@ -310,7 +312,7 @@
       title = fmt(T.subscribed, { plan: p.plan === 'pro' ? 'Pro' : 'Starter' });
       body = trialDays(prof.trial_ends_at, now) > 0 ? fmt(T.subscribedTrial, { date: longDate(new Date(Date.parse(prof.trial_ends_at))) }) : T.subscribedBody;
     }
-    else if (p.source === 'trial') { title = fmt(T.preview, { n: p.trialDaysLeft }); body = fmt(T.previewBody, { ai: AI.pro }); }
+    else if (p.source === 'trial') { title = fmt(p.trialDaysLeft === 1 ? T.previewOne : T.preview, { n: p.trialDaysLeft }); body = fmt(T.previewBody, { ai: AI.pro }); }
     else { title = T.free; body = fmt(T.freeBody, { n: AI.free }); }
     el('plan-title').textContent = title;
     el('plan-body').textContent = body;
