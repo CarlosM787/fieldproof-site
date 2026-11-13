@@ -35,6 +35,10 @@ const CARDS = [
   // the subtotal of all 5 ($285 + $279 + $144 + $86.40 + $60 = $854.40).
   ['og-template-en', 'en', 'Free estimate template: *fill it in, print it.*', 'Estimate #1001 · bathroom ceiling', [['Replace water-damaged drywall', '$285.00'], ['Tape, mud, sand · 4.5 hr', '$279.00'], ['Prime & paint · 64 sq ft', '$144.00'], ['Subtotal · 5 lines', '$854.40', 'total']], 'free'],
   ['og-template-es', 'es', 'Plantilla de estimado gratis: *llénala e imprímela.*', 'Estimado #1001 · techo del baño', [['Reemplazar drywall dañado', '$285.00'], ['Cinta, masilla, lijar · 4.5 h', '$279.00'], ['Sellar y pintar · 64 pies²', '$144.00'], ['Subtotal · 5 líneas', '$854.40', 'total']], 'free'],
+  // The change order template's own example (tools/assets/change-order-template.js EXAMPLE_LINES): change order #1 on
+  // estimate #1001 above. $854.40 original + $377.60 added work ($140 + 2 × $62 + $28.60 + $85) − a $42.00 credit = $1,190.00.
+  ['og-change-order-en', 'en', 'Free change order template: *write it down, get it signed.*', 'Change order #1 · estimate #1001', [['Original estimate', '$854.40'], ['Added work · 4 lines', '$377.60'], ['Credit · customer’s ceiling paint', '−$42.00'], ['New contract total', '$1,190.00', 'total']], 'free'],
+  ['og-change-order-es', 'es', 'Plantilla de orden de cambio: *por escrito y firmada.*', 'Orden de cambio #1 · estimado #1001', [['Estimado original', '$854.40'], ['Trabajo agregado · 4 líneas', '$377.60'], ['Crédito · pintura de la clienta', '−$42.00'], ['Nuevo total del contrato', '$1,190.00', 'total']], 'free'],
 ];
 // Optional: only the named cards, e.g.  node scripts/brand/og.mjs og-template-en og-template-es
 const ONLY = process.argv.slice(2);
