@@ -230,3 +230,8 @@ Deno.test('the script has the same words in both languages: form messages, the p
     assert(EXAMPLE[lang].bizEmail.endsWith('@example.com'));
   }
 });
+
+Deno.test("the printout carries no TalkEstimate credit (the estimate is the contractor's own document)", () => {
+  const js = Deno.readTextFileSync(new URL('../../tools/assets/estimate-template.js', import.meta.url));
+  assert(!/d-foot|talkestimate\.com['"]/.test(js.replace(/^\/\/.*$/gm, '')), 'no footer credit in the printed estimate');
+});

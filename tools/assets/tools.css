@@ -367,7 +367,6 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
 .est-doc .d-accept { font-size: 9pt; margin: 0; }
 .est-doc .d-sigrow { display: grid; grid-template-columns: 1fr 34%; gap: 10pt; margin-top: 26pt; }
 .est-doc .d-sigrow div { border-top: 1px solid #000; padding-top: 2pt; font-size: 8.5pt; color: #333; }
-.est-doc .d-foot { margin-top: 10pt; font-size: 7.5pt; color: #666; text-align: center; }
 .est-doc .d-fix { font-size: 12pt; font-weight: 700; }
 @media print {
   .est-page .crumbs, .est-page .page-head, .est-page .calc { display: none !important; }

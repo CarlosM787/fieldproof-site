@@ -64,7 +64,6 @@ const DOC = {
     sub: 'Subtotal', tax: (p) => `Sales tax (${p}%)`, taxBlank: 'Sales tax', total: 'Total', dep: 'Deposit', bal: 'Balance due',
     notes: 'Notes and terms', sigC: 'Contractor signature', sigK: 'Customer signature', sigDate: 'Date',
     accept: 'Customer acceptance: I accept this estimate, its price and its terms.',
-    foot: 'Estimate template from talkestimate.com',
     fix: 'This estimate can’t print yet: fix what’s marked on the form, then print again.',
   },
   es: {
@@ -75,7 +74,6 @@ const DOC = {
     sub: 'Subtotal', tax: (p) => `Impuesto sobre la venta (${p}%)`, taxBlank: 'Impuesto sobre la venta', total: 'Total', dep: 'Anticipo', bal: 'Saldo',
     notes: 'Notas y condiciones', sigC: 'Firma del contratista', sigK: 'Firma del cliente', sigDate: 'Fecha',
     accept: 'Aceptación del cliente: acepto este estimado, su precio y sus condiciones.',
-    foot: 'Plantilla de estimado de talkestimate.com',
     fix: 'Este estimado todavía no se puede imprimir: corrige lo que está marcado en el formulario y vuelve a imprimir.',
   },
 };
@@ -312,7 +310,7 @@ function renderDoc(s) {
 
   const sig = (label) => `<div class="d-sigrow"><div>${label}</div><div>${D.sigDate}</div></div>`;
   out.push(`<div class="d-sign"><div class="d-sig">${sig(D.sigC)}</div><div class="d-sig"><p class="d-accept">${D.accept}</p>${sig(D.sigK)}</div></div>`);
-  out.push(`<p class="d-foot">${D.foot}</p>`);
+  // No TalkEstimate credit on the printout: it is the contractor's own document for his customer (owner review 11/12).
   setHTML($('doc'), out.join(''));
 }
 
