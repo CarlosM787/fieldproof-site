@@ -60,7 +60,7 @@ const DOC = {
     locale: 'en-US', title: 'Estimate', no: 'Estimate #', date: 'Date', valid: 'Valid until',
     biz: 'Business', addr: 'Address', phone: 'Phone', email: 'Email', lic: 'License #',
     cust: 'Customer', name: 'Name', jobAddr: 'Job address', contact: 'Phone / email',
-    job: 'Job description', desc: 'Description', qty: 'Qty', unit: 'Unit', price: 'Unit price', amt: 'Amount',
+    job: 'Job description', desc: 'Description', qty: 'Qty', unit: 'Unit', price: 'Unit price', amt: 'Amount', flat: 'flat price',
     sub: 'Subtotal', tax: (p) => `Sales tax (${p}%)`, taxBlank: 'Sales tax', total: 'Total', dep: 'Deposit', bal: 'Balance due',
     notes: 'Notes and terms', sigC: 'Contractor signature', sigK: 'Customer signature', sigDate: 'Date',
     accept: 'Customer acceptance: I accept this estimate, its price and its terms.',
@@ -70,7 +70,7 @@ const DOC = {
     locale: 'es-US', title: 'Estimado', no: 'Núm. de estimado', date: 'Fecha', valid: 'Válido hasta',
     biz: 'Negocio', addr: 'Dirección', phone: 'Teléfono', email: 'Correo', lic: 'Núm. de licencia',
     cust: 'Cliente', name: 'Nombre', jobAddr: 'Dirección del trabajo', contact: 'Teléfono / correo',
-    job: 'Descripción del trabajo', desc: 'Descripción', qty: 'Cant.', unit: 'Unidad', price: 'Precio unitario', amt: 'Monto',
+    job: 'Descripción del trabajo', desc: 'Descripción', qty: 'Cant.', unit: 'Unidad', price: 'Precio unitario', amt: 'Monto', flat: 'precio fijo',
     sub: 'Subtotal', tax: (p) => `Impuesto sobre la venta (${p}%)`, taxBlank: 'Impuesto sobre la venta', total: 'Total', dep: 'Anticipo', bal: 'Saldo',
     notes: 'Notas y condiciones', sigC: 'Firma del contratista', sigK: 'Firma del cliente', sigDate: 'Fecha',
     accept: 'Aceptación del cliente: acepto este estimado, su precio y sus condiciones.',
@@ -289,7 +289,7 @@ function renderDoc(s) {
   else {
     body = s.lines.filter((l) => !l.empty).map((l) => {
       const flat = l.qty === null;
-      return `<tr><td>${esc(l.desc)}</td><td class="d-num">${flat ? '' : fmtNum(l.qty, 4)}</td><td>${esc(l.unit)}</td>`
+      return `<tr><td>${esc(l.desc)}</td><td class="d-num">${flat ? '' : fmtNum(l.qty, 4)}</td><td>${l.unit ? esc(l.unit) : flat ? D.flat : ''}</td>`
         + `<td class="d-num">${l.priceCents === null || flat ? '' : m(l.priceCents)}</td><td class="d-num">${l.cents === null ? '' : m(l.cents)}</td></tr>`;
     }).join('');
   }

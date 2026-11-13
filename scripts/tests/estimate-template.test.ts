@@ -101,7 +101,8 @@ Deno.test('estimate-template.js: no request, no storage, no beacon; analytics ca
   // Typed text reaches the page only through esc(); the printout is built locally and only window.print() sees it.
   assertEquals((JS.match(/window\.print\(\)/g) ?? []).length, 1);
   for (const m of JS.matchAll(/\$\{v\('([A-Za-z]+)'\)\}/g)) assert(false, `unescaped ${m[1]}`);
-  assert(/\$\{esc\(l\.desc\)\}/.test(JS) && /\$\{esc\(l\.unit\)\}/.test(JS));
+  // The unit is still escaped; since batch 4 a blank unit on a flat line prints the label D.flat instead.
+  assert(/\$\{esc\(l\.desc\)\}/.test(JS) && /\$\{l\.unit \? esc\(l\.unit\) : flat \? D\.flat : ''\}/.test(JS));
 });
 
 Deno.test('estimate-template.js: the money rules (flat price, qty x unit price, tax rounded once) go through estimate-math.js', () => {
@@ -234,4 +235,14 @@ Deno.test('the script has the same words in both languages: form messages, the p
 Deno.test("the printout carries no TalkEstimate credit (the estimate is the contractor's own document)", () => {
   const js = Deno.readTextFileSync(new URL('../../tools/assets/estimate-template.js', import.meta.url));
   assert(!/d-foot|talkestimate\.com['"]/.test(js.replace(/^\/\/.*$/gm, '')), 'no footer credit in the printed estimate');
+});
+
+Deno.test('Advisor pass 40 P3s: a flat line prints "flat price" / "precio fijo" in the Unit cell; the tax hint covers untaxed labor', () => {
+  const js = Deno.readTextFileSync(new URL('../../tools/assets/estimate-template.js', import.meta.url));
+  assert(js.includes("flat: 'flat price',") && js.includes("flat: 'precio fijo',"));
+  assert(js.includes("<td>${l.unit ? esc(l.unit) : flat ? D.flat : ''}</td>"), 'a typed unit wins; a blank unit on a flat line says flat price');
+  const en = Deno.readTextFileSync(new URL('../../tools/estimate-template.html', import.meta.url));
+  const es = Deno.readTextFileSync(new URL('../../es/herramientas/plantilla-de-estimado.html', import.meta.url));
+  assert(en.includes('In many states labor on a home repair isn’t taxed and only the materials are'));
+  assert(es.includes('En muchos estados la mano de obra en una reparación de casa no paga impuesto y solo los materiales sí'));
 });
