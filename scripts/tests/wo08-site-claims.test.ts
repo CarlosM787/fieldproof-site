@@ -40,7 +40,7 @@ Deno.test('every calculator reports tool_input_error with a field name only', ()
   const ui = read('tools/assets/tool-ui.js');
   assert(/track\('tool_input_error', \{ field_name: [^}]*\}\)/.test(ui));
   assert(!/tool_input_error[^\n]*\.value/.test(ui), 'never the typed value');
-  for (const f of ['markup-margin', 'labor-quote', 'labor-rate', 'painting-estimate']) {
+  for (const f of ['markup-margin', 'labor-quote', 'labor-rate', 'painting-estimate', 'estimate-template']) {
     const js = read(`tools/assets/${f}.js`);
     assert(js.includes('const reportInputError = makeErrorReporter(track);'), f);
     assert(js.includes('reportInputError();'), f);
@@ -48,7 +48,7 @@ Deno.test('every calculator reports tool_input_error with a field name only', ()
 });
 
 Deno.test('the example button counts as the first interaction (funnel: view → interaction → complete)', () => {
-  for (const f of ['markup-margin', 'labor-quote', 'labor-rate', 'painting-estimate']) {
+  for (const f of ['markup-margin', 'labor-quote', 'labor-rate', 'painting-estimate', 'estimate-template']) {
     const js = read(`tools/assets/${f}.js`);
     assert(/\$\('exampleBtn'\)\.addEventListener\('click', \(\) => \{ (firstTouch\(\);|if \(!touched\) \{ touched = true; track\('tool_first_interaction'\); \}) loadExample\(\); \}\);/.test(js), f);
   }

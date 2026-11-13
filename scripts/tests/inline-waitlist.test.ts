@@ -12,8 +12,8 @@ const JS = read('assets/waitlist.js');
 const HOME_EN = read('index.html');
 const HOME_ES = read('es.html');
 
-Deno.test('all 19 tool and guide pages are covered', () => {
-  assertEquals(PAGES.length, 19);
+Deno.test('all 21 tool and guide pages are covered', () => {
+  assertEquals(PAGES.length, 21); // V6 batch 3: + the estimate template (EN + ES)
 });
 
 for (const p of PAGES) {

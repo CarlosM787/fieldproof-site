@@ -11,7 +11,7 @@ const PAGES = [...list('tools/'), ...list('guides/'), ...list('es/herramientas/'
 const CSS = read('tools/assets/tools.css');
 
 Deno.test('every tool/guide nav button: compact on phones, full label kept for screen readers', () => {
-  assertEquals(PAGES.length, 19);
+  assertEquals(PAGES.length, 21); // V6 batch 3: + the estimate template (EN + ES)
   for (const p of PAGES) {
     const nav = read(p).split('</nav>')[0];
     const want = p.startsWith('es/')

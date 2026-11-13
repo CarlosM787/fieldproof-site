@@ -30,6 +30,9 @@ const PAGES = [
   // SEO guides 2026-11 (the ES-only /es/guias/estimado-en-ingles is checked in seo-guides-2026-11.test.ts: it has no English twin)
   { file: 'guides/how-to-write-an-estimate.html', url: '/guides/how-to-write-an-estimate', alt: '/es/guias/como-hacer-un-estimado', lang: 'en' },
   { file: 'es/guias/como-hacer-un-estimado.html', url: '/es/guias/como-hacer-un-estimado', alt: '/guides/how-to-write-an-estimate', lang: 'es' },
+  // V6 batch 3: free printable estimate template (estimate-template.test.ts checks the template itself)
+  { file: 'tools/estimate-template.html', url: '/tools/estimate-template', alt: '/es/herramientas/plantilla-de-estimado', lang: 'en' },
+  { file: 'es/herramientas/plantilla-de-estimado.html', url: '/es/herramientas/plantilla-de-estimado', alt: '/tools/estimate-template', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
@@ -182,16 +185,16 @@ Deno.test('painting pages: no coverage or paint price is pre-filled or claimed a
   }
 });
 
-// G W-21 (2026-11-10): the undated "Coming next: Free estimate template" card is removed until the template ships.
-Deno.test('directories: the two Release B tools are live cards; no permanent "coming next" card', () => {
-  for (const [f, links, soon] of [
-    ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor', '/tools/labor-cost-per-hour-calculator'], 'Free estimate template'],
-    ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra', '/es/herramientas/calculadora-costo-hora-mano-de-obra'], 'Plantilla de estimado gratis'],
+// G W-21 (2026-11-10): the undated "Coming next: Free estimate template" card was removed until the template shipped.
+// V6 batch 3 ships it: both hubs now link it as a live card, and there is still no "coming next" card.
+Deno.test('directories: the Release B tools and the estimate template are live cards; no "coming next" card', () => {
+  for (const [f, links] of [
+    ['tools/index.html', ['/tools/painting-estimate-calculator', '/tools/labor-job-quote-calculator', '/guides/how-to-estimate-a-paint-job', '/guides/how-to-price-labor', '/tools/labor-cost-per-hour-calculator', '/tools/estimate-template']],
+    ['es/herramientas/index.html', ['/es/herramientas/calculadora-estimado-pintura', '/es/herramientas/calculadora-mano-de-obra-cotizacion', '/es/guias/como-estimar-pintura', '/es/guias/como-cobrar-mano-de-obra', '/es/herramientas/calculadora-costo-hora-mano-de-obra', '/es/herramientas/plantilla-de-estimado']],
   ] as const) {
     const html = read(f);
     for (const l of links) assert(html.includes(`<a class="card" href="${l}"`), `${f}: no live card for ${l}`);
     assert(!html.includes('class="card soon"'), `${f}: no coming-next card`);
-    assert(!html.includes(soon), `${f}: the unshipped template is not advertised`);
   }
 });
 

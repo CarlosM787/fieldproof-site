@@ -178,7 +178,7 @@ const fileFor = (loc: string) => {
 };
 
 Deno.test('W-09: every sitemap page has a title of at most 60 characters and a description of at most 160', () => {
-  assertEquals(urls.length, 25); // +3 SEO guides 2026-11 (write an estimate EN/ES, estimado en inglés)
+  assertEquals(urls.length, 27); // +3 SEO guides 2026-11 (write an estimate EN/ES, estimado en inglés); +2 estimate template (V6 batch 3)
   for (const { loc } of urls) {
     const h = read(fileFor(loc));
     const t = decode(/<title>([^<]+)<\/title>/.exec(h)![1]);
@@ -215,7 +215,8 @@ const PLAN_PRICE = /\$\s?\d[\d.,]*\s?\/\s?(mo|month|mes)\b/i;
 const plain = (s: string) => decode(s.replace(/<[^>]+>/g, '')).replace(/\s+/g, ' ').trim();
 const FAQ_PAGES = ['index.html', 'es.html', 'tools/markup-margin-calculator.html', 'tools/painting-estimate-calculator.html', 'tools/labor-job-quote-calculator.html',
   'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
-  'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html'];
+  'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
+  'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html'];
 
 Deno.test('W-10: FAQPage data on the home and calculator pages says exactly what the visible FAQ says, never a plan price', () => {
   for (const p of FAQ_PAGES) {
@@ -284,8 +285,13 @@ Deno.test('W-20: the no-token approval page sets its own font at zero specificit
 
 // ── Tools hub and calculator sources (W-21, W-22) ────────────────────────────────────────────────────────────────────
 
-Deno.test('W-21: neither tools hub advertises the unshipped estimate template (tools-pages.test.ts pins the cards)', () => {
-  for (const p of ['tools/index.html', 'es/herramientas/index.html']) assert(!/Coming next|Lo que viene|card soon|estimate template|Plantilla de estimado/i.test(read(p)), p);
+// V6 batch 3: the estimate template has shipped, so the hubs name it now, as a live card only (tools-pages.test.ts pins the cards).
+Deno.test('W-21: neither tools hub has a "coming next" card; the estimate template appears only as its live card', () => {
+  for (const [p, href] of [['tools/index.html', '/tools/estimate-template'], ['es/herramientas/index.html', '/es/herramientas/plantilla-de-estimado']]) {
+    const h = read(p);
+    assert(!/Coming next|Lo que viene|card soon/i.test(h), p);
+    assert(h.includes(`<a class="card" href="${href}"`), `${p}: live card`);
+  }
 });
 
 Deno.test('W-22: the Idaho workers\' comp rates are labelled as one state\'s example, not Arizona\'s, in EN and ES', () => {
@@ -300,7 +306,7 @@ Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resa
   const es = ['es.html', 'es/herramientas/index.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
     'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
     'es/guias/markup-vs-margen.html', 'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html',
-    'es/guias/como-hacer-un-estimado.html', 'es/guias/estimado-en-ingles.html'];
+    'es/guias/como-hacer-un-estimado.html', 'es/guias/estimado-en-ingles.html', 'es/herramientas/plantilla-de-estimado.html'];
   for (const p of es) assert(!/rec[aá]mara|\btroca|resan|zoclo|nom[aá]s\b/i.test(read(p)), p);
   assert(read('es.html').includes('La habitación principal, doce por catorce'));
   assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
@@ -326,7 +332,7 @@ Deno.test('CLS: every page that loads analytics.js reserves the band space in <h
     if (e.isDirectory) { if (!['scripts', 'node_modules', '.git', '.cf-dist', '.wrangler', '.well-known'].includes(e.name)) walk(p); } else if (p.endsWith('.html')) pages.push(p); } };
   walk('');
   const withGa = pages.filter((p) => read(p).includes('src="/analytics.js"'));
-  assertEquals(withGa.length, 26); // +3 SEO guides 2026-11
+  assertEquals(withGa.length, 28); // +3 SEO guides 2026-11; +2 estimate template (V6 batch 3)
   for (const p of withGa) {
     const h = read(p);
     const i = h.indexOf("document.documentElement.classList.add('te-ask')");
@@ -366,7 +372,7 @@ Deno.test('support.html is linked from every shared footer (EN -> /support.html,
     'tools/labor-job-quote-calculator.html', 'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html',
     'es/herramientas/calculadora-estimado-pintura.html', 'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
     'guides/markup-vs-margin.html', 'guides/how-to-estimate-a-paint-job.html', 'guides/how-to-price-labor.html', 'es/guias/markup-vs-margen.html',
-    'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html', ...LEGAL];
+    'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html', 'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html', ...LEGAL];
   for (const p of pages) {
     const h = read(p); const foot = h.slice(h.indexOf('<footer'), h.indexOf('</footer>'));
     const es = h.includes('<html lang="es"');
