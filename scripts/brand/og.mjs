@@ -31,7 +31,13 @@ const CARDS = [
   ['og-painting-es', 'es', 'Estimado de pintura: *galones, mano de obra, precio.*', 'Recámara de 12 × 11 pies, 2 manos', [['Área a pintar', '314 sqft'], ['Galones a comprar', '3 gal'], ['Mano de obra · 2 × 6 h', '$384.00'], ['Precio de venta', '$820.59', 'total']], 'free'],
   ['og-labor-en', 'en', 'Price the labor. *Quote the whole job.*', 'Siding repair, two-person crew', [['Labor · 18 crew hours', '$594.00'], ['Materials, travel, disposal', '$401.00'], ['Contingency 10%', '$99.50'], ['Selling price', '$1,616.88', 'total']], 'free'],
   ['og-labor-es', 'es', 'Cobra bien la mano de obra. *Cotiza todo el trabajo.*', 'Reparación de siding, 2 personas', [['Mano de obra · 18 horas', '$594.00'], ['Materiales, traslado, escombro', '$401.00'], ['Imprevistos 10%', '$99.50'], ['Precio de venta', '$1,616.88', 'total']], 'free'],
+  // The estimate template's own example (tools/assets/estimate-template.js EXAMPLE_LINES): 3 of its 5 lines and
+  // the subtotal of all 5 ($285 + $279 + $144 + $86.40 + $60 = $854.40).
+  ['og-template-en', 'en', 'Free estimate template: *fill it in, print it.*', 'Estimate #1001 · bathroom ceiling', [['Replace water-damaged drywall', '$285.00'], ['Tape, mud, sand · 4.5 hr', '$279.00'], ['Prime & paint · 64 sq ft', '$144.00'], ['Subtotal · 5 lines', '$854.40', 'total']], 'free'],
+  ['og-template-es', 'es', 'Plantilla de estimado gratis: *llénala e imprímela.*', 'Estimado #1001 · techo del baño', [['Reemplazar drywall dañado', '$285.00'], ['Cinta, masilla, lijar · 4.5 h', '$279.00'], ['Sellar y pintar · 64 pies²', '$144.00'], ['Subtotal · 5 líneas', '$854.40', 'total']], 'free'],
 ];
+// Optional: only the named cards, e.g.  node scripts/brand/og.mjs og-template-en og-template-es
+const ONLY = process.argv.slice(2);
 
 const html = ([, lang, head, title, rows, foot]) => `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><style>
 @font-face{font-family:B;src:${font(800)} format("woff2");font-weight:800}
@@ -67,6 +73,7 @@ h1 em{font-style:normal;color:#FFC52E}
 mkdirSync(path.join(ROOT, 'assets/og'), { recursive: true });
 const browser = await puppeteer.launch({ executablePath: 'C:/Program Files/Google/Chrome/Application/chrome.exe', headless: true });
 for (const card of CARDS) {
+  if (ONLY.length && !ONLY.includes(card[0])) continue;
   const page = await browser.newPage();
   await page.setViewport({ width: 1200, height: 630, deviceScaleFactor: 1 });
   await page.setContent(html(card), { waitUntil: 'load' });
