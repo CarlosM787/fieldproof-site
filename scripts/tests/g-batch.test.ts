@@ -216,7 +216,7 @@ const plain = (s: string) => decode(s.replace(/<[^>]+>/g, '')).replace(/\s+/g, '
 const FAQ_PAGES = ['index.html', 'es.html', 'tools/markup-margin-calculator.html', 'tools/painting-estimate-calculator.html', 'tools/labor-job-quote-calculator.html',
   'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
   'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
-  'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html'];
+  'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html', 'tools/change-order-template.html', 'es/herramientas/plantilla-orden-de-cambio.html'];
 
 Deno.test('W-10: FAQPage data on the home and calculator pages says exactly what the visible FAQ says, never a plan price', () => {
   for (const p of FAQ_PAGES) {
@@ -306,7 +306,7 @@ Deno.test('Spanish pages avoid Mexico-only words (recámara, troca, resanar/resa
   const es = ['es.html', 'es/herramientas/index.html', 'es/herramientas/calculadora-markup-margen.html', 'es/herramientas/calculadora-estimado-pintura.html',
     'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
     'es/guias/markup-vs-margen.html', 'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html',
-    'es/guias/como-hacer-un-estimado.html', 'es/guias/estimado-en-ingles.html', 'es/herramientas/plantilla-de-estimado.html'];
+    'es/guias/como-hacer-un-estimado.html', 'es/guias/estimado-en-ingles.html', 'es/herramientas/plantilla-de-estimado.html', 'es/herramientas/plantilla-orden-de-cambio.html'];
   for (const p of es) assert(!/rec[aá]mara|\btroca|resan|zoclo|nom[aá]s\b/i.test(read(p)), p);
   assert(read('es.html').includes('La habitación principal, doce por catorce'));
   assert(read('es/guias/como-estimar-pintura.html').includes('una habitación de 12 × 11 pies'));
@@ -332,7 +332,7 @@ Deno.test('CLS: every page that loads analytics.js reserves the band space in <h
     if (e.isDirectory) { if (!['scripts', 'node_modules', '.git', '.cf-dist', '.wrangler', '.well-known'].includes(e.name)) walk(p); } else if (p.endsWith('.html')) pages.push(p); } };
   walk('');
   const withGa = pages.filter((p) => read(p).includes('src="/analytics.js"'));
-  assertEquals(withGa.length, 28); // +3 SEO guides 2026-11; +2 estimate template (V6 batch 3)
+  assertEquals(withGa.length, 30); // +3 SEO guides 2026-11; +2 estimate template (V6 batch 3); +2 change order template (V6 batch 6)
   for (const p of withGa) {
     const h = read(p);
     const i = h.indexOf("document.documentElement.classList.add('te-ask')");
@@ -372,7 +372,8 @@ Deno.test('support.html is linked from every shared footer (EN -> /support.html,
     'tools/labor-job-quote-calculator.html', 'tools/labor-cost-per-hour-calculator.html', 'es/herramientas/calculadora-markup-margen.html',
     'es/herramientas/calculadora-estimado-pintura.html', 'es/herramientas/calculadora-mano-de-obra-cotizacion.html', 'es/herramientas/calculadora-costo-hora-mano-de-obra.html',
     'guides/markup-vs-margin.html', 'guides/how-to-estimate-a-paint-job.html', 'guides/how-to-price-labor.html', 'es/guias/markup-vs-margen.html',
-    'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html', 'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html', ...LEGAL];
+    'es/guias/como-estimar-pintura.html', 'es/guias/como-cobrar-mano-de-obra.html', 'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html',
+    'tools/change-order-template.html', 'es/herramientas/plantilla-orden-de-cambio.html', ...LEGAL];
   for (const p of pages) {
     const h = read(p); const foot = h.slice(h.indexOf('<footer'), h.indexOf('</footer>'));
     const es = h.includes('<html lang="es"');

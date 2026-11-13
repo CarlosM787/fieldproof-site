@@ -372,3 +372,16 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
   .est-page .crumbs, .est-page .page-head, .est-page .calc { display: none !important; }
   .est-page > .wrap { padding: 0; max-width: none; }
 }
+
+/* V6 batch 6: the free change order template (tools/change-order-template, es/herramientas/plantilla-orden-de-cambio)
+   reuses the estimate template's page, line cards and printed document (main.est-page, .est-line, .est-doc). Only what
+   a change order adds: the Added work / Credit picker on each line, a credit line marked on screen and in print, the
+   second totals table (where the contract stands) and the hint under a blank form's lines. */
+.est-line .est-kind { margin-top: 2px; gap: 4px; }
+.est-line .est-kind > label { font-size: 14px; }
+.est-line .est-kind select { font-size: 17px; padding: 10px; min-height: 46px; }
+.est-line.est-credit { border-left: 4px solid var(--red); }
+.est-line.est-credit .est-amt { color: var(--red); }
+.est-doc .d-tag { font-weight: 800; }
+.est-doc .d-contract { margin-top: 8pt; }
+.est-doc .d-hint { font-size: 8.5pt; color: #333; margin: 3pt 0 0; }
