@@ -136,6 +136,8 @@
 
     /* Pricing */
     .price-card { max-width: 460px; margin: 44px auto 0; background: #fff; border: 2px solid var(--blue); border-radius: 20px; padding: 36px; text-align: center; box-shadow: 0 12px 40px rgba(29,78,216,.12); }
+    #join { scroll-margin-top: 84px; }
+    #join:target { box-shadow: 0 0 0 4px rgba(29,78,216,.22), 0 12px 40px rgba(29,78,216,.12); }
     .price-tag { font-size: 15px; font-weight: 800; color: var(--blue); letter-spacing: 1px; }
     .price-num { font-size: 56px; font-weight: 800; margin-top: 6px; }
     .price-num small { font-size: 18px; color: var(--muted); font-weight: 600; }
@@ -260,7 +262,7 @@
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
       <span class="lang-toggle" aria-label="Language"><a class="lt on" href="/">EN</a><a class="lt" href="es.html">ES</a></span>
-      <a class="btn" href="#pricing" data-cta="nav_get_app">Join the waitlist</a>
+      <a class="btn" href="#join" data-cta="nav_get_app">Join the waitlist</a>
     </div>
   </div>
 </nav>
@@ -273,7 +275,7 @@
       <h1>Talk the job.<br>Send the estimate <em>before you leave the driveway.</em></h1>
       <p class="sub">TalkEstimate turns your jobsite walkthrough into a priced, professional estimate your customer approves by text. Priced from <b>your</b> price list, never AI guesses.</p>
       <div class="hero-ctas">
-        <a class="btn big" href="#pricing" data-cta="hero_get_app">Join the waitlist</a>
+        <a class="btn big" href="#join" data-cta="hero_get_app">Join the waitlist</a>
         <a class="btn big ghost" href="#demo" data-cta="hero_see_demo">See it in action</a>
       </div>
       <div class="price-strip" aria-label="Pricing when it opens">
@@ -456,7 +458,7 @@
       </div>
     </div>
     <p class="plans-note">When it opens: 14 days with everything turned on, no card. After that you stay on Free unless you choose a plan, and you're never charged without subscribing. No per-user pricing. Your estimates and records stay yours on every plan, even if you stop paying.</p>
-    <div class="price-card">
+    <div class="price-card" id="join">
       <div class="price-tag">WAITLIST</div>
       <p style="margin-top:8px;color:var(--muted)">Not released yet — Android coming soon. Join the list and we'll set you up personally when it opens.</p>
       <form class="wl-form" id="wl">
@@ -502,7 +504,7 @@
   <div class="wrap center">
     <h2>Win the jobs you’re losing to faster replies.</h2>
     <p class="lead">Start free, no card. Starter $20/month when it opens; Pro $35/month after launch. Set up personally. Your records stay yours.</p>
-    <p style="margin-top:26px"><a class="btn big" href="#pricing" data-cta="footer_get_access">Join the waitlist</a></p>
+    <p style="margin-top:26px"><a class="btn big" href="#join" data-cta="footer_get_access">Join the waitlist</a></p>
   </div>
 </section>
 
