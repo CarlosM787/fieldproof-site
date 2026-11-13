@@ -45,7 +45,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/tools/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/"/>
@@ -54,7 +54,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/es/herramientas/</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/"/>
@@ -206,8 +206,26 @@
     <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/estimate-template"/>
   </url>
   <url>
+    <loc>https://talkestimate.com/tools/change-order-template</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/change-order-template"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/plantilla-orden-de-cambio"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/change-order-template"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/herramientas/plantilla-orden-de-cambio</loc>
+    <lastmod>2026-11-13</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/change-order-template"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/herramientas/plantilla-orden-de-cambio"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/tools/change-order-template"/>
+  </url>
+  <url>
     <loc>https://talkestimate.com/guides/how-to-write-an-estimate</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-write-an-estimate"/>
@@ -216,7 +234,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/es/guias/como-hacer-un-estimado</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-13</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-write-an-estimate"/>
