@@ -178,7 +178,7 @@ const fileFor = (loc: string) => {
 };
 
 Deno.test('W-09: every sitemap page has a title of at most 60 characters and a description of at most 160', () => {
-  assertEquals(urls.length, 27); // +3 SEO guides 2026-11 (write an estimate EN/ES, estimado en inglés); +2 estimate template (V6 batch 3)
+  assertEquals(urls.length, 29); // +3 SEO guides 2026-11 (write an estimate EN/ES, estimado en inglés); +2 estimate template (V6 batch 3); +2 change order template (V6 batch 6)
   for (const { loc } of urls) {
     const h = read(fileFor(loc));
     const t = decode(/<title>([^<]+)<\/title>/.exec(h)![1]);

@@ -119,7 +119,7 @@ for (const pg of PAGES) {
   Deno.test(`${pg.file}: title, description of at most 155 characters, canonical, hreflang pair, x-default English`, () => {
     const title = /<title>([^<]+)<\/title>/.exec(html)![1];
     const desc = /<meta name="description" content="([^"]+)"/.exec(html)![1];
-    assert(title.endsWith('| TalkEstimate') && title.length <= 70, title);
+    assert(title.endsWith('| TalkEstimate') && [...title].length <= 60, title); // g-batch W-09: at most 60
     assert(desc.length >= 110 && desc.length <= 155, `description ${desc.length}`);
     assert(html.includes(`<link rel="canonical" href="${SITE}${pg.url}" />`));
     assert(html.includes(`<link rel="alternate" hreflang="en" href="${SITE}/tools/change-order-template" />`));
