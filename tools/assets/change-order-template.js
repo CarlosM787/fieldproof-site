@@ -383,7 +383,7 @@ function doReset(skipFocus) {
 }
 
 // Example: change order #1 on the estimate template's own example job (estimate #1001, a water-damaged bathroom
-// ceiling, $854.40). Opening the ceiling showed more damage, the customer asked for a vanity light swap, and the
+// ceiling, $854.40). Opening the ceiling showed more damage, the customer asked for a new towel bar and toilet paper holder, and the
 // customer already has the ceiling paint (a credit). Every price is an example, not a market rate; the hourly rate is
 // the estimate's own $62. qty '' = a flat price. scripts/tests/change-order-template.test.ts recomputes these lines,
 // the original amount and the days with estimate-math.js and checks every figure the two pages print about them.
@@ -391,7 +391,7 @@ const EXAMPLE_LINES = [
   { kind: 'add', qty: '', unit: ['', ''], price: '140', text: ['Cut out and replace about 2 × 4 ft more water-damaged drywall, found once the ceiling was open', 'Cortar y reemplazar unos 2 × 4 pies más de drywall dañado por agua, que aparecieron al abrir el techo'] },
   { kind: 'add', qty: '2', unit: ['hr', 'h'], price: '62', text: ['Tape, mud and sand the larger patch', 'Poner cinta, masilla y lijar el parche más grande'] },
   { kind: 'add', qty: '1', unit: ['lot', 'lote'], price: '28.60', text: ['Materials: more drywall, tape and compound', 'Materiales: más drywall, cinta y masilla'] },
-  { kind: 'add', qty: '', unit: ['', ''], price: '85', text: ['Swap the vanity light for the customer’s new fixture, same box, no new wiring', 'Cambiar la lámpara del tocador por la lámpara nueva de la clienta, en la misma caja, sin cableado nuevo'] },
+  { kind: 'add', qty: '', unit: ['', ''], price: '85', text: ['Take down the old towel bar and toilet paper holder; put up the new ones the customer bought', 'Quitar el toallero y el portarrollos viejos; poner los nuevos que compró la clienta'] },
   { kind: 'credit', qty: '', unit: ['', ''], price: '42', text: ['Ceiling paint the customer already has', 'Pintura para techo que la clienta ya tiene'] },
 ];
 const EXAMPLE_ORIGINAL = '854.40';
@@ -401,13 +401,13 @@ const EXAMPLE = {
   en: {
     bizName: 'Example Home Repair LLC', bizPhone: '(555) 010-0123', bizEmail: 'office@example.com',
     coNo: '1', estNo: '1001', custName: 'Alex Johnson', custAddr: '123 Main St',
-    reason: 'Once we opened the ceiling, the water damage ran past the 4 × 4 ft area in estimate #1001: about 2 × 4 ft more drywall has to come out. The customer also asked us to swap the vanity light while we’re here, and already has the ceiling paint, so it comes off the price.',
+    reason: 'Once we opened the ceiling, the water damage ran past the 4 × 4 ft area in estimate #1001: about 2 × 4 ft more drywall has to come out. The customer also asked us to put up the new towel bar and toilet paper holder they bought while we’re here, and already has the ceiling paint, so it comes off the price.',
     notes: 'Everything else in estimate #1001 stays the same.\nPayment for this change is due with the balance, when the work is done.\nWe start the work on this change order once it’s signed.',
   },
   es: {
     bizName: 'Reparaciones Ejemplo LLC', bizPhone: '(555) 010-0123', bizEmail: 'oficina@example.com',
     coNo: '1', estNo: '1001', custName: 'Ana Torres', custAddr: '123 Main St',
-    reason: 'Al abrir el techo, el daño por agua pasaba del área de 4 × 4 pies del estimado #1001: hay que quitar unos 2 × 4 pies más de drywall. La clienta también nos pidió cambiar la lámpara del tocador ya que estamos aquí, y ya tiene la pintura para techo, así que se descuenta del precio.',
+    reason: 'Al abrir el techo, el daño por agua pasaba del área de 4 × 4 pies del estimado #1001: hay que quitar unos 2 × 4 pies más de drywall. La clienta también nos pidió poner el toallero y el portarrollos nuevos que compró, ya que estamos aquí, y ya tiene la pintura para techo, así que se descuenta del precio.',
     notes: 'Todo lo demás del estimado #1001 sigue igual.\nEste cambio se paga junto con el saldo, al terminar el trabajo.\nEmpezamos el trabajo de esta orden de cambio cuando esté firmada.',
   },
 }[LANG];
