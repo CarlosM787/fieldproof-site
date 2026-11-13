@@ -41,7 +41,7 @@ nav.top { position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-
 @media (max-width: 760px) { .nav-links a.hide-sm { display: none; } .logo-word { display: none; } .logo-mark { margin-right: 0; } .nav-links { gap: 12px; } .nav-links a.btn { padding: 10px 14px; font-size: 14px; } }
 /* Phones (V6 batch 2): the signup button stays, as a compact "Join" / "Únete"; the rest of the label stays readable
    for screen readers (visually hidden, not display:none). */
-@media (max-width: 480px) { .nav-links a.btn { padding: 8px 12px; font-size: 14px; white-space: nowrap; } .nav-links .nav-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; } }
+@media (max-width: 480px) { .nav-links a.btn { padding: 8px 12px; font-size: 14px; white-space: nowrap; min-height: 44px; display: inline-flex; align-items: center; } .nav-links .nav-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; } }
 
 /* Page head */
 .crumbs { font-size: 14px; color: var(--muted); padding-top: 22px; }
@@ -192,6 +192,9 @@ table.conv thead th { background: var(--surface); font-size: 13px; letter-spacin
 .cta-band .wl-inline .wl-consent { color: #94A3B8; font-size: 13px; line-height: 1.5; margin: 0; max-width: none; }
 .wl-inline .wl-consent a { color: #BFDBFE; font-weight: 700; }
 .hp { position: absolute; left: -9999px; width: 1px; height: 0; opacity: 0; overflow: hidden; }
+/* The sticky nav is 65 px tall: a jump to #join (nav button, or a link from elsewhere) must land the form BELOW it,
+   not under it (Advisor pass 37, P2-1). Same 84 px as the sticky result panel. */
+#join { scroll-margin-top: 84px; }
 @media (max-width: 720px) { .wl-inline { width: 100%; } }
 .faq { max-width: 760px; margin-top: 24px; }
 .faq details { border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 10px; background: #fff; }

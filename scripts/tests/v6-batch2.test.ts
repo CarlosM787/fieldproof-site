@@ -34,3 +34,17 @@ Deno.test('how-to-price-labor: the title carries "labor cost per hour" and stays
   assertEquals(t, 'How to Price Labor: Your Labor Cost per Hour | TalkEstimate');
   assert(/labor cost per hour/i.test(t) && t.length <= 65);
 });
+
+Deno.test('Advisor pass 37 P2-1: a jump to #join lands below the 65 px sticky nav; the phone button is 44 px tall', () => {
+  assert(CSS.includes('#join { scroll-margin-top: 84px; }'));
+  assert(CSS.includes('nav.top { position: sticky; top: 0;'), 'the nav this offsets');
+  assert(CSS.includes('.nav-links a.btn { padding: 8px 12px; font-size: 14px; white-space: nowrap; min-height: 44px;'));
+});
+
+Deno.test('Advisor pass 36 P3 guard: the inline form has no human-check (Turnstile) path, so the home site key must stay empty', () => {
+  // waitlist.js sends no turnstile_token. If anyone pastes a Turnstile site key into the home form, this test fails
+  // until waitlist.js gets the same token path (otherwise the server, once told to enforce, would refuse inline signups).
+  const js = read('assets/waitlist.js');
+  assert(!js.includes('turnstile_token'));
+  for (const p of ['index.html', 'es.html']) assert(read(p).includes("var TURNSTILE_SITE_KEY = '';"), p);
+});
