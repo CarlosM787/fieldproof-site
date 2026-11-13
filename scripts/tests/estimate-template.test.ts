@@ -243,6 +243,8 @@ Deno.test('Advisor pass 40 P3s: a flat line prints "flat price" / "precio fijo" 
   assert(js.includes("<td>${l.unit ? esc(l.unit) : flat ? D.flat : ''}</td>"), 'a typed unit wins; a blank unit on a flat line says flat price');
   const en = Deno.readTextFileSync(new URL('../../tools/estimate-template.html', import.meta.url));
   const es = Deno.readTextFileSync(new URL('../../es/herramientas/plantilla-de-estimado.html', import.meta.url));
-  assert(en.includes('In many states labor on a home repair isn’t taxed and only the materials are'));
-  assert(es.includes('En muchos estados la mano de obra en una reparación de casa no paga impuesto y solo los materiales sí'));
+  // Advisor pass 42 P2-1: inform, don't instruct (no "add a sales tax line" advice).
+  assert(en.includes('In many states labor on a home repair isn’t taxed, and in many the contractor pays the tax on materials when buying them. Your state’s rules (or your accountant) decide whether you add any tax line.'));
+  assert(es.includes('En muchos estados la mano de obra en una reparación de casa no paga impuesto, y en muchos el contratista paga el impuesto de los materiales al comprarlos. Las reglas de tu estado (o tu contador) deciden si agregas una línea de impuesto.'));
+  for (const h of [en, es]) assert(!/Sales tax on materials|Impuesto sobre materiales/.test(h), 'no instruction to bill a materials-tax line');
 });
