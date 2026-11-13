@@ -33,6 +33,9 @@ const PAGES = [
   // V6 batch 3: free printable estimate template (estimate-template.test.ts checks the template itself)
   { file: 'tools/estimate-template.html', url: '/tools/estimate-template', alt: '/es/herramientas/plantilla-de-estimado', lang: 'en' },
   { file: 'es/herramientas/plantilla-de-estimado.html', url: '/es/herramientas/plantilla-de-estimado', alt: '/tools/estimate-template', lang: 'es' },
+  // V6 batch 6: free printable change order template (change-order-template.test.ts checks the template itself)
+  { file: 'tools/change-order-template.html', url: '/tools/change-order-template', alt: '/es/herramientas/plantilla-orden-de-cambio', lang: 'en' },
+  { file: 'es/herramientas/plantilla-orden-de-cambio.html', url: '/es/herramientas/plantilla-orden-de-cambio', alt: '/tools/change-order-template', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
