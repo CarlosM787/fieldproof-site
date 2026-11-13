@@ -358,7 +358,7 @@ function renderDoc(s) {
 
   const sig = (label) => `<div class="d-sigrow"><div>${label}</div><div>${D.sigDate}</div></div>`;
   out.push(`<div class="d-sign"><div class="d-sig">${sig(D.sigC)}</div><div class="d-sig"><p class="d-accept">${D.accept}</p>${sig(D.sigK)}</div></div>`);
-  // No TalkEstimate credit on the printout: it is the contractor's own document for his customer (as on the estimate template).
+  // No TalkEstimate credit on the printout: it is the contractor's own document for their customer (as on the estimate template).
   setHTML($('doc'), out.join(''));
 }
 
