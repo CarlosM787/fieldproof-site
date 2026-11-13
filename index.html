@@ -203,6 +203,15 @@
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
     .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
     .foot a { color: var(--muted); }
+    /* V6 batch 7: real app screens (vc6 925f3ca test build, example data) */
+    #screens .shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 36px; text-align: left; }
+    #screens .shot { margin: 0; }
+    #screens .shot img { display: block; width: 100%; height: auto; border-radius: 26px; border: 6px solid #0B1220; background: #fff; box-shadow: 0 18px 40px rgba(16,24,40,.16); }
+    #screens .shot figcaption { margin-top: 12px; font-size: 15px; line-height: 1.45; color: var(--muted); }
+    #screens .shot figcaption b { color: var(--ink); }
+    #screens .shots-note { margin-top: 22px; font-size: 14px; color: var(--muted); }
+    #screens .shots:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; border-radius: 12px; }
+    @media (max-width: 900px) { #screens .shots { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding: 4px 4px 14px; } #screens .shot { flex: 0 0 min(62vw, 250px); scroll-snap-align: start; } }
   </style>
   <script type="application/ld+json">
   {
@@ -346,6 +355,20 @@
 </section>
 
 <!-- Demo video: hidden until VIDEO_URL is set at the bottom of this file. -->
+<section id="screens">
+  <div class="wrap center">
+    <h2>The real app, not a mockup</h2>
+    <p class="lead">Four screens from the Android test build, with example data.</p>
+    <div class="shots" tabindex="0" role="region" aria-label="App screens">
+      <figure class="shot"><img src="/assets/screens/en-1-price.webp" width="480" height="974" loading="lazy" decoding="async" alt="Price Estimate screen: three lines, each with its price and a Manual badge; total $1,005.00"><figcaption><b>Price it.</b> Every line shows its price and where it came from.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/en-2-preview.webp" width="480" height="974" loading="lazy" decoding="async" alt="Preview Estimate screen: the estimate as the customer will see it, with a choice of English or Español"><figcaption><b>Preview it.</b> What your customer will see, in English or Spanish.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/en-3-change.webp" width="480" height="974" loading="lazy" decoding="async" alt="Change Order screen: a faucet replacement priced from My Prices at $135.00, with Send for Approval (Text) and Copy Approval Link"><figcaption><b>Add a change.</b> Extra work priced from your list, sent for approval.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/en-4-invoice.webp" width="480" height="974" loading="lazy" decoding="async" alt="Invoice screen: Paid in Full, four lines including the change order; total $1,140.00"><figcaption><b>Get paid.</b> The invoice includes the change order. Mark it paid.</figcaption></figure>
+    </div>
+    <p class="shots-note">Real screenshots of the Android test build, November 2026. Harper Home Repair and its customer are made up. Not released yet.</p>
+  </div>
+</section>
+
 <section id="video" hidden>
   <div class="wrap center">
     <h2>See how TalkEstimate works</h2>

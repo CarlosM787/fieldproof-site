@@ -181,6 +181,15 @@
     footer { border-top: 1px solid var(--border); padding: 44px 0 56px; }
     .foot { display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; color: var(--muted); font-size: 14px; }
     .foot a { color: var(--muted); }
+    /* V6 batch 7: real app screens (vc6 925f3ca test build, example data) */
+    #screens .shots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 22px; margin-top: 36px; text-align: left; }
+    #screens .shot { margin: 0; }
+    #screens .shot img { display: block; width: 100%; height: auto; border-radius: 26px; border: 6px solid #0B1220; background: #fff; box-shadow: 0 18px 40px rgba(16,24,40,.16); }
+    #screens .shot figcaption { margin-top: 12px; font-size: 15px; line-height: 1.45; color: var(--muted); }
+    #screens .shot figcaption b { color: var(--ink); }
+    #screens .shots-note { margin-top: 22px; font-size: 14px; color: var(--muted); }
+    #screens .shots:focus-visible { outline: 3px solid var(--blue); outline-offset: 4px; border-radius: 12px; }
+    @media (max-width: 900px) { #screens .shots { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 16px; padding: 4px 4px 14px; } #screens .shot { flex: 0 0 min(62vw, 250px); scroll-snap-align: start; } }
   </style>
   <script type="application/ld+json">
   {
@@ -323,6 +332,20 @@
 </section>
 
 <!-- Video demo: oculto hasta configurar VIDEO_URL al final de este archivo. -->
+<section id="screens">
+  <div class="wrap center">
+    <h2>La app real, no una maqueta</h2>
+    <p class="lead">Cuatro pantallas de la versión de prueba para Android, con datos de ejemplo.</p>
+    <div class="shots" tabindex="0" role="region" aria-label="Pantallas de la app">
+      <figure class="shot"><img src="/assets/screens/es-1-price.webp" width="480" height="974" loading="lazy" decoding="async" alt="Pantalla Poner Precios: tres líneas, cada una con su precio y de dónde salió (Manual o Mi Precio); total $965.00"><figcaption><b>Ponle precio.</b> Cada línea muestra su precio y de dónde salió.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/es-2-preview.webp" width="480" height="974" loading="lazy" decoding="async" alt="Pantalla Ver Estimado: el estimado como lo verá tu cliente, con opción English o Español"><figcaption><b>Revísalo.</b> Lo que verá tu cliente, en inglés o en español.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/es-3-change.webp" width="480" height="974" loading="lazy" decoding="async" alt="Pantalla Orden de Cambio: cambio de llave del lavabo con Mi Precio, $126.00, con Enviar para Aprobar (Mensaje) y Copiar el Link de Aprobación"><figcaption><b>Agrega un cambio.</b> El trabajo extra con tus precios, enviado para aprobar.</figcaption></figure>
+      <figure class="shot"><img src="/assets/screens/es-4-invoice.webp" width="480" height="974" loading="lazy" decoding="async" alt="Pantalla Factura: Pagado completo, cuatro líneas con la orden de cambio incluida; total $1,091.00"><figcaption><b>Cobra.</b> La factura incluye la orden de cambio. Márcala como pagada.</figcaption></figure>
+    </div>
+    <p class="shots-note">Capturas reales de la versión de prueba para Android, noviembre de 2026. Pintura y Remodelación Ávila y su clienta son inventadas. Todavía no está disponible.</p>
+  </div>
+</section>
+
 <section id="video" hidden>
   <div class="wrap center">
     <h2>Mira cómo funciona TalkEstimate</h2>
