@@ -177,6 +177,20 @@ table.conv thead th { background: var(--surface); font-size: 13px; letter-spacin
 .cta-band p { color: #CBD5E1; margin-top: 8px; font-size: 16px; max-width: 560px; }
 .cta-band .note { font-size: 13px; color: #94A3B8; margin-top: 10px; }
 @media (max-width: 720px) { .cta-band { grid-template-columns: 1fr; padding: 24px 20px; } .cta-band .btn { text-align: center; } }
+/* Inline waitlist form in the CTA band (V6 batch 1): the home form's fields and endpoint, on the dark band. */
+.wl-inline { display: grid; gap: 10px; width: 340px; max-width: 100%; }
+.wl-inline input, .wl-inline select { padding: 13px 14px; border: 2px solid #334155; border-radius: 12px; font-size: 16px; font-family: inherit; width: 100%; background: #fff; color: var(--ink); min-height: 48px; }
+.wl-inline input:focus-visible, .wl-inline select:focus-visible, .wl-inline button:focus-visible { outline: 3px solid #93C5FD; outline-offset: 2px; }
+.wl-inline button { padding: 14px 16px; border: 0; border-radius: 12px; background: var(--blue); color: #fff; font-size: 16px; font-weight: 800; font-family: inherit; cursor: pointer; min-height: 48px; }
+.wl-inline button:hover { background: #2563EB; }
+.wl-inline button:disabled { opacity: .6; cursor: default; }
+.wl-inline .wl-msg { font-weight: 700; font-size: 15px; }
+.wl-inline .wl-msg:empty { display: none; }
+.wl-inline .wl-msg.ok { color: #86EFAC; } .wl-inline .wl-msg.err { color: #FCA5A5; }
+.cta-band .wl-inline .wl-consent { color: #94A3B8; font-size: 13px; line-height: 1.5; margin: 0; max-width: none; }
+.wl-inline .wl-consent a { color: #BFDBFE; font-weight: 700; }
+.hp { position: absolute; left: -9999px; width: 1px; height: 0; opacity: 0; overflow: hidden; }
+@media (max-width: 720px) { .wl-inline { width: 100%; } }
 .faq { max-width: 760px; margin-top: 24px; }
 .faq details { border: 1px solid var(--border); border-radius: 14px; padding: 16px 20px; margin-bottom: 10px; background: #fff; }
 .faq summary { font-weight: 700; cursor: pointer; font-size: 16px; }

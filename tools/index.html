@@ -53,6 +53,7 @@
   }
   </script>
   <script src="/analytics.js" defer></script>
+  <script src="/assets/waitlist.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
   <link rel="preload" href="/assets/fonts/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/assets/brand/brand.css" />
@@ -69,7 +70,7 @@
       <a class="hide-sm" href="/guides/markup-vs-margin" data-cta="nav_guide_markup_margin">Guide</a>
       <a class="hide-sm" href="/#how">The app</a>
       <span class="lang-toggle" aria-label="Language"><a class="lt on" href="/tools/" hreflang="en" lang="en">EN</a><a class="lt" href="/es/herramientas/" hreflang="es" lang="es">ES</a></span>
-      <a class="btn" href="/#pricing" data-cta="tools_nav_waitlist">Join the waitlist</a>
+      <a class="btn" href="#join" data-cta="tools_nav_waitlist">Join the waitlist</a>
     </div>
   </div>
 </nav>
@@ -145,7 +146,23 @@
           <p>TalkEstimate turns your jobsite walkthrough into a priced estimate from your own price list, and your customer approves it by text. You set every price; the AI only organizes what you said.</p>
           <p class="note">Not released yet — Android coming soon · built and tested on a real phone</p>
         </div>
-        <a class="btn" href="/#pricing" data-cta="tools_waitlist">Join the waitlist</a>
+        <form class="wl-inline" id="join" data-waitlist>
+          <label for="join-email" class="sr-only">Your email address</label>
+          <input type="email" id="join-email" name="email" placeholder="you@example.com" autocomplete="email" inputmode="email" required />
+          <label for="join-trade" class="sr-only">Your trade</label>
+          <select id="join-trade" name="trade" aria-label="Your trade">
+            <option value="">Your trade…</option>
+            <option>Handyman</option>
+            <option>Painting</option>
+            <option>Drywall</option>
+            <option>General / Remodel</option>
+            <option>Other</option>
+          </select>
+          <input class="hp" type="text" name="te_hp_x" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit" data-cta="tools_waitlist">Join the waitlist</button>
+          <div class="wl-msg" role="status" aria-live="polite"></div>
+          <p class="wl-consent">By joining, you agree to our <a href="/privacy.html">Privacy&nbsp;Policy</a>. No spam — we email you personally to get you set up.</p>
+        </form>
       </div>
     </div>
   </section>

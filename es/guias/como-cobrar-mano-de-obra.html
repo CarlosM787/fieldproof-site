@@ -51,6 +51,7 @@
   }
   </script>
   <script src="/analytics.js" defer></script>
+  <script src="/assets/waitlist.js" defer></script>
   <link rel="icon" type="image/svg+xml" href="/assets/brand/favicon.svg" />
   <link rel="preload" href="/assets/fonts/barlow-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin />
   <link rel="stylesheet" href="/assets/brand/brand.css" />
@@ -67,7 +68,7 @@
       <a class="hide-sm" href="/es/guias/como-cobrar-mano-de-obra" aria-current="page">Guía</a>
       <a class="hide-sm" href="/es.html#how">La app</a>
       <span class="lang-toggle" aria-label="Idioma"><a class="lt" href="/guides/how-to-price-labor" hreflang="en" lang="en">EN</a><a class="lt on" href="/es/guias/como-cobrar-mano-de-obra" hreflang="es" lang="es">ES</a></span>
-      <a class="btn" href="/es.html#pricing" data-cta="guide_nav_waitlist">Únete a la lista de espera</a>
+      <a class="btn" href="#join" data-cta="guide_nav_waitlist">Únete a la lista de espera</a>
     </div>
   </div>
 </nav>
@@ -208,7 +209,23 @@
           <p>TalkEstimate guarda tus propios precios y costos por hora en una lista y arma el estimado con ellos mientras hablas del trabajo — en español o inglés. La IA organiza lo que dijiste; nunca pone un precio.</p>
           <p class="note">Todavía no disponible — pronto en Android · construida y probada en un teléfono real</p>
         </div>
-        <a class="btn" href="/es.html#pricing" data-cta="guide_labor_waitlist">Únete a la lista de espera</a>
+        <form class="wl-inline" id="join" data-waitlist>
+          <label for="join-email" class="sr-only">Tu correo electrónico</label>
+          <input type="email" id="join-email" name="email" placeholder="tu@correo.com" autocomplete="email" inputmode="email" required />
+          <label for="join-trade" class="sr-only">Tu oficio</label>
+          <select id="join-trade" name="trade" aria-label="Tu oficio">
+            <option value="">Tu oficio…</option>
+            <option>Handyman</option>
+            <option>Pintura</option>
+            <option>Drywall</option>
+            <option>General / Remodelación</option>
+            <option>Otro</option>
+          </select>
+          <input class="hp" type="text" name="te_hp_x" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button type="submit" data-cta="guide_labor_waitlist">Únete a la lista de espera</button>
+          <div class="wl-msg" role="status" aria-live="polite"></div>
+          <p class="wl-consent">Al unirte, aceptas nuestra <a href="/privacy.html">Política de Privacidad</a>. Sin spam — te escribimos personalmente para configurarte.</p>
+        </form>
       </div>
       <div class="cards">
         <a class="card" href="/es/herramientas/calculadora-mano-de-obra-cotizacion" data-cta="guide_card_tool">

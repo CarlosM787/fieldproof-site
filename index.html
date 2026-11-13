@@ -624,7 +624,9 @@
         // happened. The one real lead event comes from the server itself, for accepted new leads only.
       } catch (err) {
         msg.className = 'wl-msg err';
-        msg.textContent = (err && err.message && err.message !== 'failed')
+        // Only the server's own message is shown; a network failure (a TypeError such as "Failed to fetch") shows
+        // the plain fallback, never the browser's raw text.
+        msg.textContent = (err && err.message && err.message !== 'failed' && !(err instanceof TypeError))
           ? err.message
           : 'Something went wrong — try again, or email support@talkestimate.com';
         track('form_submit_error', { form_name: 'waitlist' });

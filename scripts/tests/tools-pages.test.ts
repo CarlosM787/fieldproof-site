@@ -94,8 +94,12 @@ for (const pg of PAGES) {
     for (const m of html.matchAll(/<script[^>]*src="([^"]+)"/g)) assert(m[1].startsWith('/'), `external script ${m[1]}`);
     assert(!/supabase\.co|eyJhbGci|sk_live|sk_test|rk_live|whsec_/.test(html));
     for (const m of html.matchAll(/data-cta="[^"]*waitlist"[^>]*/g)) assert(m[0].length > 0);
+    // V6 batch 1: the waitlist is now IN the page (#join) and it is the existing one: /assets/waitlist.js posts to the
+    // same join-waitlist endpoint as the home form (inline-waitlist.test.ts checks the form and the script in detail).
     const wl = [...html.matchAll(/<a class="btn"[^>]*href="([^"]+)"[^>]*data-cta="[^"]*waitlist"/g)].map((m) => m[1]);
-    for (const h of wl) assert(h === '/#pricing' || h === '/es.html#pricing', h);
+    for (const h of wl) assert(h === '#join', h);
+    assert((html.match(/<form class="wl-inline" id="join" data-waitlist>/g) ?? []).length === 1, 'one inline waitlist form');
+    assert(html.includes('<script src="/assets/waitlist.js" defer></script>'));
   });
 
   Deno.test(`${pg.url}: no price promise (the $29 copy is untouched until the plan cutover)`, () => {
