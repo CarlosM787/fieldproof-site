@@ -38,8 +38,10 @@ nav.top { position: sticky; top: 0; background: rgba(255,255,255,.94); backdrop-
 .lang-toggle { display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
 .lang-toggle a.lt { padding: 7px 12px; font-weight: 800; font-size: 13px; color: var(--muted); text-decoration: none; box-shadow: none; }
 .lang-toggle a.lt.on { background: var(--blue); color: #fff; }
-@media (max-width: 480px) { .nav-links a.btn { display: none; } }
 @media (max-width: 760px) { .nav-links a.hide-sm { display: none; } .logo-word { display: none; } .logo-mark { margin-right: 0; } .nav-links { gap: 12px; } .nav-links a.btn { padding: 10px 14px; font-size: 14px; } }
+/* Phones (V6 batch 2): the signup button stays, as a compact "Join" / "Únete"; the rest of the label stays readable
+   for screen readers (visually hidden, not display:none). */
+@media (max-width: 480px) { .nav-links a.btn { padding: 8px 12px; font-size: 14px; white-space: nowrap; } .nav-links .nav-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; } }
 
 /* Page head */
 .crumbs { font-size: 14px; color: var(--muted); padding-top: 22px; }
