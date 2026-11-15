@@ -362,6 +362,7 @@ Deno.test('the social cards show the example: $854.40 + $335.60 − $250.00 = $9
     assert(card.includes(lang === 'es' ? "['Saldo', '$940.00', 'total']" : "['Balance due', '$940.00', 'total']"));
     // Advisor P3 (batch 10): the ES card names the payments line as the invoice page does ("Pagos recibidos", DOC.es.paid).
     if (lang === 'es') assert(card.includes(`['Pagos recibidos', '${MINUS}${usd(PAID)}']`) && !card.includes('Anticipo recibido'), 'es: Pagos recibidos');
+    if (lang === 'en') assert(card.includes(`['Payments received', '${MINUS}${usd(PAID)}']`) && !card.includes('Deposit received'), 'en: Payments received');
     assert(!/-\$|'-/.test(card), `${lang}: no hyphen used as a minus sign`);
     for (const m of card.matchAll(/\$\d[\d,]*\.\d\d/g)) assert([usd(EST_SUB), usd(CO_CHANGE), usd(PAID), usd(BALANCE)].includes(m[0]), `${lang}: ${m[0]}`);
   }
