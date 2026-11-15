@@ -42,10 +42,10 @@ const CARDS = [
   // The invoice template's own example (tools/assets/invoice-template.js EXAMPLE_LINES): the invoice for the same job.
   // Estimate #1001's 5 lines ($854.40) + change order #1 ($335.60) = $1,190.00, no tax; − the $250.00 deposit = $940.00.
   ['og-invoice-en', 'en', 'Free invoice template: *bill the whole job.*', 'Invoice #1001 · bathroom ceiling', [['Estimate #1001 · 5 lines', '$854.40'], ['Change order #1', '$335.60'], ['Deposit received', '−$250.00'], ['Balance due', '$940.00', 'total']], 'free'],
-  ['og-invoice-es', 'es', 'Plantilla de factura gratis: *cobra todo el trabajo.*', 'Factura #1001 · techo del baño', [['Estimado #1001 · 5 líneas', '$854.40'], ['Orden de cambio #1', '$335.60'], ['Anticipo recibido', '−$250.00'], ['Saldo', '$940.00', 'total']], 'free'],
+  ['og-invoice-es', 'es', 'Plantilla de factura gratis: *cobra todo el trabajo.*', 'Factura #1001 · techo del baño', [['Estimado #1001 · 5 líneas', '$854.40'], ['Orden de cambio #1', '$335.60'], ['Pagos recibidos', '−$250.00'], ['Saldo', '$940.00', 'total']], 'free'],
   // The labor quoting mistakes guide (guides/labor-quoting-mistakes, es/guias/errores-al-cotizar-mano-de-obra): the labor
   // guide's siding repair, quoted right at $1,616.88, and the three biggest drops on it (7 hours each instead of 9; the
-  // lead at his $28 wage instead of $42; no overhead share). scripts/tests/quoting-mistakes.test.ts recomputes them.
+  // lead at the $28 wage instead of $42; no overhead share). scripts/tests/quoting-mistakes.test.ts recomputes them.
   ['og-quoting-mistakes-en', 'en', 'Labor quoting mistakes: *what each one costs.*', 'Siding repair, two-person crew', [['Hoped-for hours, 7 not 9', '−$214.50'], ['Labor at the wage', '−$204.75'], ['No overhead share', '−$194.03'], ['Quoted right', '$1,616.88', 'total']], 'free'],
   ['og-quoting-mistakes-es', 'es', 'Errores al cotizar la mano de obra: *lo que cuestan.*', 'Reparación de siding, 2 personas', [['Horas que esperas, 7 y no 9', '−$214.50'], ['Mano de obra al sueldo', '−$204.75'], ['Sin gastos generales', '−$194.03'], ['Cotizada bien', '$1,616.88', 'total']], 'free'],
 ];
