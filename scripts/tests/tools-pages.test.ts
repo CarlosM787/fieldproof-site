@@ -36,6 +36,9 @@ const PAGES = [
   // V6 batch 6: free printable change order template (change-order-template.test.ts checks the template itself)
   { file: 'tools/change-order-template.html', url: '/tools/change-order-template', alt: '/es/herramientas/plantilla-orden-de-cambio', lang: 'en' },
   { file: 'es/herramientas/plantilla-orden-de-cambio.html', url: '/es/herramientas/plantilla-orden-de-cambio', alt: '/tools/change-order-template', lang: 'es' },
+  // V6 batch 8: free printable invoice template (invoice-template.test.ts checks the template itself)
+  { file: 'tools/invoice-template.html', url: '/tools/invoice-template', alt: '/es/herramientas/plantilla-de-factura', lang: 'en' },
+  { file: 'es/herramientas/plantilla-de-factura.html', url: '/es/herramientas/plantilla-de-factura', alt: '/tools/invoice-template', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
