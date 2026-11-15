@@ -67,14 +67,14 @@ for (const pg of PAGES) {
     const home = read(pg.lang === 'es' ? 'es.html' : 'index.html');
     if (pg.lang === 'es') {
       assert(home.includes('<figcaption><b>Cobra.</b> La factura incluye la orden de cambio. Márcala como pagada.</figcaption>'));
-      assert(html.includes('<p>Luego cobra: la factura incluye la orden de cambio, y la marcas como pagada.</p>'));
+      assert(html.includes('<p>Luego la factura: incluye la orden de cambio, y la marcas como pagada.</p>'));
     } else {
       assert(home.includes('<figcaption><b>Get paid.</b> The invoice includes the change order. Mark it paid.</figcaption>'));
-      assert(html.includes('<p>Then get paid: the invoice includes the change order, and you mark it paid.</p>'));
+      assert(html.includes('<p>Then the invoice: it includes the change order, and you mark it paid.</p>'));
     }
     const band = html.slice(html.indexOf('<div class="cta-band">'), html.indexOf('<form class="wl-inline"'));
     assertEquals((band.match(/<p[ >]/g) ?? []).length, 3, 'pitch, the invoice line, the release note: nothing else');
-    assert(band.indexOf('<p class="note">') > band.indexOf(pg.lang === 'es' ? 'Luego cobra' : 'Then get paid'), 'the app line sits right above "Not released yet"');
+    assert(band.indexOf('<p class="note">') > band.indexOf(pg.lang === 'es' ? 'Luego la factura' : 'Then the invoice'), 'the app line sits right above "Not released yet"');
     assert(!/available now|ya disponible|download|descarga|Google Play|App Store|\$\d|automatic|autom[aá]tic/i.test(band.replace(/<[^>]+>/g, ' ')), 'no release, price or feature claim');
   });
 
