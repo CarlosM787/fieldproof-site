@@ -117,7 +117,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/tools/labor-job-quote-calculator</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-job-quote-calculator"/>
@@ -153,7 +153,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/guides/how-to-price-labor</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/how-to-price-labor"/>
@@ -171,7 +171,7 @@
   </url>
   <url>
     <loc>https://talkestimate.com/tools/labor-cost-per-hour-calculator</loc>
-    <lastmod>2026-11-12</lastmod>
+    <lastmod>2026-11-14</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
     <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/tools/labor-cost-per-hour-calculator"/>
@@ -266,5 +266,23 @@
     <priority>0.7</priority>
     <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/estimado-en-ingles"/>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/es/guias/estimado-en-ingles"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/guides/labor-quoting-mistakes</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/labor-quoting-mistakes"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/errores-al-cotizar-mano-de-obra"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/labor-quoting-mistakes"/>
+  </url>
+  <url>
+    <loc>https://talkestimate.com/es/guias/errores-al-cotizar-mano-de-obra</loc>
+    <lastmod>2026-11-14</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.7</priority>
+    <xhtml:link rel="alternate" hreflang="en" href="https://talkestimate.com/guides/labor-quoting-mistakes"/>
+    <xhtml:link rel="alternate" hreflang="es" href="https://talkestimate.com/es/guias/errores-al-cotizar-mano-de-obra"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://talkestimate.com/guides/labor-quoting-mistakes"/>
   </url>
 </urlset>
