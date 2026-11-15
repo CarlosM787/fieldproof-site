@@ -17,6 +17,7 @@ export const FAQ_PAGES = [
   'tools/estimate-template.html', 'es/herramientas/plantilla-de-estimado.html',
   'tools/change-order-template.html', 'es/herramientas/plantilla-orden-de-cambio.html',
   'tools/invoice-template.html', 'es/herramientas/plantilla-de-factura.html',
+  'guides/labor-quoting-mistakes.html', 'es/guias/errores-al-cotizar-mano-de-obra.html',
 ];
 const PLAN_PRICE = /\$\s?\d[\d.,]*\s?\/\s?(mo|month|mes)\b/i;
 const text = (s) => s.replace(/<[^>]+>/g, '').replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&quot;/g, '"').replace(/&#39;/g, "'")
