@@ -39,6 +39,9 @@ const PAGES = [
   // V6 batch 8: free printable invoice template (invoice-template.test.ts checks the template itself)
   { file: 'tools/invoice-template.html', url: '/tools/invoice-template', alt: '/es/herramientas/plantilla-de-factura', lang: 'en' },
   { file: 'es/herramientas/plantilla-de-factura.html', url: '/es/herramientas/plantilla-de-factura', alt: '/tools/invoice-template', lang: 'es' },
+  // V6 batch 10: labor quoting mistakes guide (quoting-mistakes.test.ts checks the content and every figure)
+  { file: 'guides/labor-quoting-mistakes.html', url: '/guides/labor-quoting-mistakes', alt: '/es/guias/errores-al-cotizar-mano-de-obra', lang: 'en' },
+  { file: 'es/guias/errores-al-cotizar-mano-de-obra.html', url: '/es/guias/errores-al-cotizar-mano-de-obra', alt: '/guides/labor-quoting-mistakes', lang: 'es' },
 ];
 
 const redirects = read('_redirects').split(/\r?\n/).map((l) => l.trim()).filter((l) => l && !l.startsWith('#'))
