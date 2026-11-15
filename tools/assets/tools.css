@@ -385,3 +385,8 @@ footer.foot-wrap { border-top: 1px solid var(--border); padding: 40px 0 52px; ma
 .est-doc .d-tag { font-weight: 800; }
 .est-doc .d-contract { margin-top: 8pt; }
 .est-doc .d-hint { font-size: 8.5pt; color: #333; margin: 3pt 0 0; }
+
+/* V6 batch 8: the free invoice template (tools/invoice-template, es/herramientas/plantilla-de-factura) reuses the
+   estimate template's page, line cards and printed document (main.est-page, .est-line, .est-doc). Only what an
+   invoice adds: the thank-you line at the end of the printout. */
+.est-doc .d-thanks { margin: 16pt 0 0; text-align: center; font-weight: 700; break-inside: avoid; }
