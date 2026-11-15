@@ -39,6 +39,10 @@ const CARDS = [
   // estimate #1001 above. $854.40 original + $377.60 added work ($140 + 2 × $62 + $28.60 + $85) − a $42.00 credit = $1,190.00.
   ['og-change-order-en', 'en', 'Free change order template: *write it down, get it signed.*', 'Change order #1 · estimate #1001', [['Original estimate', '$854.40'], ['Added work · 4 lines', '$377.60'], ['Credit · customer’s ceiling paint', '−$42.00'], ['New contract total', '$1,190.00', 'total']], 'free'],
   ['og-change-order-es', 'es', 'Plantilla de orden de cambio: *por escrito y firmada.*', 'Orden de cambio #1 · estimado #1001', [['Estimado original', '$854.40'], ['Trabajo agregado · 4 líneas', '$377.60'], ['Crédito · pintura de la clienta', '−$42.00'], ['Nuevo total del contrato', '$1,190.00', 'total']], 'free'],
+  // The invoice template's own example (tools/assets/invoice-template.js EXAMPLE_LINES): the invoice for the same job.
+  // Estimate #1001's 5 lines ($854.40) + change order #1 ($335.60) = $1,190.00, no tax; − the $250.00 deposit = $940.00.
+  ['og-invoice-en', 'en', 'Free invoice template: *bill the whole job.*', 'Invoice #1001 · bathroom ceiling', [['Estimate #1001 · 5 lines', '$854.40'], ['Change order #1', '$335.60'], ['Deposit received', '−$250.00'], ['Balance due', '$940.00', 'total']], 'free'],
+  ['og-invoice-es', 'es', 'Plantilla de factura gratis: *cobra todo el trabajo.*', 'Factura #1001 · techo del baño', [['Estimado #1001 · 5 líneas', '$854.40'], ['Orden de cambio #1', '$335.60'], ['Anticipo recibido', '−$250.00'], ['Saldo', '$940.00', 'total']], 'free'],
 ];
 // Optional: only the named cards, e.g.  node scripts/brand/og.mjs og-template-en og-template-es
 const ONLY = process.argv.slice(2);
