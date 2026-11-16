@@ -21,3 +21,8 @@ Deno.test('T-4: the phone header shows the brand name from the measured width', 
     assert(h.includes('<span class="logo-word">Talk<em>Estimate</em></span>'), f);
   }
 });
+
+Deno.test('Advisor 21 B1: the ES header shows only logo, EN/ES and Join at tablet widths (721-860 px)', () => {
+  assert(read('es.html').includes('@media (min-width: 721px) and (max-width: 860px) { .nav-links a:not(.btn):not(.lt) { display: none; } }'));
+  assert(!read('index.html').includes('(min-width: 721px) and (max-width: 860px)'), 'EN header fits; unchanged');
+});
