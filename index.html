@@ -55,6 +55,7 @@
     .nav-links a.btn { color: #fff; }
     .nav-links a.btn:hover { color: #fff; }
     @media (max-width: 720px) { .nav-links a:not(.btn):not(.lt) { display: none; } .logo-word { display: none; } .logo-mark { margin-right: 0; } section { padding: 56px 0; } .hero { padding: 44px 0 56px; } .hero-ctas .btn.big { flex: 1 1 auto; text-align: center; padding: 16px 20px; } }
+    @media (min-width: 375px) and (max-width: 720px) { .logo-word { display: inline; font-size: 16px; } .logo-mark { margin-right: 8px; } } /* T-4: brand name on phones wherever the nav has room (measured: EN fits from 375 px; ES needs 480 px for its longer Join label) */
     @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
     .lang-toggle { display: flex; border: 2px solid var(--border); border-radius: 10px; overflow: hidden; }
     .lang-toggle a.lt { padding: 7px 12px; font-weight: 800; font-size: 13px; color: var(--muted); text-decoration: none; }
